@@ -1,3 +1,3 @@
 tesoureiros
-Bernardo Casaleiro	2013138047
-Rui Fonseca		2013145105
+2013138047, Bernardo Casaleiro
+2013145105, Rui Fonseca
