@@ -4,6 +4,9 @@
 # Pdf files
 *.pdf
 
+# Lex files
+*.yy.c
+
 # Object files
 *.o
 *.ko
