@@ -7,8 +7,10 @@
 /* variables */
 id                  ([a-z]|[A-Z]|"_")+([a-z]|[A-Z]|"_"|[0-9])*
 intlit              [0-9]+
-chrlit
-strlit
+valid_escape        \\n|\\t[0-7]{1-3}
+invalid_escape    "\"([0-9]|8-9][0-9]|[8-9][0-9][0-9]|[0-9][0-9][8-9])|"\n"|"\t"|
+chrlit              "'"[^{invalid_escape}]"'"
+strlit              """."""
 ignore              ("\n"|"\t"|" ")
 reserved            ("-""-"|"+""+")
 
@@ -61,7 +63,7 @@ return              { print_text("RETURN"); }
 /* simple printing function that checks for -l flag */
 void print_text(char* text) {
     if (flag == 1) {
-        printf("%s", text);
+        printf("%s\n", text);
     }
 }
 
