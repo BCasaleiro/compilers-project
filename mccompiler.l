@@ -47,10 +47,10 @@ if                  { print_text("IF"); }
 else                { print_text("ELSE"); }
 for                 { print_text("FOR"); }
 return              { print_text("RETURN"); }
-{id}                { { print_text("ID"); } }
-{intlit}            { { print_text("INTLIT"); } }
-{chrlit}            { { print_text("CHRLIT"); } }
-{strlit}            { { print_text("STRLIT"); } }
+{id}                { print_text("ID"); }
+{intlit}            { print_text("INTLIT"); }
+{chrlit}            { print_text("CHRLIT"); }
+{strlit}            { print_text("STRLIT"); }
 
 %%
 
