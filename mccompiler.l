@@ -10,8 +10,8 @@ id                  ([a-z]|[A-Z]|"_")+([a-z]|[A-Z]|"_"|[0-9])*
 intlit              [0-9]+
 valid_escape        \\n|\\t[0-7]{1-3}
 invalid_escape    "\"([0-9]|8-9][0-9]|[8-9][0-9][0-9]|[0-9][0-9][8-9])|"\n"|"\t"|
-chrlit              "'"[^{invalid_escape}]"'"
-strlit              """."""
+chrlit              \'[^{invalid_escape}]\'
+strlit              \".*\"
 ignore              ("\n"|"\t"|" ")
 reserved            ("-""-"|"+""+"|"|"|"^"|"~"|"<""<"|">"">"|"+""="|"-""="|"*""="|"/""="|"%""="|">"">""="|"<""<""="|"&""="|"^""="|"|""=")
 
@@ -20,17 +20,17 @@ reserved            ("-""-"|"+""+"|"|"|"^"|"~"|"<""<"|">"">"|"+""="|"-""="|"*""=
 /* TODO strlit */
 %%
 
-"&""&"              { print_text("AND"); }
-"|""|"              { print_text("OR"); }
+"&&"                { print_text("AND"); }
+"||"                { print_text("OR"); }
 "&"                 { print_text("AMP"); }
-"=""="              { print_text("EQ"); }
+"=="                { print_text("EQ"); }
 "="                 { print_text("ASSIGN"); }
 "!"                 { print_text("NOT"); }
-"!""="              { print_text("NE"); }
+"!="                { print_text("NE"); }
 ">"                 { print_text("GT"); }
 "<"                 { print_text("LT"); }
-">""="              { print_text("GE"); }
-"<""="              { print_text("LE"); }
+">="                { print_text("GE"); }
+"<="                { print_text("LE"); }
 ","                 { print_text("COMMA"); }
 ";"                 { print_text("SEMI"); }
 "{"                 { print_text("LBRACE"); }
