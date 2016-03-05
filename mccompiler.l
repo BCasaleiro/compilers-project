@@ -8,10 +8,13 @@
 /* variables */
 id                  ([a-z]|[A-Z]|"_")+([a-z]|[A-Z]|"_"|[0-9])*
 intlit              [0-9]+
-valid_escape        \\n|\\t[0-7]{1-3}
-invalid_escape      "\"([0-9]|8-9][0-9]|[8-9][0-9][0-9]|[0-9][0-9][8-9])|"\n"|"\t"|
-chrlit              \'[^{invalid_escape}]\'
-strlit              \".*\"
+valid_stuff         ([^\n\'\\]|\\n|\\t|"\""|"\'"|"\\"|\\([0-7]{1,3}))
+chrlit              \'{valid_stuff}\'
+unterminated_chr    (\'[^\n\']*)|(\'\\\')
+invalid_chr         \'([^\n\'\\]|\\.)*\'
+strlit              \"{valid_stuff}*\"
+unterminated_str    (\"([^\n\"]|\\n|\\t|\\\\|\\\'|\\\"|\\([0-7]{1,3}))*)|(\"\\\")
+invalid_str         (\"([^\n\"]|\\.)*\")
 ignore              ("\n"|"\t"|" ")
 reserved            ("-""-"|"+""+"|"|"|"^"|"~"|"<""<"|">"">"|"+""="|"-""="|"*""="|"/""="|"%""="|">"">""="|"<""<""="|"&""="|"^""="|"|""="|auto|break|case|const|continue|default|do|double|enum|extern|float|goto|long|register|short|signed|sizeof|static|struct|switch|typedef|union|unsigned|volatile|while)
 
@@ -57,6 +60,7 @@ return              { print_text("RETURN"); }
 {strlit}            { print_with_content("STRLIT", yytext); }
 {reserved}          { print_with_content("RESERVED", yytext); }
 {ignore}            { ; }
+.                   {;}
 
 %%
 
