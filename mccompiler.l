@@ -16,7 +16,7 @@ strlit              \"{valid_stuff}*\"
 unterminated_str    (\"([^\n\"]|\\n|\\t|\\\\|\\\'|\\\"|\\([0-7]{1,3}))*)|(\"\\\")
 invalid_str         (\"([^\n\"]|\\.)*\")
 ignore              ("\n"|"\t"|" ")
-reserved            ("-""-"|"+""+"|"|"|"^"|"~"|"<""<"|">"">"|"+""="|"-""="|"*""="|"/""="|"%""="|">"">""="|"<""<""="|"&""="|"^""="|"|""=")
+reserved            ("-""-"|"+""+"|"|"|"^"|"~"|"<""<"|">"">"|"+""="|"-""="|"*""="|"/""="|"%""="|">"">""="|"<""<""="|"&""="|"^""="|"|""="|auto|break|case|const|continue|default|do|double|enum|extern|float|goto|long|register|short|signed|sizeof|static|struct|switch|typedef|union|unsigned|volatile|while)
 
 /* rules */
 /* TODO chrlit */
@@ -56,8 +56,8 @@ for                 { print_text("FOR"); }
 return              { print_text("RETURN"); }
 {id}                { print_with_content("ID", yytext); }
 {intlit}            { print_with_content("INTLIT", yytext); }
-{chrlit}            { print_with_content("CHARLIT", yytext);}
-{strlit}            { print_with_content("STRLIT", yytext);}
+{chrlit}            { print_with_content("CHRLIT", yytext); }
+{strlit}            { print_with_content("STRLIT", yytext); }
 {reserved}          { print_with_content("RESERVED", yytext); }
 {ignore}            { ; }
 .                   {;}
