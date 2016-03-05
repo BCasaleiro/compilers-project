@@ -2,22 +2,23 @@
     #include <stdio.h>
     int flag = 0;
     void print_text(char* text);
+    void print_with_content(char* text, char* content);
 %}
 
 /* variables */
 id                  ([a-z]|[A-Z]|"_")+([a-z]|[A-Z]|"_"|[0-9])*
 intlit              [0-9]+
+<<<<<<< HEAD
 valid_escape        \\n|\\t[0-7]{1-3}
 invalid_escape    "\"([0-9]|8-9][0-9]|[8-9][0-9][0-9]|[0-9][0-9][8-9])|"\n"|"\t"|
 chrlit              "'"[^{invalid_escape}]"'"
 strlit              """."""
 ignore              ("\n"|"\t"|" ")
-reserved            ("-""-"|"+""+")
+reserved            ("-""-"|"+""+"|"|"|"^"|"~"|"<""<"|">"">"|"+""="|"-""="|"*""="|"/""="|"%""="|">"">""="|"<""<""="|"&""="|"^""="|"|""=")
 
 /* rules */
 /* TODO chrlit */
 /* TODO strlit */
-/* TODO reserved */
 %%
 
 "&""&"              { print_text("AND"); }
@@ -31,18 +32,18 @@ reserved            ("-""-"|"+""+")
 "<"                 { print_text("LT"); }
 ">""="              { print_text("GE"); }
 "<""="              { print_text("LE"); }
-"*"                 { print_text("AST"); }
 ","                 { print_text("COMMA"); }
 ";"                 { print_text("SEMI"); }
-"/"                 { print_text("DIV"); }
 "{"                 { print_text("LBRACE"); }
 "}"                 { print_text("RBRACE"); }
 "("                 { print_text("LPAR"); }
 ")"                 { print_text("RPAR"); }
 "["                 { print_text("LSC"); }
 "]"                 { print_text("RSC"); }
-"-"                 { print_text("MINUS"); }
 "+"                 { print_text("PLUS"); }
+"-"                 { print_text("MINUS"); }
+"*"                 { print_text("AST"); }
+"/"                 { print_text("DIV"); }
 "%"                 { print_text("MOD"); }
 int                 { print_text("INT"); }
 char                { print_text("CHAR"); }
@@ -53,9 +54,7 @@ for                 { print_text("FOR"); }
 return              { print_text("RETURN"); }
 {id}                { print_text("ID"); }
 {intlit}            { print_text("INTLIT"); }
-{chrlit}            { print_text("CHRLIT"); }
-{strlit}            { print_text("STRLIT"); }
-{reserved}          { print_text("RESERVED"); }
+{reserved}          { print_with_content("RESERVED", yytext); }
 {ignore}            { ; }
 
 %%
@@ -64,6 +63,12 @@ return              { print_text("RETURN"); }
 void print_text(char* text) {
     if (flag == 1) {
         printf("%s\n", text);
+    }
+}
+
+void print_with_content(char* text, char* content) {
+    if (flag == 1) {
+        printf("%s(%s)", text, content);
     }
 }
 
