@@ -49,8 +49,8 @@ if                  { print_text("IF"); }
 else                { print_text("ELSE"); }
 for                 { print_text("FOR"); }
 return              { print_text("RETURN"); }
-{id}                { print_text("ID"); }
-{intlit}            { print_text("INTLIT"); }
+{id}                { print_with_content("ID", yytext); }
+{intlit}            { print_with_content("INTLIT", yytext); }
 {reserved}          { print_with_content("RESERVED", yytext); }
 {ignore}            { ; }
 
