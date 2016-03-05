@@ -5,7 +5,7 @@
 %}
 
 /* variables */
-id                  ([a-z]*|[A-Z]*|"_"*)+([a-z]*|[A-Z]*|"_"*|[0-9]*)*
+id                  ([a-z]|[A-Z]|"_")+([a-z]|[A-Z]|"_"|[0-9])*
 intlit              [0-9]+
 chrlit
 strlit
