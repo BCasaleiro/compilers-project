@@ -10,6 +10,7 @@ intlit              [0-9]+
 chrlit
 strlit
 ignore              ("\n"|"\t"|" ")
+reserved            ("-""-"|"+""+")
 
 /* rules */
 /* TODO chrlit */
@@ -52,6 +53,7 @@ return              { print_text("RETURN"); }
 {intlit}            { print_text("INTLIT"); }
 {chrlit}            { print_text("CHRLIT"); }
 {strlit}            { print_text("STRLIT"); }
+{reserved}          { print_text("RESERVED"); }
 {ignore}            { ; }
 
 %%
