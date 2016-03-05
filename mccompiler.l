@@ -5,10 +5,11 @@
 %}
 
 /* variables */
-id                  [a-z]+( [a-z]* | [A-Z]* | "_"* | [0-9]* )*
+id                  [a-z]+([a-z]*|[A-Z]*|"_"*|[0-9]*)*
 intlit              [0-9]+
 chrlit
 strlit
+ignore              ("\n"|"\t"|" ")
 
 /* rules */
 /* TODO chrlit */
@@ -51,6 +52,7 @@ return              { print_text("RETURN"); }
 {intlit}            { print_text("INTLIT"); }
 {chrlit}            { print_text("CHRLIT"); }
 {strlit}            { print_text("STRLIT"); }
+{ignore}            { ; }
 
 %%
 
