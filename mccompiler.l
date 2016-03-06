@@ -1,9 +1,16 @@
 %{
     #include <stdio.h>
     int flag = 0;
+    int lineNumber = 0;
+    int columnNumber = 0;
+    int colComment;
+    int lineComment;
+
     void print_text(char* text);
     void print_with_content(char* text, char* content);
 %}
+
+%X COMMENT
 
 /* variables */
 id                  ([a-z]|[A-Z]|"_")+([a-z]|[A-Z]|"_"|[0-9])*
@@ -15,12 +22,18 @@ invalid_chr         \'([^\n\'\\]|\\.)*\'
 strlit              \"{valid_stuff}*\"
 unterminated_str    (\"([^\n\"]|\\n|\\t|\\\\|\\\'|\\\"|\\([0-7]{1,3}))*)|(\"\\\")
 invalid_str         (\"([^\n\"]|\\.)*\")
-comment             "/*"([^"/"|"*"]|"*""*"*([^ "*"|"/"]))*"*"+"/"
 ignore              ("\n"|"\t"|" ")
 reserved            ("--"|"++"|auto|break|case|const|continue|default|do|double|enum|extern|float|goto|long|register|short|signed|sizeof|static|struct|switch|typedef|union|unsigned|volatile|while)
 
 /* rules */
 %%
+
+"/*"                                { BEGIN (COMMENT); { colComment = columnNumber - 1; } lineComment = yylineno; }
+<COMMENT>"*/"                       { BEGIN (0); }
+<COMMENT>"\n"                       { columnNumber = 0; }
+<COMMENT>.                          { ; }
+<COMMENT><<EOF>>                    { printf("Line %d, col %d: unterminated comment\n", lineComment,  colComment); yyterminate(); }
+"\n"
 
 {reserved}          { print_with_content("RESERVED", yytext); }
 
@@ -58,8 +71,11 @@ return              { print_text("RETURN"); }
 {id}                { print_with_content("ID", yytext); }
 {intlit}            { print_with_content("INTLIT", yytext); }
 {chrlit}            { print_with_content("CHRLIT", yytext); }
+{invalid_chr}       { printf("Line %d, col %d: invalid char constant (%s)\n", yylineno,  0, yytext); }
+{unterminated_chr}  { printf("Line %d, col %d: unterminated char constant\n", yylineno,  0); }
 {strlit}            { print_with_content("STRLIT", yytext); }
-{comment}           { ; }
+{invalid_str}       { printf("Line %d, col %d: invalid string constant (%s)\n", yylineno,  0, yytext); }
+{unterminated_str}  { printf("Line %d, col %d: unterminated string constant\n", yylineno,  0); }
 {ignore}            { ; }
 .                   { ; }
 
@@ -72,6 +88,7 @@ void print_text(char* text) {
     }
 }
 
+/* printing function that checks for -l flag */
 void print_with_content(char* text, char* content) {
     if (flag == 1) {
         printf("%s(%s)\n", text, content);
