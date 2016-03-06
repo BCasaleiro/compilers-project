@@ -15,8 +15,9 @@ invalid_chr         \'([^\n\'\\]|\\.)*\'
 strlit              \"{valid_stuff}*\"
 unterminated_str    (\"([^\n\"]|\\n|\\t|\\\\|\\\'|\\\"|\\([0-7]{1,3}))*)|(\"\\\")
 invalid_str         (\"([^\n\"]|\\.)*\")
-ignore              ("\n"|"\t"|" "|"/*"[^"*/"]*"*/")
-reserved            ("-""-"|"+""+"|"|"|"^"|"~"|"<""<"|">"">"|"+""="|"-""="|"*""="|"/""="|"%""="|">"">""="|"<""<""="|"&""="|"^""="|"|""="|auto|break|case|const|continue|default|do|double|enum|extern|float|goto|long|register|short|signed|sizeof|static|struct|switch|typedef|union|unsigned|volatile|while)
+comment             "/*"([^"/"|"*"]|"*""*"*([^ "*"|"/"]))*"*"+"/"
+ignore              ("\n"|"\t"|" ")
+reserved            ("--"|"++"|"|"|"^"|"~"|"<<"|">>"|"+="|"-="|"*="|"/="|"%="|">>="|"<<="|"&="|"^="|"|="|auto|break|case|const|continue|default|do|double|enum|extern|float|goto|long|register|short|signed|sizeof|static|struct|switch|typedef|union|unsigned|volatile|while)
 
 /* rules */
 %%
@@ -57,6 +58,7 @@ return              { print_text("RETURN"); }
 {chrlit}            { print_with_content("CHRLIT", yytext); }
 {strlit}            { print_with_content("STRLIT", yytext); }
 {reserved}          { print_with_content("RESERVED", yytext); }
+{comment}           { ; }
 {ignore}            { ; }
 .                   { ; }
 
