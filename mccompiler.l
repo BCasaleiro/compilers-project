@@ -5,7 +5,7 @@
 
     int flag = 0;
     int lineNumber = 1;
-    int columnNumber = 0;
+    int columnNumber = 1;
     int colComment;
     int lineComment;
 
@@ -25,7 +25,7 @@ unterminated_chr    (\'[^\n\']*)|(\'\\\')
 invalid_chr         \'([^\n\'\\]|\\.)*\'
 strlit              \"{valid_stuff}*\"
 unterminated_str    (\"([^\n\"]|\\n|\\t|\\\\|\\\'|\\\"|\\([0-7]{1,3}))*)|(\"\\\")
-invalid_str         (\"([^\n\"]|\\.)*\")
+invalid_str         \"([^\n\"]|\\.)*\"
 ignore              ("\n"|"\t"|" ")
 reserved            ("--"|"++"|auto|break|case|const|continue|default|do|double|enum|extern|float|goto|long|register|short|signed|sizeof|static|struct|switch|typedef|union|unsigned|volatile|while)
 
@@ -37,7 +37,8 @@ reserved            ("--"|"++"|auto|break|case|const|continue|default|do|double|
 <COMMENT>"\n"                       { columnNumber = 0; }
 <COMMENT>.                          { ; }
 <COMMENT><<EOF>>                    { printf("Line %d, col %d: unterminated comment\n", lineComment,  colComment); yyterminate(); }
-"\n"
+
+"\n"                { columnNumber = 1; }
 
 {reserved}          { print_with_content("RESERVED", yytext); }
 
@@ -75,13 +76,13 @@ return              { print_text("RETURN"); }
 {id}                { print_with_content("ID", yytext); }
 {intlit}            { print_with_content("INTLIT", yytext); }
 {chrlit}            { print_with_content("CHRLIT", yytext); }
-{invalid_chr}       { printf("Line %d, col %d: invalid char constant (%s)\n", yylineno,  columnNumber, yytext); }
-{unterminated_chr}  { printf("Line %d, col %d: unterminated char constant\n", yylineno,  columnNumber); }
+{unterminated_chr}  { printf("Line %d, col %d: unterminated char constant\n", yylineno, (int)(columnNumber-yyleng)); }
+{invalid_chr}       { printf("Line %d, col %d: invalid char constant (%s)\n", yylineno, (int)(columnNumber-yyleng), yytext); }
 {strlit}            { print_with_content("STRLIT", yytext); }
-{invalid_str}       { printf("Line %d, col %d: invalid string constant (%s)\n", yylineno,  columnNumber, yytext); }
-{unterminated_str}  { printf("Line %d, col %d: unterminated string constant\n", yylineno,  columnNumber); }
+{unterminated_str}  { printf("Line %d, col %d: unterminated string constant\n", yylineno, (int)(columnNumber-yyleng)); }
+{invalid_str}       { printf("Line %d, col %d: invalid string constant (%s)\n", yylineno, (int)(columnNumber-yyleng), yytext); }
 {ignore}            { ; }
-.                   { printf("Line %d, col %d: illegal character (%s)\n", yylineno,  columnNumber, yytext); }
+.                   { printf("Line %d, col %d: illegal character (%s)\n", yylineno, (int)(columnNumber-yyleng), yytext); }
 
 %%
 
