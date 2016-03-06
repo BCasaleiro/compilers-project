@@ -1,7 +1,10 @@
 %{
+    #define YY_USER_ACTION columnNumber += yyleng;
+
     #include <stdio.h>
+
     int flag = 0;
-    int lineNumber = 0;
+    int lineNumber = 1;
     int columnNumber = 0;
     int colComment;
     int lineComment;
@@ -10,6 +13,7 @@
     void print_with_content(char* text, char* content);
 %}
 
+%option yylineno
 %X COMMENT
 
 /* variables */
@@ -71,13 +75,13 @@ return              { print_text("RETURN"); }
 {id}                { print_with_content("ID", yytext); }
 {intlit}            { print_with_content("INTLIT", yytext); }
 {chrlit}            { print_with_content("CHRLIT", yytext); }
-{invalid_chr}       { printf("Line %d, col %d: invalid char constant (%s)\n", yylineno,  0, yytext); }
-{unterminated_chr}  { printf("Line %d, col %d: unterminated char constant\n", yylineno,  0); }
+{invalid_chr}       { printf("Line %d, col %d: invalid char constant (%s)\n", yylineno,  columnNumber, yytext); }
+{unterminated_chr}  { printf("Line %d, col %d: unterminated char constant\n", yylineno,  columnNumber); }
 {strlit}            { print_with_content("STRLIT", yytext); }
-{invalid_str}       { printf("Line %d, col %d: invalid string constant (%s)\n", yylineno,  0, yytext); }
-{unterminated_str}  { printf("Line %d, col %d: unterminated string constant\n", yylineno,  0); }
+{invalid_str}       { printf("Line %d, col %d: invalid string constant (%s)\n", yylineno,  columnNumber, yytext); }
+{unterminated_str}  { printf("Line %d, col %d: unterminated string constant\n", yylineno,  columnNumber); }
 {ignore}            { ; }
-.                   { ; }
+.                   { printf("Line %d, col %d: illegal character (%s)\n", yylineno,  columnNumber, yytext); }
 
 %%
 
