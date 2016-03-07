@@ -26,8 +26,7 @@ invalid_chr         \'([^\n\'\\]|\\.)*\'
 valid_string        ([^(\\.)\"\n]|\\n|\\t|\\\"|\\\'|\\\\|\\([0-7]{1,3})) 
 strlit              \"{valid_string}*\"
 unterminated_str    (\"([^\n\"]|\\n|\\t|\\\\|\\\'|\\\"|\\([0-7]{1,3}))*)|(\"\\\")
-/*invalid_str         \"([^\n\"]|\\.)*\" */
-/*{invalid_str}       { printf("Line %d, col %d: invalid string constant (%s)\n", yylineno, (int)(columnNumber-yyleng), yytext); }*/
+invalid_str         \"([^\n\"]|\\.)*\"
 ignore              ("\n"|"\t"|" ")
 reserved            ("--"|"++"|auto|break|case|const|continue|default|do|double|enum|extern|float|goto|long|register|short|signed|sizeof|static|struct|switch|typedef|union|unsigned|volatile|while)
 
@@ -81,6 +80,8 @@ return              { print_text("RETURN"); }
 {unterminated_chr}  { printf("Line %d, col %d: unterminated char constant\n", yylineno, (int)(columnNumber-yyleng)); }
 {invalid_chr}       { printf("Line %d, col %d: invalid char constant (%s)\n", yylineno, (int)(columnNumber-yyleng), yytext); }
 {strlit}            { print_with_content("STRLIT", yytext); }
+{unterminated_str}  { printf("Line %d, col %d: unterminated string constant\n", yylineno, (int)(columnNumber-yyleng));}
+{invalid_str}       { printf("Line %d, col %d: invalid string constant (%s)\n", yylineno, (int)(columnNumber-yyleng), yytext); }
 {ignore}            { ; }
 .                   { printf("Line %d, col %d: illegal character (%s)\n", yylineno, (int)(columnNumber-yyleng), yytext); }
 
