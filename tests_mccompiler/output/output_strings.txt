@@ -1,0 +1,12 @@
+Line 1, col 1: invalid string constant ("\a")
+Line 2, col 1: invalid string constant (" \a")
+Line 3, col 1: invalid string constant ("\a ")
+Line 4, col 1: invalid string constant ("\t \\\a")
+Line 5, col 1: invalid string constant ("\8")
+Line 6, col 1: invalid string constant ("\ ")
+STRLIT("\08")
+Line 8, col 1: unterminated string constant
+Line 9, col 5: unterminated string constant
+Line 10, col 1: unterminated string constant
+Line 11, col 1: unterminated string constant
+Line 12, col 1: unterminated string constant
