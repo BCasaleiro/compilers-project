@@ -36,7 +36,7 @@ reserved            ("--"|"++"|auto|break|case|const|continue|default|do|double|
 /* rules */
 %%
 
-"/*"                                { BEGIN (COMMENT); { colComment = columnNumber - 1; } lineComment = yylineno; }
+"/*"                                { BEGIN (COMMENT); { colComment = columnNumber - 2; } lineComment = yylineno; }
 <COMMENT>"*/"                       { BEGIN (0); }
 <COMMENT>"\n"                       { columnNumber = 0; }
 <COMMENT>.                          { ; }
