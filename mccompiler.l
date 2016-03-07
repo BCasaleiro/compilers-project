@@ -19,13 +19,13 @@
 /* variables */
 id                  ([a-z]|[A-Z]|"_")+([a-z]|[A-Z]|"_"|[0-9])*
 intlit              [0-9]+
-valid_stuff         ([^(\\.)]|\\n|\\t|\\\"|\\\\|\\\'|\\([0-7]{1,3}))
+valid_stuff         ([^(\\.)\n]|\\n|\\t|\\\"|\\\\|\\\'|\\([0-7]{1,3}))
 chrlit              \'{valid_stuff}\'
 unterminated_chr    \'(([^\n\'\\]*)|(\\\\)*|(\\\'))
 invalid_chr         \'([^\n\'\\]|\\.)*\'
-valid_string        ([^(\\.)\"]|\\n|\\t|\\\"|\\\'|\\\\|\\([0-7]{1,3})) 
+valid_string        ([^(\\.)\"\n]|\\n|\\t|\\\"|\\\'|\\\\|\\([0-7]{1,3})) 
 strlit              \"{valid_string}*\"
-/*unterminated_str    (\"([^\n\"]|\\n|\\t|\\\\|\\\'|\\\"|\\([0-7]{1,3}))*)|(\"\\\")*/
+unterminated_str    (\"([^\n\"]|\\n|\\t|\\\\|\\\'|\\\"|\\([0-7]{1,3}))*)|(\"\\\")
 /*invalid_str         \"([^\n\"]|\\.)*\" */
 /*{invalid_str}       { printf("Line %d, col %d: invalid string constant (%s)\n", yylineno, (int)(columnNumber-yyleng), yytext); }*/
 ignore              ("\n"|"\t"|" ")
