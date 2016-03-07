@@ -21,23 +21,23 @@ id                  ([a-z]|[A-Z]|"_")+([a-z]|[A-Z]|"_"|[0-9])*
 intlit              [0-9]+
 valid_stuff         ([^\'\\\n]|\\n|\\t|\\\"|\\\\|\\\'|\\([0-7]{1,3}))
 chrlit              \'{valid_stuff}\'
-unterminated_chr    \'(([^\n\'\\]*)|(\\\\)*|(\\\'))
-invalid_chr         \'([^\n\'\\]|\\.)*\'
-valid_string        ([^\"\n\\]|\\n|\\t|\\\"|\\\'|\\\\|\\([0-7]{1,3})) 
+unterminated_chr	\'((\\n|\\t|\\\\|\\\'|\\\"|(\\([0-7]{1,3})))*|(\\.|[^'\n\\]))*\\?
+invalid_chr         \'([^'\n\\]|\\.)*\'
+valid_string        ([^\"\n\\]|\\n|\\t|\\\"|\\\'|\\\\|\\([0-7]{1,3}))
 strlit              \"{valid_string}*\"
 unterminated_str    (\"([^\n\"]|\\n|\\t|\\\\|\\\'|\\\"|\\([0-7]{1,3}))*)|(\"\\\")
-invalid_str         \"([^\n\"]|\\.)*\"
+invalid_str         \"([^"\n\\]|\\.)*\"
 ignore              ("\n"|"\t"|" ")
 reserved            ("--"|"++"|auto|break|case|const|continue|default|do|double|enum|extern|float|goto|long|register|short|signed|sizeof|static|struct|switch|typedef|union|unsigned|volatile|while)
 
 /* rules */
 %%
 
-"/*"                                { BEGIN (COMMENT); { colComment = columnNumber - 2; } lineComment = yylineno; }
-<COMMENT>"*/"                       { BEGIN (0); }
-<COMMENT>"\n"                       { columnNumber = 0; }
-<COMMENT>.                          { ; }
-<COMMENT><<EOF>>                    { printf("Line %d, col %d: unterminated comment\n", lineComment,  colComment); yyterminate(); }              
+"/*"                { BEGIN (COMMENT); { colComment = columnNumber - 2; } lineComment = yylineno; }
+<COMMENT>"*/"       { BEGIN (0); }
+<COMMENT>"\n"       { columnNumber = 0; }
+<COMMENT>.          { ; }
+<COMMENT><<EOF>>    { printf("Line %d, col %d: unterminated comment\n", lineComment,  colComment); yyterminate(); }
 
 "\n"                { columnNumber = 1; }
 
