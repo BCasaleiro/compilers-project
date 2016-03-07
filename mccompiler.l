@@ -15,13 +15,14 @@
 
 %option yylineno
 %X COMMENT
+%X CHR
 
 /* variables */
 id                  ([a-z]|[A-Z]|"_")+([a-z]|[A-Z]|"_"|[0-9])*
 intlit              [0-9]+
-valid_stuff         ([^\n\'\\]|\\n|\\t|"\""|"\'"|"\\"|\\([0-7]{1,3}))
+valid_stuff         ([^(\\.)]|\\n|\\t|\\\"|\\\\|\\\'|\\([0-7]{1,3}))
 chrlit              \'{valid_stuff}\'
-unterminated_chr    (\'[^\n\']*)|(\'\\\')
+unterminated_chr    \'(([^\n\'\\]*)|(\\\\)*|(\\\'))
 invalid_chr         \'([^\n\'\\]|\\.)*\'
 strlit              \"{valid_stuff}*\"
 unterminated_str    (\"([^\n\"]|\\n|\\t|\\\\|\\\'|\\\"|\\([0-7]{1,3}))*)|(\"\\\")
@@ -36,7 +37,7 @@ reserved            ("--"|"++"|auto|break|case|const|continue|default|do|double|
 <COMMENT>"*/"                       { BEGIN (0); }
 <COMMENT>"\n"                       { columnNumber = 0; }
 <COMMENT>.                          { ; }
-<COMMENT><<EOF>>                    { printf("Line %d, col %d: unterminated comment\n", lineComment,  colComment); yyterminate(); }
+<COMMENT><<EOF>>                    { printf("Line %d, col %d: unterminated comment\n", lineComment,  colComment); yyterminate(); }              
 
 "\n"                { columnNumber = 1; }
 
