@@ -8,7 +8,7 @@
     int columnNumber = 1;
     int colComment;
     int lineComment;
-
+/*Hello World*/
     void print_text(char* text);
     void print_with_content(char* text, char* content);
 %}
