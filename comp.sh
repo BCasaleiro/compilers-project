@@ -1,3 +1,4 @@
 lex mccompiler.l
-cc -o mccompiler lex.yy.c -ll
-zip mccompiler.zip mccompiler.l
+yacc -d mccompiler.y
+cc -o mccompiler y.tab.c lex.yy.c -ll -ly
+zip mccompiler.zip mccompiler.l mccompiler.y
