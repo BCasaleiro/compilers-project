@@ -2,13 +2,14 @@
     #define YY_USER_ACTION columnNumber += yyleng;
 
     #include <stdio.h>
+    #include "y.tab.h"
 
     int flag = 0;
     int lineNumber = 1;
     int columnNumber = 1;
     int colComment;
     int lineComment;
-/*Hello World*/
+
     void print_text(char* text);
     void print_with_content(char* text, char* content);
 %}
