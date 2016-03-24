@@ -20,14 +20,24 @@
 /* variables */
 id                  ([a-z]|[A-Z]|"_")+([a-z]|[A-Z]|"_"|[0-9])*
 intlit              [0-9]+
-valid_stuff         ([^\'\\\n]|\\n|\\t|\\\"|\\\\|\\\'|\\([0-7]{1,3}))
-chrlit              \'{valid_stuff}\'
-unterminated_chr	\'((\\n|\\t|\\\\|\\\'|\\\"|(\\([0-7]{1,3})))*|(\\.|[^'\n\\]))*\\?
-invalid_chr         \'([^'\n\\]|\\.)*\'
-valid_string        ([^\"\n\\]|\\n|\\t|\\\"|\\\'|\\\\|\\([0-7]{1,3}))
-strlit              \"{valid_string}*\"
-unterminated_str    (\"([^\n\"]|\\n|\\t|\\\\|\\\'|\\\"|\\([0-7]{1,3}))*)|(\"\\\")
-invalid_str         \"([^"\n\\]|\\.)*\"
+
+valid_stuff         \\n|\\t|\\\\|\\\'|\\\"|(\\([0-7]{1,3}))
+invalid_stuff       \\.|\\[8-9]{1,3}
+
+valid_chr           ([^\n\'\\]|{valid_stuff})
+inval_chr           ([^'\n\\]|{invalid_stuff})
+
+chrlit              \'{valid_chr}\'
+invalid_chr         \'{inval_chr}*\'
+unterminated_chr    \'({valid_stuff}*|(\\.|[^'\n\\]))*\\?
+
+valid_str           ([^\n\"\\]|{valid_stuff})
+inval_str           ([^"\n\\]|{invalid_stuff})
+
+strlit              \"{valid_str}*\"
+invalid_str         \"{inval_str}*\"
+unterminated_str    \"([^\"\n]|{valid_stuff})*
+
 ignore              ("\n"|"\t"|" ")
 reserved            ("--"|"++"|auto|break|case|const|continue|default|do|double|enum|extern|float|goto|long|register|short|signed|sizeof|static|struct|switch|typedef|union|unsigned|volatile|while)
 
