@@ -4,6 +4,11 @@
 # Pdf files
 *.pdf
 
+# Yacc files
+*.output
+y.tab.c
+y.tab.h
+
 # Lex files
 *.yy.c
 mccompiler
