@@ -52,11 +52,14 @@
 
 %%
  //Start
-Start:  FunctionDefinition | FunctionDeclaration | Declaration
-    |   Restart
+Start:  Restart FunctionDefinition
+    |   Restart FunctionDeclaration
+    |   Restart Declaration
     ;
 
-Restart: Empty | Restart Start ;
+Restart: Restart Start
+    |    Empty
+    ;
 
  //FunctionDefinition
 FunctionDefinition: TypeSpec FunctionDeclarator FunctionBody;
@@ -76,7 +79,9 @@ ParameterList: ParameterDeclaration CommaParameterDeclaration;
  //ParameterDeclaration
 ParameterDeclaration: TypeSpec ZMast ZUid;
 
-CommaParameterDeclaration: Empty | CommaParameterDeclaration COMMA ParameterDeclaration;
+CommaParameterDeclaration:  COMMA ParameterDeclaration CommaParameterDeclaration;
+                        |   Empty
+                        ;
 
  //Declaration
 Declaration: TypeSpec Declarator CommaDeclarator SEMI;
