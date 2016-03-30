@@ -1,6 +1,8 @@
 %{
     #include <stdio.h>
     #include <stdlib.h>
+
+    void yyerror (int line, int col, char *s);
 %}
 
 %token AND
@@ -50,27 +52,28 @@
 %nonassoc "then"
 %nonassoc ELSE
 
-
-
-%right  ASSIGN
-%right  NOT
-%right  AST
-%right  AMP
-%right  PLUS
-%right  MINUS
-%left   LPAR
-%left   RPAR
-%left   LSQ
-%left   RSQ
-%left   GE
-%left   LE
-%left   GT
-%left   LT
-%left   EQ
-%left   NE
-%left   AND
-%left   OR
-%left   COMMA
+%start Start
+%left LPAR
+%left RPAR
+%left LSQ
+%left RSQ
+%left MOD
+%left AST
+%left DIV
+%left MINUS
+%left PLUS
+%left GE
+%left LE
+%left GT
+%left LT
+%left EQ
+%left NE
+%left NOT
+%left OR
+%left AND
+%left AMP
+%right ASSIGN
+%left COMMA
 
 %%
  //Start
@@ -95,7 +98,9 @@ FunctionDeclaration: TypeSpec FunctionDeclarator SEMI;
 FunctionDeclarator: ZMast ID LPAR ParameterList RPAR;
 
  //FunctionBody
-FunctionBody: LBRACE Redeclaration Restatement  RBRACE;
+FunctionBody: LBRACE Redeclaration Restatement  RBRACE
+        |     LBRACE error  RBRACE
+        ;
 
  //ParameterList
 ParameterList: ParameterDeclaration CommaParameterDeclaration;
@@ -108,10 +113,12 @@ CommaParameterDeclaration:  COMMA ParameterDeclaration CommaParameterDeclaration
                         ;
 
  //Declaration
-Declaration: TypeSpec Declarator CommaDeclarator SEMI;
+Declaration:    TypeSpec Declarator CommaDeclarator SEMI
+        |       error SEMI
+        ;
 
 Redeclaration:  Empty
-        |       Redeclaration Declaration
+        |       Declaration Redeclaration
         ;
 
  //TypeSpec
@@ -129,79 +136,62 @@ ArraySpecial: Empty | LSQ INTLIT RSQ;
 
  //Statement
 Statement:  ZUExpr SEMI
+        |   error SEMI
         |   LBRACE Restatement RBRACE
+        |   LBRACE error RBRACE
         |   IF LPAR Expr RPAR Statement %prec "then"
         |   IF LPAR Expr RPAR Statement ELSE Statement
         |   FOR LPAR ZUExpr SEMI ZUExpr SEMI ZUExpr RPAR Statement
         |   RETURN ZUExpr SEMI
         ;
 
-/*ElseStatement:  Empty
-            |   ELSE Statement
-            ;*/
-
-
-
 Restatement:    Empty
-        |       Restatement Statement
+        |       Statement Restatement
         ;
 
  //Expr
 
-Expr:   /*Expr Symbol Expr    %prec "then"
-    |*/   Expr ASSIGN Expr
-    |   Expr COMMA Expr
-    |   Expr AND Expr
-    |   Expr OR Expr
-    |   Expr EQ Expr
-    |   Expr NE Expr
-    |   Expr LT Expr
-    |   Expr GT Expr
-    |   Expr LE Expr
-    |   Expr GE Expr
-    |   Expr PLUS Expr
-    |   Expr MINUS Expr
-    |   Expr AST Expr
-    |   Expr DIV Expr
-    |   Expr MOD Expr
-    |   NOT Expr
-    |   MINUS Expr
-    |   PLUS Expr
-    |   AST Expr
-    |   AMP Expr
-    // |   ID LPAR ExprSpecial RPAR
-    // |   ID
-    // |   INTLIT
-    // |   CHRLIT
-    // |   STRLIT
-    |   LPAR Expr RPAR
+Expr:    ExprSpecial
+    |    Expr COMMA ExprSpecial
     ;
 
+ExprSpecial:    ExprSpecial ASSIGN ExprSpecial
+        |       ExprSpecial AND ExprSpecial
+        |       ExprSpecial OR ExprSpecial
+        |       ExprSpecial EQ ExprSpecial
+        |       ExprSpecial NE ExprSpecial
+        |       ExprSpecial LT ExprSpecial
+        |       ExprSpecial GT ExprSpecial
+        |       ExprSpecial LE ExprSpecial
+        |       ExprSpecial GE ExprSpecial
+        |       ExprSpecial PLUS ExprSpecial
+        |       ExprSpecial MINUS ExprSpecial
+        |       ExprSpecial AST ExprSpecial
+        |       ExprSpecial DIV ExprSpecial
+        |       ExprSpecial MOD ExprSpecial
+        |       NOT ExprSpecial
+        |       MINUS ExprSpecial
+        |       PLUS ExprSpecial
+        |       AST ExprSpecial
+        |       AMP ExprSpecial
+        |       ID
+        |       INTLIT
+        |       CHRLIT
+        |       STRLIT
+        |       LPAR Expr RPAR
+        |       LPAR error RPAR
+        |       ID LPAR ZUExprZMComma RPAR
+        |       ID LPAR error RPAR
+        |       ExprSpecial LSQ Expr RSQ
+        ;
 
-Symbol: ASSIGN
-    |   COMMA
-    |   AND
-    |   OR
-    |   EQ
-    |   NE
-    |   LT
-    |   GT
-    |   LE
-    |   GE
-    |   PLUS
-    |   MINUS
-    |   AST
-    |   DIV
-    |   MOD
+ZUExprZMComma:  Empty
+            |   ExprSpecial ZMComma
+            ;
+
+ZMComma:    Empty
+    |       ZMComma COMMA ExprSpecial
     ;
-
-ExprSpecial:    Empty
-        |       Expr CommaExpr
-        ;
-
-CommaExpr:  Empty
-        |   CommaExpr COMMA Expr
-        ;
 
  //Caracteres repetidos
 
@@ -221,8 +211,7 @@ Empty:  ;
 
 /* A função main() está do lado do lex */
 
-/*
-void yyerror (char *s) {
-    printf ("Line %d, col %d: %s: %s\n", <num linha>, <num coluna>, s, yytext);
+
+void yyerror (int line, int col, char *s) {
+    printf ("Line %d, col %d: %s: %s\n", line, col, s, yytext);
 }
-*/
