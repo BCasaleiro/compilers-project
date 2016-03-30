@@ -57,8 +57,10 @@ Start:  Restart FunctionDefinition
     |   Restart Declaration
     ;
 
-Restart: Restart Start
-    |    Empty
+Restart:    Empty
+    |       Restart FunctionDefinition
+    |       Restart FunctionDeclaration
+    |       Restart Declaration
     ;
 
  //FunctionDefinition
@@ -86,10 +88,15 @@ CommaParameterDeclaration:  COMMA ParameterDeclaration CommaParameterDeclaration
  //Declaration
 Declaration: TypeSpec Declarator CommaDeclarator SEMI;
 
-Redeclaration: Empty | Redeclaration Declaration;
+Redeclaration:  Empty
+        |       Redeclaration Declaration
+        ;
 
  //TypeSpec
-TypeSpec: CHAR | INT | VOID;
+TypeSpec:   INT
+   |       CHAR
+   |       VOID
+   ;
 
  //Declarator
 Declarator: ZMast ID ArraySpecial;
@@ -111,19 +118,38 @@ ElseStatement: Empty | ELSE Statement;
 Restatement: Empty | Restatement Statement;
 
  //Expr
-Expr:   Expr Assignment Expr
-    |   Expr Options Expr
-    |   Expr Comparison Expr
-    |   Expr Math Expr
-    |   Aggregation Expr
+Expr:   Expr ASSIGN Expr
+    |   Expr COMMA Expr
+    |   Expr AND Expr
+    |   Expr OR Expr
+    |   Expr EQ Expr
+    |   Expr NE Expr
+    |   Expr LT Expr
+    |   Expr GT Expr
+    |   Expr LE Expr
+    |   Expr GE Expr
+    |   Expr PLUS Expr
+    |   Expr MINUS Expr
+    |   Expr AST Expr
+    |   Expr DIV Expr
+    |   Expr MOD Expr
+    |   AMP Expr
+    |   AST Expr
+    |   PLUS Expr
+    |   MINUS Expr
+    |   NOT Expr
     |   Expr LSQ Expr RSQ
     |   ID LPAR ExprSpecial RPAR
     |   ID | INTLIT | CHRLIT | STRLIT | LPAR Expr RPAR
     ;
 
-ExprSpecial: Empty | Expr CommaExpr;
+ExprSpecial:    Empty
+        |       Expr CommaExpr
+        ;
 
-CommaExpr: Empty | CommaExpr COMMA Expr;
+CommaExpr:  Empty
+        |   CommaExpr COMMA Expr
+        ;
 
  //Caracteres repetidos
 
@@ -136,15 +162,6 @@ ZUid: Empty | ID;
 ZUExpr: Empty | Expr;
 
  // Carateres especiais
-Assignment: ASSIGN | COMMA;
-
-Options: AND | OR;
-
-Comparison: EQ | NE | LT | GT | LE | GE;
-
-Math: PLUS | MINUS | AST | DIV | MOD;
-
-Aggregation: AMP | AST | PLUS | MINUS | NOT;
 
 Empty:  ;
 
