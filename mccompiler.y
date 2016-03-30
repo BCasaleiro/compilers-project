@@ -41,14 +41,36 @@
 %token <strlit> STRLIT
 
 %union{
-    char* id;
-    int   intlit;
-    char*  chrlit;
-    char* strlit;
+    char*   id;
+    int     intlit;
+    char*   chrlit;
+    char*   strlit;
 }
 
-%right  ASSIGN NOT AST AMP PLUS MINUS
-%left   LPAR RPAR LSQ RSQ GE LE GT LT EQ NE AND OR COMMA
+%nonassoc "then"
+%nonassoc ELSE
+
+
+
+%right  ASSIGN
+%right  NOT
+%right  AST
+%right  AMP
+%right  PLUS
+%right  MINUS
+%left   LPAR
+%left   RPAR
+%left   LSQ
+%left   RSQ
+%left   GE
+%left   LE
+%left   GT
+%left   LT
+%left   EQ
+%left   NE
+%left   AND
+%left   OR
+%left   COMMA
 
 %%
  //Start
@@ -108,17 +130,26 @@ ArraySpecial: Empty | LSQ INTLIT RSQ;
  //Statement
 Statement:  ZUExpr SEMI
         |   LBRACE Restatement RBRACE
-        |   IF LPAR Expr RPAR Statement ElseStatement
+        |   IF LPAR Expr RPAR Statement %prec "then"
+        |   IF LPAR Expr RPAR Statement ELSE Statement
         |   FOR LPAR ZUExpr SEMI ZUExpr SEMI ZUExpr RPAR Statement
         |   RETURN ZUExpr SEMI
         ;
 
-ElseStatement: Empty | ELSE Statement;
+/*ElseStatement:  Empty
+            |   ELSE Statement
+            ;*/
 
-Restatement: Empty | Restatement Statement;
+
+
+Restatement:    Empty
+        |       Restatement Statement
+        ;
 
  //Expr
-Expr:   Expr ASSIGN Expr
+
+Expr:   /*Expr Symbol Expr    %prec "then"
+    |*/   Expr ASSIGN Expr
     |   Expr COMMA Expr
     |   Expr AND Expr
     |   Expr OR Expr
@@ -133,14 +164,35 @@ Expr:   Expr ASSIGN Expr
     |   Expr AST Expr
     |   Expr DIV Expr
     |   Expr MOD Expr
-    |   AMP Expr
-    |   AST Expr
-    |   PLUS Expr
-    |   MINUS Expr
     |   NOT Expr
-    |   Expr LSQ Expr RSQ
-    |   ID LPAR ExprSpecial RPAR
-    |   ID | INTLIT | CHRLIT | STRLIT | LPAR Expr RPAR
+    |   MINUS Expr
+    |   PLUS Expr
+    |   AST Expr
+    |   AMP Expr
+    // |   ID LPAR ExprSpecial RPAR
+    // |   ID
+    // |   INTLIT
+    // |   CHRLIT
+    // |   STRLIT
+    |   LPAR Expr RPAR
+    ;
+
+
+Symbol: ASSIGN
+    |   COMMA
+    |   AND
+    |   OR
+    |   EQ
+    |   NE
+    |   LT
+    |   GT
+    |   LE
+    |   GE
+    |   PLUS
+    |   MINUS
+    |   AST
+    |   DIV
+    |   MOD
     ;
 
 ExprSpecial:    Empty
