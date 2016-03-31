@@ -140,12 +140,12 @@ CommaDeclarator: Empty | CommaDeclarator COMMA Declarator;
 ArraySpecial: Empty | LSQ INTLIT RSQ;
 
  //Statement
-Statement:      LBRACE error RBRACE
-        |       error SEMI
+Statement:      error SEMI
         |       StatementSpecial
         ;
 
 StatementSpecial:   ZUExpr SEMI
+        |           LBRACE error RBRACE
         |           LBRACE Restatement RBRACE
         |           IF LPAR Expr RPAR Statement %prec "then"
         |           IF LPAR Expr RPAR Statement ELSE Statement
@@ -156,7 +156,7 @@ StatementSpecial:   ZUExpr SEMI
 // UMStatement: Statement | Statement UMStatement;
 
 ReSpecialStatement: Empty
-                |   StatementSpecial ReSpecialStatement;   
+                |   StatementSpecial ReSpecialStatement;
                 ;
 
 Restatement:    Empty
