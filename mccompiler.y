@@ -2,7 +2,12 @@
     #include <stdio.h>
     #include <stdlib.h>
 
-    void yyerror (int line, int col, char *s);
+    extern int yylineno;
+    extern int yyleng;
+    extern int columnNumber;
+    extern char * yytext;
+
+    void yyerror (char *s);
 %}
 
 %token AND
@@ -98,7 +103,7 @@ FunctionDeclaration: TypeSpec FunctionDeclarator SEMI;
 FunctionDeclarator: ZMast ID LPAR ParameterList RPAR;
 
  //FunctionBody
-FunctionBody: LBRACE Redeclaration Restatement  RBRACE
+FunctionBody: LBRACE Redeclaration ReSpecialStatement  RBRACE
         |     LBRACE error  RBRACE
         ;
 
@@ -135,22 +140,30 @@ CommaDeclarator: Empty | CommaDeclarator COMMA Declarator;
 ArraySpecial: Empty | LSQ INTLIT RSQ;
 
  //Statement
-Statement:      ZUExpr SEMI
-        |       LBRACE Restatement RBRACE
-        |       IF LPAR Expr RPAR Statement %prec "then"
-        |       IF LPAR Expr RPAR Statement ELSE Statement
-        |       FOR LPAR ZUExpr SEMI ZUExpr SEMI ZUExpr RPAR Statement
-        |       RETURN ZUExpr SEMI
+Statement:      LBRACE error RBRACE
         |       error SEMI
-        |       LBRACE error RBRACE
+        |       StatementSpecial
         ;
+
+StatementSpecial:   ZUExpr SEMI
+        |           LBRACE Restatement RBRACE
+        |           IF LPAR Expr RPAR Statement %prec "then"
+        |           IF LPAR Expr RPAR Statement ELSE Statement
+        |           FOR LPAR ZUExpr SEMI ZUExpr SEMI ZUExpr RPAR Statement
+        |           RETURN ZUExpr SEMI
+        ;
+
+// UMStatement: Statement | Statement UMStatement;
+
+ReSpecialStatement: Empty
+                |   StatementSpecial ReSpecialStatement;   
+                ;
 
 Restatement:    Empty
         |       Statement Restatement
         ;
 
  //Expr
-
 Expr:    ExprSpecial
     |    Expr COMMA ExprSpecial
     ;
@@ -212,6 +225,6 @@ Empty:  ;
 /* A função main() está do lado do lex */
 
 
-void yyerror (int line, int col, char *s) {
-    printf ("Line %d, col %d: %s: %s\n", line, col, s, yytext);
+void yyerror (char *s) {
+    printf ("Line %d, col %d: %s: %s\n", yylineno, columnNumber-yyleng, s, yytext);
 }
