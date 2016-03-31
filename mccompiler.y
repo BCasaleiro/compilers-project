@@ -135,14 +135,14 @@ CommaDeclarator: Empty | CommaDeclarator COMMA Declarator;
 ArraySpecial: Empty | LSQ INTLIT RSQ;
 
  //Statement
-Statement:  ZUExpr SEMI
-        |   error SEMI
-        |   LBRACE Restatement RBRACE
-        |   LBRACE error RBRACE
-        |   IF LPAR Expr RPAR Statement %prec "then"
-        |   IF LPAR Expr RPAR Statement ELSE Statement
-        |   FOR LPAR ZUExpr SEMI ZUExpr SEMI ZUExpr RPAR Statement
-        |   RETURN ZUExpr SEMI
+Statement:      ZUExpr SEMI
+        |       LBRACE Restatement RBRACE
+        |       IF LPAR Expr RPAR Statement %prec "then"
+        |       IF LPAR Expr RPAR Statement ELSE Statement
+        |       FOR LPAR ZUExpr SEMI ZUExpr SEMI ZUExpr RPAR Statement
+        |       RETURN ZUExpr SEMI
+        |       error SEMI
+        |       LBRACE error RBRACE
         ;
 
 Restatement:    Empty
