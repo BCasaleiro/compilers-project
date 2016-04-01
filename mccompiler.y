@@ -3,11 +3,11 @@
     #include <stdlib.h>
 
     extern int yylineno;
-    extern int yyleng;
     extern int columnNumber;
     extern char * yytext;
 
     void yyerror (char *s);
+    extern int yylex();
 %}
 
 %token AND
@@ -104,7 +104,7 @@ FunctionDeclarator: ZMast ID LPAR ParameterList RPAR;
 
  //FunctionBody
 FunctionBody: LBRACE Redeclaration ReSpecialStatement  RBRACE
-        |     LBRACE error  RBRACE
+        |     LBRACE error  RBRACE                                              
         ;
 
  //ParameterList
@@ -128,16 +128,20 @@ Redeclaration:  Empty
 
  //TypeSpec
 TypeSpec:   INT
-   |       CHAR
-   |       VOID
-   ;
+    |       CHAR
+    |       VOID
+    ;
 
  //Declarator
 Declarator: ZMast ID ArraySpecial;
 
-CommaDeclarator: Empty | CommaDeclarator COMMA Declarator;
+CommaDeclarator:    Empty
+            |       CommaDeclarator COMMA Declarator
+            ;
 
-ArraySpecial: Empty | LSQ INTLIT RSQ;
+ArraySpecial:   Empty
+        |       LSQ INTLIT RSQ
+        ;
 
  //Statement
 Statement:      error SEMI
@@ -226,5 +230,5 @@ Empty:  ;
 
 
 void yyerror (char *s) {
-    printf ("Line %d, col %d: %s: %s\n", yylineno, columnNumber-yyleng, s, yytext);
+    printf ("Line %d, col %d: %s: %s\n", yylineno, columnNumber, s, yytext);
 }

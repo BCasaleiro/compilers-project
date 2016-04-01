@@ -89,12 +89,12 @@ if                  { print_text("IF");     if(flag == 0) {return IF;} }
 else                { print_text("ELSE");   if(flag == 0) {return ELSE;} }
 for                 { print_text("FOR");    if(flag == 0) {return FOR;} }
 return              { print_text("RETURN"); if(flag == 0) {return RETURN;} }
-{id}                { print_with_content("ID", yytext);         strcpy(yylval.id, yytext);      if(flag == 0) {return ID;} }
+{id}                { print_with_content("ID", yytext);         yylval.id = yytext;      if(flag == 0) {return ID;} }
 {intlit}            { print_with_content("INTLIT", yytext);     yylval.intlit = atoi(yytext);   if(flag == 0) {return INTLIT;} }
-{chrlit}            { print_with_content("CHRLIT", yytext);     strcpy(yylval.chrlit, yytext);         if(flag == 0) {return CHRLIT;} }
+{chrlit}            { print_with_content("CHRLIT", yytext);     yylval.chrlit = yytext;         if(flag == 0) {return CHRLIT;} }
 {unterminated_chr}  { print_unterminated_error("Line %d, col %d: unterminated char constant\n", yylineno, (int)(columnNumber-yyleng)); }
 {invalid_chr}       { print_invalid_error("Line %d, col %d: invalid char constant (%s)\n", yylineno, (int)(columnNumber-yyleng), yytext); }
-{strlit}            { print_with_content("STRLIT", yytext);     strcpy(yylval.strlit, yytext);  if(flag == 0) {return STRLIT;} }
+{strlit}            { print_with_content("STRLIT", yytext);     yylval.strlit = yytext;  if(flag == 0) {return STRLIT;} }
 {unterminated_str}  { print_unterminated_error("Line %d, col %d: unterminated string constant\n", yylineno, (int)(columnNumber-yyleng)); }
 {invalid_str}       { print_invalid_error("Line %d, col %d: invalid string constant (%s)\n", yylineno, (int)(columnNumber-yyleng), yytext); }
 {ignore}            { ; }
