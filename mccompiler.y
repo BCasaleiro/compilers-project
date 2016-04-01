@@ -150,12 +150,19 @@ Statement:      error SEMI
 
 StatementSpecial:   ZUExpr SEMI
         |           LBRACE error RBRACE
-        |           LBRACE Restatement RBRACE
+        |           LBRACE StatList RBRACE
+        |           LBRACE RBRACE
         |           IF LPAR Expr RPAR Statement %prec "then"
         |           IF LPAR Expr RPAR Statement ELSE Statement
         |           FOR LPAR ZUExpr SEMI ZUExpr SEMI ZUExpr RPAR Statement
         |           RETURN ZUExpr SEMI
         ;
+
+
+StatList:       Statement Restatement;
+
+
+
 
 // UMStatement: Statement | Statement UMStatement;
 
