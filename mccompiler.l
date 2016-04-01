@@ -50,57 +50,188 @@ reserved            ("--"|"++"|auto|break|case|const|continue|default|do|double|
 /* rules */
 %%
 
-"/*"                { BEGIN (COMMENT); { colComment = columnNumber - 2; } lineComment = yylineno; }
-<COMMENT>"*/"       { BEGIN (0); }
-<COMMENT>"\n"       { columnNumber = 0; }
-<COMMENT>.          { ; }
-<COMMENT><<EOF>>    { printf("Line %d, col %d: unterminated comment\n", lineComment,  colComment); yyterminate(); }
+"/*"                            {
+                                    BEGIN (COMMENT);
+                                    {
+                                        colComment = columnNumber - 1;
+                                    }
+                                    lineComment = yylineno;
+                                }
+<COMMENT>"*/"                   { BEGIN (0); }
+<COMMENT>"\n"                   { columnNumber = 1; }
+<COMMENT>.                      { ; }
+<COMMENT><<EOF>>                {
+                                    printf("Line %d, col %d: unterminated comment\n", lineComment,  colComment);
+                                    yyterminate();
+                                }
 
-"\n"                { columnNumber = 1; }
+"\n"                            { columnNumber = 1; }
 
-{reserved}          { print_with_content("RESERVED", yytext); }
+{reserved}                      {
+                                    print_with_content("RESERVED", yytext);
+                                    if(flag == 0 || flag == 3) { return RESERVED; }
+                                }
 
-"&&"                { print_text("AND");    if(flag == 0 || flag == 3 ) {return AND;} }
-"||"                { print_text("OR");     if(flag == 0 || flag == 3 ) {return OR;} }
-"&"                 { print_text("AMP");    if(flag == 0 || flag == 3 ) {return AMP;} }
-"=="                { print_text("EQ");     if(flag == 0 || flag == 3 ) {return EQ;} }
-"="                 { print_text("ASSIGN"); if(flag == 0 || flag == 3 ) {return ASSIGN;} }
-"!"                 { print_text("NOT");    if(flag == 0 || flag == 3 ) {return NOT;} }
-"!="                { print_text("NE");     if(flag == 0 || flag == 3 ) {return NE;} }
-">"                 { print_text("GT");     if(flag == 0 || flag == 3 ) {return GT;} }
-"<"                 { print_text("LT");     if(flag == 0 || flag == 3 ) {return LT;} }
-">="                { print_text("GE");     if(flag == 0 || flag == 3 ) {return GE;} }
-"<="                { print_text("LE");     if(flag == 0 || flag == 3 ) {return LE;} }
-","                 { print_text("COMMA");  if(flag == 0 || flag == 3 ) {return COMMA;} }
-";"                 { print_text("SEMI");   if(flag == 0 || flag == 3 ) {return SEMI;} }
-"{"                 { print_text("LBRACE"); if(flag == 0 || flag == 3 ) {return LBRACE;} }
-"}"                 { print_text("RBRACE"); if(flag == 0 || flag == 3 ) {return RBRACE;} }
-"("                 { print_text("LPAR");   if(flag == 0 || flag == 3 ) {return LPAR;} }
-")"                 { print_text("RPAR");   if(flag == 0 || flag == 3 ) {return RPAR;} }
-"["                 { print_text("LSQ");    if(flag == 0 || flag == 3 ) {return LSQ;} }
-"]"                 { print_text("RSQ");    if(flag == 0 || flag == 3 ) {return RSQ;} }
-"+"                 { print_text("PLUS");   if(flag == 0 || flag == 3 ) {return PLUS;} }
-"-"                 { print_text("MINUS");  if(flag == 0 || flag == 3 ) {return MINUS;} }
-"*"                 { print_text("AST");    if(flag == 0 || flag == 3 ) {return AST;} }
-"/"                 { print_text("DIV");    if(flag == 0 || flag == 3 ) {return DIV;} }
-"%"                 { print_text("MOD");    if(flag == 0 || flag == 3 ) {return MOD;} }
-int                 { print_text("INT");    if(flag == 0 || flag == 3 ) {return INT;} }
-char                { print_text("CHAR");   if(flag == 0 || flag == 3 ) {return CHAR;} }
-void                { print_text("VOID");   if(flag == 0 || flag == 3 ) {return VOID;} }
-if                  { print_text("IF");     if(flag == 0 || flag == 3 ) {return IF;} }
-else                { print_text("ELSE");   if(flag == 0 || flag == 3 ) {return ELSE;} }
-for                 { print_text("FOR");    if(flag == 0 || flag == 3 ) {return FOR;} }
-return              { print_text("RETURN"); if(flag == 0 || flag == 3 ) {return RETURN;} }
-{id}                { print_with_content("ID", yytext);         yylval.id = strdup(yytext);      if(flag == 0 || flag == 3 ) {return ID;} }
-{intlit}            { print_with_content("INTLIT", yytext);     yylval.intlit = atoi(yytext);   if(flag == 0 || flag == 3 ) {return INTLIT;} }
-{chrlit}            { print_with_content("CHRLIT", yytext);     yylval.chrlit = strdup(yytext);         if(flag == 0 || flag == 3 ) {return CHRLIT;} }
-{unterminated_chr}  { print_unterminated_error("Line %d, col %d: unterminated char constant\n", yylineno, (int)(columnNumber-yyleng)); }
-{invalid_chr}       { print_invalid_error("Line %d, col %d: invalid char constant (%s)\n", yylineno, (int)(columnNumber-yyleng), yytext); }
-{strlit}            { print_with_content("STRLIT", yytext);     yylval.strlit = strdup(yytext);  if(flag == 0 || flag == 3 ) {return STRLIT;} }
-{unterminated_str}  { print_unterminated_error("Line %d, col %d: unterminated string constant\n", yylineno, (int)(columnNumber-yyleng)); }
-{invalid_str}       { print_invalid_error("Line %d, col %d: invalid string constant (%s)\n", yylineno, (int)(columnNumber-yyleng), yytext); }
-{ignore}            { ; }
-.                   { print_invalid_error("Line %d, col %d: illegal character (%s)\n", yylineno, (int)(columnNumber-yyleng), yytext); }
+"&&"                            {
+                                    print_text("AND");
+                                    if(flag == 0 || flag == 3 ) { return AND; }
+                                }
+"||"                            {
+                                    print_text("OR");
+                                    if(flag == 0 || flag == 3 ) { return OR; }
+                                }
+"&"                             {
+                                    print_text("AMP");
+                                    if(flag == 0 || flag == 3 ) { return AMP; }
+                                }
+"=="                            {
+                                    print_text("EQ");
+                                    if(flag == 0 || flag == 3 ) { return EQ; }
+                                }
+"="                             {
+                                    print_text("ASSIGN");
+                                    if(flag == 0 || flag == 3 ) { return ASSIGN; }
+                                }
+"!"                             {
+                                    print_text("NOT");
+                                    if(flag == 0 || flag == 3 ) { return NOT; }
+                                }
+"!="                            {
+                                    print_text("NE");
+                                    if(flag == 0 || flag == 3 ) { return NE; }
+                                }
+">"                             {
+                                    print_text("GT");
+                                    if(flag == 0 || flag == 3 ) { return GT; }
+                                }
+"<"                             {
+                                    print_text("LT");
+                                    if(flag == 0 || flag == 3 ) { return LT; }
+                                }
+">="                            {
+                                    print_text("GE");
+                                    if(flag == 0 || flag == 3 ) { return GE; }
+                                }
+"<="                            {
+                                    print_text("LE");
+                                    if(flag == 0 || flag == 3 ) { return LE; }
+                                }
+","                             {
+                                    print_text("COMMA");
+                                    if(flag == 0 || flag == 3 ) { return COMMA; }
+                                }
+";"                             {
+                                    print_text("SEMI");
+                                    if(flag == 0 || flag == 3 ) { return SEMI; }
+                                }
+"{"                             {
+                                    print_text("LBRACE");
+                                    if(flag == 0 || flag == 3 ) { return LBRACE; }
+                                }
+"}"                             {
+                                    print_text("RBRACE");
+                                    if(flag == 0 || flag == 3 ) { return RBRACE; }
+                                }
+"("                             {
+                                    print_text("LPAR");
+                                    if(flag == 0 || flag == 3 ) { return LPAR; }
+                                }
+")"                             {
+                                    print_text("RPAR");
+                                    if(flag == 0 || flag == 3 ) { return RPAR; }
+                                }
+"["                             {
+                                    print_text("LSQ");
+                                    if(flag == 0 || flag == 3 ) { return LSQ; }
+                                }
+"]"                             {
+                                    print_text("RSQ");
+                                    if(flag == 0 || flag == 3 ) { return RSQ; }
+                                }
+"+"                             {
+                                    print_text("PLUS");
+                                    if(flag == 0 || flag == 3 ) { return PLUS; }
+                                }
+"-"                             {
+                                    print_text("MINUS");
+                                     if(flag == 0 || flag == 3 ) { return MINUS; }
+                                }
+"*"                             {
+                                    print_text("AST");
+                                    if(flag == 0 || flag == 3 ) { return AST; }
+                                }
+"/"                             {
+                                    print_text("DIV");
+                                    if(flag == 0 || flag == 3 ) { return DIV; }
+                                }
+"%"                             {
+                                    print_text("MOD");
+                                    if(flag == 0 || flag == 3 ) { return MOD; }
+                                }
+int                             {
+                                    print_text("INT");
+                                    if(flag == 0 || flag == 3 ) { return INT; }
+                                }
+char                            {
+                                    print_text("CHAR");
+                                    if(flag == 0 || flag == 3 ) { return CHAR; }
+                                }
+void                            {
+                                    print_text("VOID");
+                                    if(flag == 0 || flag == 3 ) { return VOID; }
+                                }
+if                              {
+                                    print_text("IF");
+                                    if(flag == 0 || flag == 3 ) { return IF; }
+                                }
+else                            {
+                                    print_text("ELSE");
+                                    if(flag == 0 || flag == 3 ) { return ELSE; }
+                                }
+for                             {
+                                    print_text("FOR");
+                                    if(flag == 0 || flag == 3 ) { return FOR; }
+                                }
+return                          {
+                                    print_text("RETURN");
+                                    if(flag == 0 || flag == 3 ) { return RETURN; }
+                                }
+{id}                            {
+                                    print_with_content("ID", yytext);
+                                    yylval.id = strdup(yytext);
+                                    if(flag == 0 || flag == 3 ) { return ID; }
+                                }
+{intlit}                        {
+                                    print_with_content("INTLIT", yytext);
+                                    yylval.intlit = atoi(yytext);
+                                    if(flag == 0 || flag == 3 ) { return INTLIT; }
+                                }
+{chrlit}                        {
+                                    print_with_content("CHRLIT", yytext);
+                                    yylval.chrlit = strdup(yytext);
+                                    if(flag == 0 || flag == 3 ) { return CHRLIT; }
+                                }
+{unterminated_chr}              {
+                                    print_unterminated_error("Line %d, col %d: unterminated char constant\n", yylineno, (int)(columnNumber-yyleng));
+                                }
+{invalid_chr}                   {
+                                    print_invalid_error("Line %d, col %d: invalid char constant (%s)\n", yylineno, (int)(columnNumber-yyleng), yytext);
+                                }
+{strlit}                        {
+                                    print_with_content("STRLIT", yytext);
+                                    yylval.strlit = strdup(yytext);
+                                    if(flag == 0 || flag == 3 ) { return STRLIT; }
+                                }
+{unterminated_str}              {
+                                    print_unterminated_error("Line %d, col %d: unterminated string constant\n", yylineno, (int)(columnNumber-yyleng));
+                                }
+{invalid_str}                   {
+                                    print_invalid_error("Line %d, col %d: invalid string constant (%s)\n", yylineno, (int)(columnNumber-yyleng), yytext);
+                                }
+{ignore}                        { ; }
+.                               {
+                                    print_invalid_error("Line %d, col %d: illegal character (%s)\n", yylineno, (int)(columnNumber-yyleng), yytext);
+                                }
 
 %%
 
@@ -145,6 +276,8 @@ int main(int argc, char const *argv[])
 
     if (flag == 0 || flag == 3) {
         yyparse();
+    } else {
+        yylex();
     }
 
     return 0;

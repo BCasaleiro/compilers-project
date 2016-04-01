@@ -47,6 +47,7 @@
 %token ELSE
 %token FOR
 %token RETURN
+%token RESERVED
 
 %token <id> ID
 %token <intlit> INTLIT
@@ -252,5 +253,13 @@ void print(char* s) {
 }
 
 void yyerror (char *s) {
-    printf ("Line %d, col %d: %s: %s\n", yylineno, (int)(columnNumber-yyleng), s, yytext);
+    int col;
+
+    if(yyleng == 1 && columnNumber == 1) {
+        col = columnNumber;
+    } else {
+        col = (int)(columnNumber-yyleng);
+    }
+
+    printf ("Line %d, col %d: %s: %s\n", yylineno, col, s, yytext);
 }
