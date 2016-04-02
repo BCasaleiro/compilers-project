@@ -106,55 +106,115 @@
 
 %%
  //Start
-Start:  FunctionDefinition Restart                                              { /*create_tree();*/ print("start function definition"); }
-    |   FunctionDeclaration Restart                                             { /*create_tree();*/ print("start function declaration"); }
-    |   Declaration Restart                                                     { /*create_tree();*/ print("start declaration"); }
+Start:  FunctionDefinition Restart                                              { $$ = create_node("Start");
+                                                                                    add_child($$,$1);
+                                                                                    add_child($$,$2);
+                                                                                    print("start function definition"); 
+                                                                                }
+    |   FunctionDeclaration Restart                                             { $$ = create_node("Start");
+                                                                                    add_child($$,$1);
+                                                                                    add_child($$,$2);
+                                                                                    print("start function declaration"); 
+                                                                                }
+    |   Declaration Restart                                                     { $$ = create_node("Start");
+                                                                                    add_child($$,$1);
+                                                                                    add_child($$,$2); 
+                                                                                    print("start declaration"); 
+                                                                                }
     ;
 
-Restart:    Empty                                                               { print("restart empty"); }
-    |       FunctionDefinition Restart                                          { print("restart function definition"); }
-    |       FunctionDeclaration Restart                                         { print("restart function declaration"); }
-    |       Declaration Restart                                                 { print("restart declaration"); }
+Restart:    Empty                                                               { print("restart empty"); } /* o que fazer quando é vazio? $$ = $1? */
+    |       FunctionDefinition Restart                                          { $$ = create_node("Restart");
+                                                                                    add_child($$,$1);
+                                                                                    add_child($$,$2);
+                                                                                    print("restart function definition"); 
+                                                                                }
+    |       FunctionDeclaration Restart                                         { $$ = create_node("Restart");
+                                                                                    add_child($$,$1);
+                                                                                    add_child($$,$2);
+                                                                                    print("restart function declaration"); 
+                                                                                }
+    |       Declaration Restart                                                 { $$ = create_node("Restart");
+                                                                                    add_child($$,$1);
+                                                                                    add_child($$,$2);
+                                                                                    print("restart declaration"); 
+                                                                                }
     ;
 
  //FunctionDefinition
-FunctionDefinition: TypeSpec FunctionDeclarator FunctionBody                    { print("function definition"); }
+FunctionDefinition: TypeSpec FunctionDeclarator FunctionBody                    { $$ = create_node("FunctionDefinition");
+                                                                                    add_child($$,$1);
+                                                                                    add_child($$,$2);
+                                                                                    add_child($$,$3);
+                                                                                    print("function definition"); 
+                                                                                }
                 ;
 
  //FunctionDeclaration
-FunctionDeclaration: TypeSpec FunctionDeclarator SEMI                           { print("function declaration"); }
+FunctionDeclaration: TypeSpec FunctionDeclarator SEMI                           { $$ = create_node("FunctionDeclaration");
+                                                                                    add_child($$,$1);
+                                                                                    add_child($$,$2);
+                                                                                    print("function declaration"); 
+                                                                                }
                 ;
 
  //FunctionDeclarator
-FunctionDeclarator: ZMast ID LPAR ParameterList RPAR                            { print("function declarator"); }
+FunctionDeclarator: ZMast ID LPAR ParameterList RPAR                            { $$ = create_node("FunctionDeclarator");
+                                                                                    add_child($$,$1);
+                                                                                    add_child($$,create_node("Id",0,$2));
+                                                                                    add_child($$,$4);
+                                                                                    print("function declarator"); 
+                                                                                }
                 ;
 
  //FunctionBody
-FunctionBody: LBRACE Redeclaration ReSpecialStatement  RBRACE                   { print("function body"); }
-        |     LBRACE error  RBRACE
+FunctionBody: LBRACE Redeclaration ReSpecialStatement  RBRACE                   { $$ = create_node("FunctionBody");
+                                                                                    add_child($$,$2);
+                                                                                    add_child($$,$3);
+                                                                                    print("function body"); }
+        |     LBRACE error  RBRACE                                              {}/*o que fazer em caso de erro*/
         ;
 
  //ParameterList
-ParameterList: ParameterDeclaration CommaParameterDeclaration                   { print("parameter list"); }
+ParameterList: ParameterDeclaration CommaParameterDeclaration                   { $$ = create_node("ParameterList");
+                                                                                    add_child($$,$1);
+                                                                                    add_child($$,$2);
+                                                                                    print("parameter list"); }
             ;
 
  //ParameterDeclaration
-ParameterDeclaration: TypeSpec ZMast ZUid                                       { print("parameter declaration"); }
+ParameterDeclaration: TypeSpec ZMast ZUid                                       { $$ = create_node("ParameterDeclaration");
+                                                                                    add_child($$,$1);
+                                                                                    add_child($$,$2);
+                                                                                    add_child($$,$3);
+                                                                                    print("parameter declaration"); 
+                                                                                }
                 ;
 
-CommaParameterDeclaration:COMMA ParameterDeclaration CommaParameterDeclaration  { print("comma parameter declaration"); }
-                    |     Empty                                                 { print("comma parameter declaration empty"); }
+CommaParameterDeclaration:COMMA ParameterDeclaration CommaParameterDeclaration  { $$ = create_node("CommaParameterDeclaration",0,NULL);
+                                                                                    add_child($$,$2);
+                                                                                    add_child($$,$3);
+                                                                                    print("comma parameter declaration"); 
+                                                                                }
+                    |     Empty                                                 { print("comma parameter declaration empty"); } /*o que fazer nos empty? */
                     ;
 
  //Declaration
 Declaration:    TypeSpec Declarator CommaDeclarator SEMI                        {
-                                                                                    //current = add_child("PreDeclaration", -1, NULL);
+                                                                                    $$ = create_node("Declaration");
+                                                                                    add_child($$,$1);
+                                                                                    add_child($$,$2);
+                                                                                    add_child($$,$3);
                                                                                 }
-        |       error SEMI
+        |       error SEMI                                                      {} /* o que fazer em caso de erro? */
         ;
 
 Redeclaration:  Empty                                                           { print("redeclaration empty"); }
-        |       Declaration Redeclaration                                       { print("redeclaration"); }
+        |       Declaration Redeclaration                                       { $$ = create_node("Redeclaration",0,NULL);
+                                                                                    add_child($$,$1);
+                                                                                    add_child($$,$2);
+                                                                                    print("redeclaration"); 
+                                                                                }
         ;
 
  //TypeSpec
@@ -187,10 +247,11 @@ Declarator: ZMast ID                                                            
                                                                                 }
         ;
 
-CommaDeclarator:    Empty                                                       {
-                                                                                    // current = current->darth_vader;
-                                                                                }
+CommaDeclarator:    Empty                                                       {}
             |       COMMA Declarator CommaDeclarator                            {
+                                                                                    $$ = create_node("CommaDeclarator",0,NULL);
+                                                                                    add_child($$,$2); /*adicionar a virgula? (antes)*/
+                                                                                    add_child($$,$3);
                                                                                     // temp_aux = current->luke->name;
                                                                                     // current = current->darth_vader;
                                                                                     // current = add_child("PreDeclaration", -1, NULL);
@@ -199,94 +260,273 @@ CommaDeclarator:    Empty                                                       
             ;
 
  //Statement
-Statement:      error SEMI
+Statement:      error SEMI                                                      {} /* o que fazer em caso de erro?*/
         |       StatementSpecial                                                { print("statement"); }
         ;
 
-StatementSpecial:   ZUExpr SEMI                                                 { print("statement special 1"); }
-        |           LBRACE StatList RBRACE                                      { print("statement special 2"); }
-        |           LBRACE RBRACE                                               { print("statement special 3"); }
-        |           LBRACE error RBRACE
-        |           IF LPAR Expr RPAR Statement %prec "then"                    { print("statement special 4"); }
-        |           IF LPAR Expr RPAR Statement ELSE Statement                  { print("statement special 5"); }
-        |           FOR LPAR ZUExpr SEMI ZUExpr SEMI ZUExpr RPAR Statement      { print("statement special 6"); }
-        |           RETURN ZUExpr SEMI                                          { print("statement special 7"); }
+StatementSpecial:   ZUExpr SEMI                                                 { $$ = create_node("StatementSpecial",0,NULL);
+                                                                                    add_child($$,$1);
+                                                                                    add_child($$,$2);
+                                                                                    print("statement special 1"); }
+        |           LBRACE StatList RBRACE                                      { $$ = create_node("StatementSpecial",0,NULL);
+                                                                                    add_child($$,$2);
+                                                                                    print("statement special 2"); }
+        |           LBRACE RBRACE                                               { print("statement special 3"); } /*o que fazer aqui*/
+        |           LBRACE error RBRACE                                         {} /*e aqui*/
+        |           IF LPAR Expr RPAR Statement %prec "then"                    {   $$ = create_node("StatementSpecial",0,NULL);
+                                                                                    /*add_child($$, create_node("If",0,NULL)); é preciso este nó?*/
+                                                                                    add_child($$, $3);
+                                                                                    add_child($$, $5);
+                                                                                     print("statement special 4"); }
+        |           IF LPAR Expr RPAR Statement ELSE Statement                  { $$ = create_node("StatementSpecial",0,NULL);
+                                                                                    add_child($$,$3);
+                                                                                    add_child($$,$5);
+                                                                                    add_child($$,$7);
+                                                                                    print("statement special 5"); 
+                                                                                }
+        |           FOR LPAR ZUExpr SEMI ZUExpr SEMI ZUExpr RPAR Statement      { $$ = create_node("StatementSpecial",0,NULL);
+                                                                                    add_child($$, $3);
+                                                                                    add_child($$, $5);
+                                                                                    add_child($$, $7);
+                                                                                    add_child($$, $9);
+                                                                                    print("statement special 6"); 
+                                                                                }
+        |           RETURN ZUExpr SEMI                                          { $$ = create_node("StatementSpecial",0,NULL);
+                                                                                    add_child($$, $2);
+                                                                                    print("statement special 7"); 
+                                                                                }
         ;
 
 
-StatList:       Statement Restatement                                           { print("stat list"); }
+StatList:       Statement Restatement                                           { $$ = create_node("StatList",0,NULL);
+                                                                                    add_child($$,$1);
+                                                                                    add_child($$,$2);
+                                                                                    print("stat list"); }
     ;
 
 ReSpecialStatement: Empty                                                       { print("respecial statement empty"); }
-                |   StatementSpecial ReSpecialStatement                         { print("respecial statement"); }
+
+                |   StatementSpecial ReSpecialStatement                         { $$ = create_node("ReSpecialStatement",0,NULL);
+                                                                                    add_child($$,$1);
+                                                                                    add_child($$,$2);
+                                                                                    print("respecial statement"); }
                 ;
 
-Restatement:    Empty                                                           { print("restatement empty"); }
-        |       Statement Restatement                                           { print("restatement"); }
+Restatement:    Empty                                                           { print("estatement empty"); }
+
+        |       Statement Restatement                                           { $$ = create_node("Restatement",0,NULL);
+                                                                                    add_child($$,$1);
+                                                                                    add_child($$,$2);
+                                                                                    print("restatement"); }
         ;
 
  //Expr
-Expr:    ExprSpecial                                                            { print("expr special"); }
-    |    Expr COMMA ExprSpecial                                                 { print("expr comma special"); }
+Expr:    ExprSpecial                                                            { $$ = create_node("Expr",0,NULL);
+                                                                                    add_child($$,$1);
+                                                                                    print("expr special"); 
+                                                                                }
+    |    Expr COMMA ExprSpecial                                                 { $$ = create_node("Expr",0,NULL);
+                                                                                    add_child($$,$1);
+                                                                                    add_child($$, create_node("Comma",0,NULL)); /*eliminar este no?*/
+                                                                                    add_child($$,$3);
+                                                                                    print("expr comma special"); 
+                                                                                }
     ;
 
-ExprSpecial:    ExprSpecial ASSIGN ExprSpecial                                  { print("expr special assign"); }
-        |       ExprSpecial AND ExprSpecial                                     { print("expr special and"); }
-        |       ExprSpecial OR ExprSpecial                                      { print("expr special or"); }
-        |       ExprSpecial EQ ExprSpecial                                      { print("expr special eq"); }
-        |       ExprSpecial NE ExprSpecial                                      { print("expr special ne"); }
-        |       ExprSpecial LT ExprSpecial                                      { print("expr special lt"); }
-        |       ExprSpecial GT ExprSpecial                                      { print("expr special gt"); }
-        |       ExprSpecial LE ExprSpecial                                      { print("expr special le"); }
-        |       ExprSpecial GE ExprSpecial                                      { print("expr special ge"); }
-        |       ExprSpecial PLUS ExprSpecial                                    { print("expr special plus"); }
-        |       ExprSpecial MINUS ExprSpecial                                   { print("expr special minus"); }
-        |       ExprSpecial AST ExprSpecial                                     { print("expr special ast"); }
-        |       ExprSpecial DIV ExprSpecial                                     { print("expr special div"); }
-        |       ExprSpecial MOD ExprSpecial                                     { print("expr special mod"); }
-        |       NOT ExprSpecial                                                 { print("expr special not a"); }
-        |       MINUS ExprSpecial                                               { print("expr special minus a"); }
-        |       PLUS ExprSpecial                                                { print("expr special plus a"); }
-        |       AST ExprSpecial                                                 { print("expr special ast a"); }
-        |       AMP ExprSpecial                                                 { print("expr special amp a"); }
-        |       ID                                                              { print("expr special id"); }
-        |       INTLIT                                                          { print("expr special intlit"); }
-        |       CHRLIT                                                          { print("expr special chrlit"); }
-        |       STRLIT                                                          { print("expr special strlit"); }
-        |       LPAR Expr RPAR                                                  { print("expr special ()"); }
-        |       LPAR error RPAR
-        |       ID LPAR ZUExprZMComma RPAR                                      { print("expr special id()"); }
-        |       ID LPAR error RPAR
-        |       ExprSpecial LSQ Expr RSQ                                        { print("expr special []"); }
+ExprSpecial:    ExprSpecial ASSIGN ExprSpecial                                  {   $$ = create_node("ExprSpecial",0,NULL);
+                                                                                    add_child($$,$1);
+                                                                                    add_child($$,create_node("Assign",0,NULL));
+                                                                                    add_child($$,$3);
+                                                                                 print("expr special assign"); 
+                                                                                }
+
+        |       ExprSpecial AND ExprSpecial                                     { $$ = create_node("ExprSpecial",0,NULL);
+                                                                                    add_child($$,$1);
+                                                                                    add_child($$,create_node("And",0,NULL));
+                                                                                    add_child($$,$3);
+                                                                                print("expr special and"); 
+                                                                                }
+
+
+        |       ExprSpecial OR ExprSpecial                                      { $$ = create_node("ExprSpecial",0,NULL);
+                                                                                    add_child($$,$1);
+                                                                                    add_child($$,create_node("Or",0,NULL));
+                                                                                    add_child($$,$3);
+                                                                                 print("expr special or"); 
+                                                                                }
+
+        |       ExprSpecial EQ ExprSpecial                                      { $$ = create_node("ExprSpecial",0,NULL);
+                                                                                    add_child($$,$1);
+                                                                                    add_child($$,create_node("Eq",0,NULL));
+                                                                                    add_child($$,$3);
+                                                                                    print("expr special eq"); 
+                                                                                }
+
+        |       ExprSpecial NE ExprSpecial                                      { $$ = create_node("ExprSpecial",0,NULL);
+                                                                                    add_child($$,$1);
+                                                                                    add_child($$,create_node("Ne",0,NULL));
+                                                                                    add_child($$,$3);
+                                                                                    print("expr special ne"); 
+                                                                                }
+
+        |       ExprSpecial LT ExprSpecial                                      { $$ = create_node("ExprSpecial",0,NULL);
+                                                                                    add_child($$,$1);
+                                                                                    add_child($$,create_node("Lt",0,NULL));
+                                                                                    add_child($$,$3);
+                                                                                    print("expr special lt"); 
+                                                                                }
+        |       ExprSpecial GT ExprSpecial                                      { $$ = create_node("ExprSpecial",0,NULL);
+                                                                                    add_child($$,$1);
+                                                                                    add_child($$,create_node("Gt",0,NULL));
+                                                                                    add_child($$,$3);
+                                                                                    print("expr special gt"); 
+                                                                                }
+        |       ExprSpecial LE ExprSpecial                                      { $$ = create_node("ExprSpecial",0,NULL);
+                                                                                    add_child($$,$1);
+                                                                                    add_child($$,create_node("Le",0,NULL));
+                                                                                    add_child($$,$3);
+                                                                                    print("expr special le");
+                                                                                }
+        |       ExprSpecial GE ExprSpecial                                      { $$ = create_node("ExprSpecial",0,NULL);
+                                                                                    add_child($$,$1);
+                                                                                    add_child($$,create_node("Ge",0,NULL));
+                                                                                    add_child($$,$3);
+                                                                                    print("expr special ge"); 
+                                                                                }
+        |       ExprSpecial PLUS ExprSpecial                                    { $$ = create_node("ExprSpecial",0,NULL);
+                                                                                    add_child($$,$1);
+                                                                                    add_child($$,create_node("Plus",0,NULL));
+                                                                                    add_child($$,$3);
+                                                                                    print("expr special plus"); 
+                                                                                }
+        |       ExprSpecial MINUS ExprSpecial                                   { $$ = create_node("ExprSpecial",0,NULL);
+                                                                                    add_child($$,$1);
+                                                                                    add_child($$,create_node("Minus",0,NULL));
+                                                                                    add_child($$,$3);
+                                                                                    print("expr special minus"); 
+                                                                                }
+        |       ExprSpecial AST ExprSpecial                                     { $$ = create_node("ExprSpecial",0,NULL);
+                                                                                    add_child($$,$1);
+                                                                                    add_child($$,create_node("Ast",0,NULL));
+                                                                                    add_child($$,$3);
+                                                                                    print("expr special ast"); 
+                                                                                }
+        |       ExprSpecial DIV ExprSpecial                                     { $$ = create_node("ExprSpecial",0,NULL);
+                                                                                    add_child($$,$1);
+                                                                                    add_child($$,create_node("Div",0,NULL));
+                                                                                    add_child($$,$3);
+                                                                                    print("expr special div"); 
+                                                                                }
+        |       ExprSpecial MOD ExprSpecial                                     { $$ = create_node("ExprSpecial",0,NULL);
+                                                                                    add_child($$,$1);
+                                                                                    add_child($$,create_node("Mod",0,NULL));
+                                                                                    add_child($$,$3);
+                                                                                    print("expr special mod"); 
+                                                                                }
+        |       NOT ExprSpecial                                                 {   $$ = create_node("ExprSpecial",0,NULL);
+                                                                                    add_child($$,create_node("Not",0,NULL));
+                                                                                    add_child($$,$2);
+                                                                                    print("expr special not a"); 
+                                                                                }
+        |       MINUS ExprSpecial                                               { $$ = create_node("ExprSpecial",0,NULL);
+                                                                                    add_child($$,create_node("Minus",0,NULL));
+                                                                                    add_child($$,$2);
+                                                                                    print("expr special minus a"); 
+                                                                                }
+        |       PLUS ExprSpecial                                                { $$ = create_node("ExprSpecial",0,NULL);
+                                                                                    add_child($$,create_node("Plus",0,NULL));
+                                                                                    add_child($$,$2);
+                                                                                    print("expr special plus a"); 
+                                                                                }
+        |       AST ExprSpecial                                                 { $$ = create_node("ExprSpecial",0,NULL);
+                                                                                    add_child($$,create_node("Ast",0,NULL));
+                                                                                    add_child($$,$2);
+                                                                                    print("expr special ast a"); 
+                                                                                }
+        |       AMP ExprSpecial                                                 { $$ = create_node("ExprSpecial",0,NULL);
+                                                                                    add_child($$,create_node("Amp",0,NULL));
+                                                                                    add_child($$,$2);
+                                                                                    print("expr special amp a"); 
+                                                                                }
+        |       ID                                                              { $$ = create_node("ExprSpecial",0,NULL);
+                                                                                    add_child($$,create_node("Id",0,$1));
+                                                                                    print("expr special id"); 
+                                                                                }
+        |       INTLIT                                                          { $$ = create_node("ExprSpecial",0,NULL);
+                                                                                    add_child($$,create_node("IntLit",$1,NULL));
+                                                                                    print("expr special intlit"); 
+                                                                                }
+        |       CHRLIT                                                          { $$ = create_node("ExprSpecial",0,NULL);
+                                                                                    add_child($$, create_node("ChrLit",0,NULL));
+                                                                                    print("expr special chrlit"); 
+                                                                                }
+        |       STRLIT                                                          { $$ = create_node("ExprSpecial",0,NULL);
+                                                                                    add_child($$ , create_node("StrLit",0,NULL));
+                                                                                    print("expr special strlit"); 
+                                                                                }
+        |       LPAR Expr RPAR                                                  {  $$ = $2;
+                                                                                     print("expr special ()"); 
+                                                                                }
+        |       LPAR error RPAR                                                 {}/*O que fazer em caso de erro?*/
+        |       ID LPAR ZUExprZMComma RPAR                                      {   $$ = create_node("ExprSpecial",0,NULL);
+                                                                                    add_child($$, create_node(ID,0,$1));
+                                                                                    add_child($$, $3);
+                                                                                    print("expr special id()"); }
+        |       ID LPAR error RPAR                                              {}/*O que fazer em caso de erro?*/
+        |       ExprSpecial LSQ Expr RSQ                                        { $$ = create_node("ExprSpecial",0,NULL);
+                                                                                    add_child($$,$1);
+                                                                                    add_child($$,$3);
+                                                                                    print("expr special []"); 
+                                                                                }
         ;
 
 ZUExprZMComma:  Empty                                                           { print("zero um expr special zero mais comma empty"); }
-            |   ExprSpecial ZMComma                                             { print("zero um expr special zero mais comma"); }
+            |   ExprSpecial ZMComma                                             { $$ = create_node("ZUExprZMComma",0,NULL);
+                                                                                    add_child($$,$1);
+                                                                                    add_child($$,$2);
+                                                                                    print("zero um expr special zero mais comma"); 
+                                                                                }
             ;
 
 ZMComma:    Empty                                                               { print("zero mais comma empty"); }
-    |       ZMComma COMMA ExprSpecial                                           { print("zero mais comma"); }
+    |       ZMComma COMMA ExprSpecial                                           { 
+                                                                                    $$ = create_node("ZMComma",0,NULL);
+                                                                                    add_child($$,$1);
+                                                                                    add_child($$, create_node("Comma",0,NULL));/*eliminar este no?*/
+                                                                                    add_child($$,$3);
+                                                                                    print("zero mais comma");
+                                                                                }
     ;
 
  //Caracteres repetidos
 
  //Zero ou mais AST
 ZMast:  Empty                                                                   { print("zero um ast empty"); }
-    |   ZMast AST                                                               { print("zero um ast"); }
+    |   ZMast AST                                                               { $$ = create_node("ZMast",0,NULL);
+                                                                                    add_child($$,create_node("Ast",0,NULL);
+                                                                                    print("zero um ast"); 
+                                                                                }
     ;
 
  //Zero ou um ID
 ZUid:   Empty                                                                   { print("zero um id empty"); }
-    |   ID                                                                      { print("zero um id"); }
+    |   ID                                                                      { $$ = create_node("ZUid",0,NULL);
+                                                                                    add_child("Id",0,$1);
+                                                                                    print("zero um id"); 
+                                                                                }
     ;
 
 ZUExpr: Empty                                                                   { print("zero um expr empty"); }
-    |   Expr                                                                    { print("zero um expr"); }
+    |   Expr                                                                    { $$ = create_node("ZUExpr",0,NULL);
+                                                                                    add_child($$,$1);
+                                                                                    print("zero um expr"); 
+                                                                                }
     ;
 
  // Carateres especiais
 
-Empty:  ;
+Empty:                                                                          { $$ = create_node("Null",0,NULL); } 
+    ;
 
 %%
 
@@ -327,82 +567,6 @@ tree_node* create_node(char* node_name, int int_value, char* char_value) {
     new_node->father = NULL;
     new_node->value_int = int_value;
     new_node->value_str = char_value;
-
-    ///*criar um no typespec que possua um simbolo terminal como simbolo, "Int", "Char", "Void" */
-    //if(strcmp(node_name,"TypeSpec")){
-    //    tree_node* aux1;
-
-    //    new_node->next_brother = NULL;
-    //    new_node->luke = NULL;
-    //    new_node->father = NULL;
-    //    new_node->name = node_name;
-    //    new_node->value_int = int_value;
-    //    new_node->value_str = char_value;
-    //    /*
-    //    if(strcmp(char_value,"Int")){
-    //        new_node -> luke = new_node("Int",NULL,NULL);
-    //        new_node -> luke -> darth_vader = new_node;
-    //    }
-    //    else if(strcmp(char_value,"Char")){
-    //        new_node -> luke = new_node("Char",NULL,NULL);
-    //        new_node -> luke -> darth_vader = new_node;
-    //    }
-    //    else if(strcmp(char_value,"Void")){
-    //        new_node -> luke = new_node("Void",NULL,NULL);
-    //        new_node -> luke -> darth_vader = new_node;
-    //    }*/
-    //}
-
-    ///*Simbolo terminal Int*/
-    //else if(strcmp(node_name,"Int")){
-    //    new_node->next_brother = NULL;
-    //    new_node->luke = NULL;
-    //    new_node->father = NULL;
-    //    new_node->name = node_name;
-    //    new_node->value_int = int_value;
-    //    new_node->value_str = char_value;
-    //}
-
-
-    ///*Simbolo terminal Char*/
-    //else if(strcmp(node_name,"Char")){
-    //    new_node->next_brother = NULL;
-    //    new_node->luke = NULL;
-    //    new_node->father = NULL;
-    //    new_node->name = node_name;
-    //    new_node->value_int = int_value;
-    //    new_node->value_str = char_value;
-    //}
-
-    ///*Simbolo terminal Void*/
-    //else if(strcmp(node_name,"Void")){
-    //    new_node->next_brother = NULL;
-    //    new_node->luke = NULL;
-    //    new_node->father = NULL;
-    //    new_node->name = node_name;
-    //    new_node->value_int = int_value;
-    //    new_node->value_str = char_value;
-    //}
-
-    ///*Simbolo terminal Id*/
-    //else if(strcmp(node_name,"Id")){
-    //    new_node->next_brother = NULL;
-    //    new_node->luke = NULL;
-    //    new_node->father = NULL;
-    //    new_node->name = node_name;
-    //    new_node->value_int = int_value;
-    //    new_node->value_str = char_value;
-    //}
-
-    ///*Simbolo terminal Id*/
-    //else if(strcmp(node_name,"Ast")){
-    //    new_node->next_brother = NULL;
-    //    new_node->luke = NULL;
-    //    new_node->father = NULL;
-    //    new_node->name = node_name;
-    //    new_node->value_int = int_value;
-    //    new_node->value_str = char_value;
-    //}
 
     return new_node;
 }
