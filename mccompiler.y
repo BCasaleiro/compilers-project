@@ -29,7 +29,6 @@
 
     tree_node* root = NULL;
     tree_node* current = NULL;
-    char* temp_aux;
 
     void create_tree();
     tree_node* add_child(char* child_name, int child_int, char* child_str);
@@ -160,25 +159,31 @@ Redeclaration:  Empty                                                           
 
  //TypeSpec
 TypeSpec:   INT                                                                 {
-                                                                                    // add_child("Int", -1, NULL);
+                                                                                    $$ = create_node("TypeSpec",0,NULL);
+                                                                                    add_child($$, create_node("Int",0,NULL);
                                                                                 }
     |       CHAR                                                                {
-                                                                                    // add_child("Char", -1, NULL);
+                                                                                    $$ = create_node("TypeSpec",0,NULL);
+                                                                                    add_child($$, create_node("Char",0,NULL);
                                                                                 }
     |       VOID                                                                {
-                                                                                    // add_child("Void", -1, NULL);
+                                                                                    $$ = create_node("TypeSpec",0,NULL);
+                                                                                    add_child($$, create_node("Char",0,NULL);
                                                                                 }
     ;
 
  //Declarator
 Declarator: ZMast ID                                                            {
-                                                                                    // current->name="Declaration";
-                                                                                    // add_child("Id", -1, NULL); //TODO add this shitty id
+                                                                                    $$ = create_node("Declarator");
+                                                                                    add_child($$,$1);
+                                                                                    add_child($$,create_node("Id"),$2); //Nao sei se isto esta bem
+
                                                                                 }
         |   ZMast ID LSQ INTLIT RSQ                                             {
-                                                                                    // current->name="ArrayDeclaration";
-                                                                                    // add_child("Id", -1, NULL); //TODO add this shitty id
-                                                                                    // add_child("IntLit", -1, NULL); //TODO add this shitty intlit
+                                                                                    $$ = create_node("Declarator");
+                                                                                    add_child($$,$1);
+                                                                                    add_child($$,create_node("Id"),0,$2); //Nao sei se isto esta bem
+                                                                                    add_child($$,create_node("IntLit",$4,NULL));
                                                                                 }
         ;
 
@@ -313,11 +318,116 @@ void create_tree() {
     }
 }
 
-tree_node* add_child(char* child_name, int child_int, char* child_str) {
-    tree_node* new_node = NULL;
+tree_node* create_node(char* node_name, int int_value, char* char_value) {
+    tree_node* new_node = (tree_node*)malloc(sizeof(tree_node));
 
+    strcpy(new_node->name, node_name);
+    new_node->next_brother = NULL;
+    new_node->luke = NULL;
+    new_node->father = NULL;
+    new_node->value_int = int_value;
+    new_node->value_str = char_value;
+
+    ///*criar um no typespec que possua um simbolo terminal como simbolo, "Int", "Char", "Void" */
+    //if(strcmp(node_name,"TypeSpec")){
+    //    tree_node* aux1;
+
+    //    new_node->next_brother = NULL;
+    //    new_node->luke = NULL;
+    //    new_node->father = NULL;
+    //    new_node->name = node_name;
+    //    new_node->value_int = int_value;
+    //    new_node->value_str = char_value;
+    //    /*
+    //    if(strcmp(char_value,"Int")){
+    //        new_node -> luke = new_node("Int",NULL,NULL);
+    //        new_node -> luke -> darth_vader = new_node;
+    //    }
+    //    else if(strcmp(char_value,"Char")){
+    //        new_node -> luke = new_node("Char",NULL,NULL);
+    //        new_node -> luke -> darth_vader = new_node;
+    //    }
+    //    else if(strcmp(char_value,"Void")){
+    //        new_node -> luke = new_node("Void",NULL,NULL);
+    //        new_node -> luke -> darth_vader = new_node;
+    //    }*/
+    //}
+
+    ///*Simbolo terminal Int*/
+    //else if(strcmp(node_name,"Int")){
+    //    new_node->next_brother = NULL;
+    //    new_node->luke = NULL;
+    //    new_node->father = NULL;
+    //    new_node->name = node_name;
+    //    new_node->value_int = int_value;
+    //    new_node->value_str = char_value;
+    //}
+
+
+    ///*Simbolo terminal Char*/
+    //else if(strcmp(node_name,"Char")){
+    //    new_node->next_brother = NULL;
+    //    new_node->luke = NULL;
+    //    new_node->father = NULL;
+    //    new_node->name = node_name;
+    //    new_node->value_int = int_value;
+    //    new_node->value_str = char_value;
+    //}
+
+    ///*Simbolo terminal Void*/
+    //else if(strcmp(node_name,"Void")){
+    //    new_node->next_brother = NULL;
+    //    new_node->luke = NULL;
+    //    new_node->father = NULL;
+    //    new_node->name = node_name;
+    //    new_node->value_int = int_value;
+    //    new_node->value_str = char_value;
+    //}
+
+    ///*Simbolo terminal Id*/
+    //else if(strcmp(node_name,"Id")){
+    //    new_node->next_brother = NULL;
+    //    new_node->luke = NULL;
+    //    new_node->father = NULL;
+    //    new_node->name = node_name;
+    //    new_node->value_int = int_value;
+    //    new_node->value_str = char_value;
+    //}
+
+    ///*Simbolo terminal Id*/
+    //else if(strcmp(node_name,"Ast")){
+    //    new_node->next_brother = NULL;
+    //    new_node->luke = NULL;
+    //    new_node->father = NULL;
+    //    new_node->name = node_name;
+    //    new_node->value_int = int_value;
+    //    new_node->value_str = char_value;
+    //}
 
     return new_node;
+}
+
+
+/*Adicionar o filho son ao fim da lista de filhos de father*/
+void add_child(tree_node * father , tree_node * son){
+    tree_node * aux;
+
+    /*se houver mais que um filho, ir ate ao ultimo*/
+    if(father->luke != NULL){
+        aux = father->luke;
+
+        while(aux->next_brother != NULL){
+            aux = aux->next_brother;
+        }
+        /*adicionar o filho ao fim*/
+        aux->next_brother = son;
+        son->darth_vader = father;
+    }
+    else{
+        /*Se ainda nao existir nenhum filho, adicionar diretamente*/
+        father -> luke = son;
+        son -> darth_vader = father;
+    }
 }
 
 void print(char* s) {
