@@ -1,8 +1,9 @@
 %{
     #include <stdio.h>
     #include <stdlib.h>
+    #include <string.h>
 
-    #define DEBUG 0
+    #define DEBUG 1
 
     extern int yylineno;
     extern int yyleng;
@@ -14,6 +15,24 @@
     void print(char *s);
     void yyerror (char *s);
     extern int yylex();
+
+    typedef struct _tree_node {
+        struct _tree_node* darth_vader;
+        struct _tree_node* next_brother;
+        struct _tree_node* luke;
+
+        char* name;
+
+        int value_int;
+        char* value_str;
+    } tree_node;
+
+    tree_node* root = NULL;
+    tree_node* current = NULL;
+    char* temp_aux;
+
+    void create_tree();
+    tree_node* add_child(char* child_name, int child_int, char* child_str);
 %}
 
 %token AND
@@ -88,9 +107,9 @@
 
 %%
  //Start
-Start:  FunctionDefinition Restart                                              { print("start function definition"); }
-    |   FunctionDeclaration Restart                                             { print("start function declaration"); }
-    |   Declaration Restart                                                     { print("start declaration"); }
+Start:  FunctionDefinition Restart                                              { /*create_tree();*/ print("start function definition"); }
+    |   FunctionDeclaration Restart                                             { /*create_tree();*/ print("start function declaration"); }
+    |   Declaration Restart                                                     { /*create_tree();*/ print("start declaration"); }
     ;
 
 Restart:    Empty                                                               { print("restart empty"); }
@@ -129,7 +148,9 @@ CommaParameterDeclaration:COMMA ParameterDeclaration CommaParameterDeclaration  
                     ;
 
  //Declaration
-Declaration:    TypeSpec Declarator CommaDeclarator SEMI                        { print("declaration"); }
+Declaration:    TypeSpec Declarator CommaDeclarator SEMI                        {
+                                                                                    //current = add_child("PreDeclaration", -1, NULL);
+                                                                                }
         |       error SEMI
         ;
 
@@ -138,18 +159,38 @@ Redeclaration:  Empty                                                           
         ;
 
  //TypeSpec
-TypeSpec:   INT                                                                 { print("int"); }
-    |       CHAR                                                                { print("char"); }
-    |       VOID                                                                { print("void"); }
+TypeSpec:   INT                                                                 {
+                                                                                    // add_child("Int", -1, NULL);
+                                                                                }
+    |       CHAR                                                                {
+                                                                                    // add_child("Char", -1, NULL);
+                                                                                }
+    |       VOID                                                                {
+                                                                                    // add_child("Void", -1, NULL);
+                                                                                }
     ;
 
  //Declarator
-Declarator: ZMast ID                                                            { print("declarator"); }
-        |   ZMast ID LSQ INTLIT RSQ                                             { print("declarator []"); }
+Declarator: ZMast ID                                                            {
+                                                                                    // current->name="Declaration";
+                                                                                    // add_child("Id", -1, NULL); //TODO add this shitty id
+                                                                                }
+        |   ZMast ID LSQ INTLIT RSQ                                             {
+                                                                                    // current->name="ArrayDeclaration";
+                                                                                    // add_child("Id", -1, NULL); //TODO add this shitty id
+                                                                                    // add_child("IntLit", -1, NULL); //TODO add this shitty intlit
+                                                                                }
         ;
 
-CommaDeclarator:    Empty                                                       { print("comma declarator empty"); }
-            |       COMMA Declarator CommaDeclarator                            { print("comma declarator"); }
+CommaDeclarator:    Empty                                                       {
+                                                                                    // current = current->darth_vader;
+                                                                                }
+            |       COMMA Declarator CommaDeclarator                            {
+                                                                                    // temp_aux = current->luke->name;
+                                                                                    // current = current->darth_vader;
+                                                                                    // current = add_child("PreDeclaration", -1, NULL);
+
+                                                                                }
             ;
 
  //Statement
@@ -246,6 +287,39 @@ Empty:  ;
 
 /* A função main() está do lado do lex */
 
+/*
+typedef struct _tree_node {
+    struct _tree_node* darth_vader;
+    struct _tree_node* next_brother;
+    struct _tree_node* luke;
+    char* name;
+
+    int value_int;
+    char* value_str;
+} tree_node;
+*/
+
+void create_tree() {
+    root = (tree_node*)malloc( sizeof(tree_node) );
+    if (root != NULL) {
+        root->darth_vader = NULL;
+        root->next_brother = NULL;
+        root->name = "Program";
+        root->luke = NULL;
+
+        current = root;
+    } else {
+        printf("ERROR MALLOC\n");
+    }
+}
+
+tree_node* add_child(char* child_name, int child_int, char* child_str) {
+    tree_node* new_node = NULL;
+
+
+    return new_node;
+}
+
 void print(char* s) {
     if (DEBUG) {
         printf("%s\n", s);
@@ -253,13 +327,5 @@ void print(char* s) {
 }
 
 void yyerror (char *s) {
-    int col;
-
-    if(yyleng == 1 && columnNumber == 1) {
-        col = columnNumber;
-    } else {
-        col = (int)(columnNumber-yyleng);
-    }
-
-    printf ("Line %d, col %d: %s: %s\n", yylineno, col, s, yytext);
+    printf ("Line %d, col %d: %s: %s\n", yylineno, (int)(columnNumber - strlen(yytext)), s, yytext);
 }
