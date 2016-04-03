@@ -6,11 +6,27 @@
     #include <string.h>
     #include "y.tab.h"
 
+    #define MAX_STR 100
+
     int flag = 0;
     int lineNumber = 1;
     int columnNumber = 1;
     int colComment;
     int lineComment;
+
+    typedef struct _tree_node {
+        struct _tree_node* darth_vader;
+        struct _tree_node* next_brother;
+        struct _tree_node* luke;
+
+        char name[MAX_STR];
+
+        int value_int;
+        char value_str[MAX_STR];
+    } tree_node;
+
+    extern int flag_error;
+    extern tree_node* root;
 
     int yyparse();
 
@@ -74,142 +90,142 @@ reserved            ("--"|"++"|auto|break|case|const|continue|default|do|double|
 
 "&&"                            {
                                     print_text("AND");
-                                    if(flag == 0 || flag == 3 ) { return AND; }
+                                    if(flag == 0 || flag == 3) { return AND; }
                                 }
 "||"                            {
                                     print_text("OR");
-                                    if(flag == 0 || flag == 3 ) { return OR; }
+                                    if(flag == 0 || flag == 3) { return OR; }
                                 }
 "&"                             {
                                     print_text("AMP");
-                                    if(flag == 0 || flag == 3 ) { return AMP; }
+                                    if(flag == 0 || flag == 3) { return AMP; }
                                 }
 "=="                            {
                                     print_text("EQ");
-                                    if(flag == 0 || flag == 3 ) { return EQ; }
+                                    if(flag == 0 || flag == 3) { return EQ; }
                                 }
 "="                             {
                                     print_text("ASSIGN");
-                                    if(flag == 0 || flag == 3 ) { return ASSIGN; }
+                                    if(flag == 0 || flag == 3) { return ASSIGN; }
                                 }
 "!"                             {
                                     print_text("NOT");
-                                    if(flag == 0 || flag == 3 ) { return NOT; }
+                                    if(flag == 0 || flag == 3) { return NOT; }
                                 }
 "!="                            {
                                     print_text("NE");
-                                    if(flag == 0 || flag == 3 ) { return NE; }
+                                    if(flag == 0 || flag == 3) { return NE; }
                                 }
 ">"                             {
                                     print_text("GT");
-                                    if(flag == 0 || flag == 3 ) { return GT; }
+                                    if(flag == 0 || flag == 3) { return GT; }
                                 }
 "<"                             {
                                     print_text("LT");
-                                    if(flag == 0 || flag == 3 ) { return LT; }
+                                    if(flag == 0 || flag == 3) { return LT; }
                                 }
 ">="                            {
                                     print_text("GE");
-                                    if(flag == 0 || flag == 3 ) { return GE; }
+                                    if(flag == 0 || flag == 3) { return GE; }
                                 }
 "<="                            {
                                     print_text("LE");
-                                    if(flag == 0 || flag == 3 ) { return LE; }
+                                    if(flag == 0 || flag == 3) { return LE; }
                                 }
 ","                             {
                                     print_text("COMMA");
-                                    if(flag == 0 || flag == 3 ) { return COMMA; }
+                                    if(flag == 0 || flag == 3) { return COMMA; }
                                 }
 ";"                             {
                                     print_text("SEMI");
-                                    if(flag == 0 || flag == 3 ) { return SEMI; }
+                                    if(flag == 0 || flag == 3) { return SEMI; }
                                 }
 "{"                             {
                                     print_text("LBRACE");
-                                    if(flag == 0 || flag == 3 ) { return LBRACE; }
+                                    if(flag == 0 || flag == 3) { return LBRACE; }
                                 }
 "}"                             {
                                     print_text("RBRACE");
-                                    if(flag == 0 || flag == 3 ) { return RBRACE; }
+                                    if(flag == 0 || flag == 3) { return RBRACE; }
                                 }
 "("                             {
                                     print_text("LPAR");
-                                    if(flag == 0 || flag == 3 ) { return LPAR; }
+                                    if(flag == 0 || flag == 3) { return LPAR; }
                                 }
 ")"                             {
                                     print_text("RPAR");
-                                    if(flag == 0 || flag == 3 ) { return RPAR; }
+                                    if(flag == 0 || flag == 3) { return RPAR; }
                                 }
 "["                             {
                                     print_text("LSQ");
-                                    if(flag == 0 || flag == 3 ) { return LSQ; }
+                                    if(flag == 0 || flag == 3) { return LSQ; }
                                 }
 "]"                             {
                                     print_text("RSQ");
-                                    if(flag == 0 || flag == 3 ) { return RSQ; }
+                                    if(flag == 0 || flag == 3) { return RSQ; }
                                 }
 "+"                             {
                                     print_text("PLUS");
-                                    if(flag == 0 || flag == 3 ) { return PLUS; }
+                                    if(flag == 0 || flag == 3) { return PLUS; }
                                 }
 "-"                             {
                                     print_text("MINUS");
-                                     if(flag == 0 || flag == 3 ) { return MINUS; }
+                                     if(flag == 0 || flag == 3) { return MINUS; }
                                 }
 "*"                             {
                                     print_text("AST");
-                                    if(flag == 0 || flag == 3 ) { return AST; }
+                                    if(flag == 0 || flag == 3) { return AST; }
                                 }
 "/"                             {
                                     print_text("DIV");
-                                    if(flag == 0 || flag == 3 ) { return DIV; }
+                                    if(flag == 0 || flag == 3) { return DIV; }
                                 }
 "%"                             {
                                     print_text("MOD");
-                                    if(flag == 0 || flag == 3 ) { return MOD; }
+                                    if(flag == 0 || flag == 3) { return MOD; }
                                 }
 int                             {
                                     print_text("INT");
-                                    if(flag == 0 || flag == 3 ) { return INT; }
+                                    if(flag == 0 || flag == 3) { return INT; }
                                 }
 char                            {
                                     print_text("CHAR");
-                                    if(flag == 0 || flag == 3 ) { return CHAR; }
+                                    if(flag == 0 || flag == 3) { return CHAR; }
                                 }
 void                            {
                                     print_text("VOID");
-                                    if(flag == 0 || flag == 3 ) { return VOID; }
+                                    if(flag == 0 || flag == 3) { return VOID; }
                                 }
 if                              {
                                     print_text("IF");
-                                    if(flag == 0 || flag == 3 ) { return IF; }
+                                    if(flag == 0 || flag == 3) { return IF; }
                                 }
 else                            {
                                     print_text("ELSE");
-                                    if(flag == 0 || flag == 3 ) { return ELSE; }
+                                    if(flag == 0 || flag == 3) { return ELSE; }
                                 }
 for                             {
                                     print_text("FOR");
-                                    if(flag == 0 || flag == 3 ) { return FOR; }
+                                    if(flag == 0 || flag == 3) { return FOR; }
                                 }
 return                          {
                                     print_text("RETURN");
-                                    if(flag == 0 || flag == 3 ) { return RETURN; }
+                                    if(flag == 0 || flag == 3) { return RETURN; }
                                 }
 {id}                            {
                                     print_with_content("ID", yytext);
                                     yylval.id = strdup(yytext);
-                                    if(flag == 0 || flag == 3 ) { return ID; }
+                                    if(flag == 0 || flag == 3) { return ID; }
                                 }
 {intlit}                        {
                                     print_with_content("INTLIT", yytext);
                                     yylval.intlit = atoi(yytext);
-                                    if(flag == 0 || flag == 3 ) { return INTLIT; }
+                                    if(flag == 0 || flag == 3) { return INTLIT; }
                                 }
 {chrlit}                        {
                                     print_with_content("CHRLIT", yytext);
                                     yylval.chrlit = strdup(yytext);
-                                    if(flag == 0 || flag == 3 ) { return CHRLIT; }
+                                    if(flag == 0 || flag == 3) { return CHRLIT; }
                                 }
 {unterminated_chr}              {
                                     print_unterminated_error("Line %d, col %d: unterminated char constant\n", yylineno, (int)(columnNumber-yyleng));
@@ -220,7 +236,7 @@ return                          {
 {strlit}                        {
                                     print_with_content("STRLIT", yytext);
                                     yylval.strlit = strdup(yytext);
-                                    if(flag == 0 || flag == 3 ) { return STRLIT; }
+                                    if(flag == 0 || flag == 3) { return STRLIT; }
                                 }
 {unterminated_str}              {
                                     print_unterminated_error("Line %d, col %d: unterminated string constant\n", yylineno, (int)(columnNumber-yyleng));
@@ -262,6 +278,47 @@ int yywrap()
     return 1;
 }
 
+void print_terminal(tree_node* node){
+    if(strcmp(node->name, "Id") == 0 || strcmp(node->name, "ChrLit") == 0 || strcmp(node->name, "StrLit") == 0) {
+        printf("%s(%s)\n", node->name, node->value_str);
+    } else {
+        printf("%s(%d)\n", node->name, node->value_int);
+    }
+}
+
+void print_points(int n){
+    while(n > 0){
+        printf("..");
+        n--;
+    }
+}
+
+void print_tree(tree_node* node, int level){
+    if(node != NULL) {
+        print_points(level);
+
+        if(strcmp(node->name, "Id") == 0 || strcmp(node->name, "ChrLit") == 0 || strcmp(node->name, "StrLit") == 0 || strcmp(node->name, "IntLit") == 0){
+            print_terminal(node);
+        } else {
+            printf("%s\n", node->name);
+        }
+
+        tree_node* child = node->luke;
+
+        if(child != NULL){
+            print_tree(child, level + 1);
+
+            while(child->next_brother != NULL){
+                child = child->next_brother;
+                print_tree(child, level + 1);
+            }
+
+        }
+
+        free(node);
+    }
+}
+
 int main(int argc, char const *argv[])
 {
     if (argc > 1) {
@@ -276,6 +333,12 @@ int main(int argc, char const *argv[])
 
     if (flag == 0 || flag == 3) {
         yyparse();
+
+        if(flag == 3 && flag_error == 0) {
+            printf("---TREE---\n\n");
+            print_tree(root, 0);
+            printf("\n---TREE---\n");
+        }
     } else {
         yylex();
     }
