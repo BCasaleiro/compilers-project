@@ -228,14 +228,12 @@ CommaParameterDeclaration:COMMA ParameterDeclaration CommaParameterDeclaration  
  //Declaration
 Declaration:    TypeSpec Declarator CommaDeclarator SEMI                        {
                                                                                     $$ = $2;
-                                                                                    add_child($$, $1);
-                                                                                    // add_brother_end($$, $3);
-                                                                                    tree_node* aux = $3;
+                                                                                    $$->next_brother = $3;
+                                                                                    tree_node* aux = $$;
                                                                                     while(aux != NULL) {
                                                                                         add_child(aux, $1);
                                                                                         aux = aux->next_brother;
                                                                                     }
-                                                                                    $$->next_brother = $3;
                                                                                 }
         |       error SEMI                                                      { }
         ;
