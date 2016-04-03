@@ -315,7 +315,7 @@ void print_tree(tree_node* node, int level){
 
         }
 
-        free(node);
+        //free(node);
     }
 }
 

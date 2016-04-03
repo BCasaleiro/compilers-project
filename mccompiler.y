@@ -190,13 +190,23 @@ FunctionDefinition: TypeSpec FunctionDeclarator FunctionBody                    
 
  //FunctionDeclaration
 FunctionDeclaration: TypeSpec FunctionDeclarator SEMI                           {
-
+                                                                                    $$ = create_simple_node("FuncDeclaration");
+                                                                                    add_child($$, $2);
+                                                                                    add_child($$, $1);
                                                                                 }
                 ;
 
  //FunctionDeclarator
 FunctionDeclarator: ZMast ID LPAR ParameterList RPAR                            {
-
+                                                                                    auxId = create_str_node("Id", $2);
+                                                                                    if($1 != NULL) {
+                                                                                        $$ = $1;
+                                                                                        add_brother_end($$, auxId);
+                                                                                        add_brother_end($$, $4);
+                                                                                    } else {
+                                                                                        $$ = auxId;
+                                                                                        add_brother_end($$, $4);
+                                                                                    }
                                                                                 }
                 ;
 
@@ -209,20 +219,26 @@ FunctionBody: LBRACE Redeclaration ReSpecialStatement  RBRACE                   
 
  //ParameterList
 ParameterList: ParameterDeclaration CommaParameterDeclaration                   {
-
+                                                                                    $$ = create_simple_node("ParamList");
+                                                                                    add_child($$,$1);
+                                                                                    add_brother_end($1,$2);
                                                                                 }
             ;
 
  //ParameterDeclaration
 ParameterDeclaration: TypeSpec ZMast ZUid                                       {
-
+                                                                                    $$ = create_simple_node("ParamDeclaration");
+                                                                                    add_child($$,$1);
+                                                                                    add_brother_end($1,$2);
+                                                                                    add_brother_end($1,$3);
                                                                                 }
                 ;
 
 CommaParameterDeclaration:COMMA ParameterDeclaration CommaParameterDeclaration  {
-
+                                                                                    $$ = $2;
+                                                                                    add_brother_end($2,$3);
                                                                                 }
-                    |     Empty                                                 {  }
+                    |     Empty                                                 { $$ = $1; }
                     ;
 
  //Declaration
@@ -456,9 +472,9 @@ ZMast:  Empty                                                                   
     ;
 
  //Zero ou um ID
-ZUid:   Empty                                                                   {  }
+ZUid:   Empty                                                                   { $$ = $1; }
     |   ID                                                                      {
-
+                                                                                    $$ = create_str_node("Id",$1);
                                                                                 }
     ;
 
