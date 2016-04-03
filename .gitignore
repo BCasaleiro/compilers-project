@@ -3,6 +3,7 @@
 
 # Pdf files
 *.pdf
+*~
 
 # Yacc files
 *.output
