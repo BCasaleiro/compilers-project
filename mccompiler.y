@@ -155,7 +155,7 @@ Start:  FunctionDefinition Restart                                              
                                                                                     root = $$;
 
                                                                                     add_child($$, $1);
-                                                                                    add_child($$, $2);
+                                                                                    $1->next_brother = $2;
                                                                                 }
     ;
 
@@ -170,8 +170,7 @@ Restart:    Empty                                                               
                                                                                 }
     |       Declaration Restart                                                 {
                                                                                     $$ = $1;
-                                                                                    printf("-- %s %s\n", $$->name, $2);
-                                                                                    add_child($$->darth_vader, $2);
+                                                                                    $$->next_brother = $2;
                                                                                 }
     ;
 
@@ -521,16 +520,13 @@ tree_node* create_str_node(char* name, char* value) {
 /*Adicionar o filho son ao fim da lista de filhos de father*/
 void add_child(tree_node * father , tree_node * son){
     tree_node * aux = father;
-
-    if(son != NULL) {
-        if(aux->luke != NULL) {
-            son->next_brother = father->luke;
-            son->darth_vader = father;
-            father->luke = son;
-        } else {
-            father->luke = son;
-            father->luke->darth_vader = father;
-        }
+    if(aux->luke != NULL) {
+        son->next_brother = father->luke;
+        son->darth_vader = father;
+        father->luke = son;
+    } else {
+        father->luke = son;
+        father->luke->darth_vader = father;
     }
 }
 
