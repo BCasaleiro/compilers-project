@@ -30,12 +30,16 @@
 
     tree_node* root = NULL;
     tree_node* auxId = NULL;
+    tree_node* auxIntLit = NULL;
+    tree_node* auxChrLit = NULL;
+    tree_node* auxStrLit = NULL;
 
     tree_node* create_simple_node(char* name);
     tree_node* create_int_node(char* name, int value);
     tree_node* create_str_node(char* name, char* value);
 
     void add_child(tree_node * father , tree_node * son);
+    void add_brother_end(tree_node* father, tree_node* new_son);
 %}
 
 %token AND
@@ -144,11 +148,13 @@ Start:  FunctionDefinition Restart                                              
                                                                                     $$ = create_simple_node("Program");
                                                                                     root = $$;
                                                                                     add_child($$, $1);
+                                                                                    $1->next_brother = $2;
                                                                                 }
     |   FunctionDeclaration Restart                                             {
                                                                                     $$ = create_simple_node("Program");
                                                                                     root = $$;
                                                                                     add_child($$, $1);
+                                                                                    $1->next_brother = $2;
                                                                                 }
     |   Declaration Restart                                                     {
                                                                                     $$ = create_simple_node("Program");
@@ -163,10 +169,12 @@ Restart:    Empty                                                               
                                                                                     $$ = $1;
                                                                                 }
     |       FunctionDefinition Restart                                          {
-
+                                                                                    $$ = $1;
+                                                                                    $$->next_brother = $2;
                                                                                 }
     |       FunctionDeclaration Restart                                         {
-
+                                                                                    $$ = $1;
+                                                                                    $$->next_brother = $2;
                                                                                 }
     |       Declaration Restart                                                 {
                                                                                     $$ = $1;
@@ -221,6 +229,13 @@ CommaParameterDeclaration:COMMA ParameterDeclaration CommaParameterDeclaration  
 Declaration:    TypeSpec Declarator CommaDeclarator SEMI                        {
                                                                                     $$ = $2;
                                                                                     add_child($$, $1);
+                                                                                    // add_brother_end($$, $3);
+                                                                                    tree_node* aux = $3;
+                                                                                    while(aux != NULL) {
+                                                                                        add_child(aux, $1);
+                                                                                        aux = aux->next_brother;
+                                                                                    }
+                                                                                    $$->next_brother = $3;
                                                                                 }
         |       error SEMI                                                      { }
         ;
@@ -234,38 +249,45 @@ Redeclaration:  Empty                                                           
  //TypeSpec
 TypeSpec:   INT                                                                 {
                                                                                     $$ = create_simple_node("Int");
-                                                                                    printf("%s\n", $$->name);
                                                                                 }
     |       CHAR                                                                {
                                                                                     $$ = create_simple_node("Char");
-                                                                                    printf("%s\n", $$->name);
                                                                                 }
     |       VOID                                                                {
                                                                                     $$ = create_simple_node("Void");
-                                                                                    printf("%s\n", $$->name);
                                                                                 }
     ;
 
  //Declarator
 Declarator: ZMast ID                                                            {
                                                                                     $$ = create_simple_node("Declaration");
-                                                                                    printf("%s\n", $$->name);
                                                                                     auxId = create_str_node("Id", $2);
-                                                                                    printf("%s(%s)\n", auxId->name, auxId->value_str);
-                                                                                    add_child($$, auxId);
+                                                                                    if($1 != NULL) {
+                                                                                        $$->luke = $1;
+                                                                                        add_brother_end($$->luke, auxId);
+                                                                                    } else {
+                                                                                        add_child($$, auxId);
+                                                                                    }
                                                                                 }
         |   ZMast ID LSQ INTLIT RSQ                                             {
-                                                                                    // $$ = create_simple_node("ArrayDeclaration");
-                                                                                    // add_child($$,$1);
-                                                                                    // $$ = create_node("Id", -1, $2);
-                                                                                    // add_child($$,$1);
-                                                                                    // $$ = create_node("IntLit", 20, NULL);
+                                                                                    $$ = create_simple_node("ArrayDeclaration");
+                                                                                    auxId = create_str_node("Id", $2);
+                                                                                    auxIntLit = create_int_node("IntLit", $4);
+                                                                                    if($1 != NULL) {
+                                                                                        $$->luke = $1;
+                                                                                        add_brother_end($$->luke, auxId);
+                                                                                        add_brother_end($$->luke, auxIntLit);
+                                                                                    } else {
+                                                                                        add_child($$, auxIntLit);
+                                                                                        add_child($$, auxId);
+                                                                                    }
                                                                                 }
         ;
 
-CommaDeclarator:    Empty                                                       { ; }
+CommaDeclarator:    Empty                                                       { $$ = $1; }
             |       COMMA Declarator CommaDeclarator                            {
-
+                                                                                    $$ = $2;
+                                                                                    $$->next_brother = $3;
                                                                                 }
             ;
 
@@ -281,7 +303,7 @@ StatementSpecial:   ZUExpr SEMI                                                 
 
                                                                                 }
         |           LBRACE RBRACE                                               {  }
-        |           LBRACE error RBRACE                                         {}
+        |           LBRACE error RBRACE                                         {  }
         |           IF LPAR Expr RPAR Statement %prec "then"                    {
 
                                                                                 }
@@ -403,23 +425,23 @@ ExprSpecial:    ExprSpecial ASSIGN ExprSpecial                                  
         |       LPAR Expr RPAR                                                  {
 
                                                                                 }
-        |       LPAR error RPAR                                                 {}/*O que fazer em caso de erro?*/
+        |       LPAR error RPAR                                                 { }
         |       ID LPAR ZUExprZMComma RPAR                                      {
 
                                                                                 }
-        |       ID LPAR error RPAR                                              {}/*O que fazer em caso de erro?*/
+        |       ID LPAR error RPAR                                              { }
         |       ExprSpecial LSQ Expr RSQ                                        {
 
                                                                                 }
         ;
 
-ZUExprZMComma:  Empty                                                           {  }
+ZUExprZMComma:  Empty                                                           { $$ = $1; }
             |   ExprSpecial ZMComma                                             {
 
                                                                                 }
             ;
 
-ZMComma:    Empty                                                               {  }
+ZMComma:    Empty                                                               { $$ = $1; }
     |       ZMComma COMMA ExprSpecial                                           {
 
                                                                                 }
@@ -428,9 +450,10 @@ ZMComma:    Empty                                                               
  //Caracteres repetidos
 
  //Zero ou mais AST
-ZMast:  Empty                                                                   {  }
+ZMast:  Empty                                                                   { $$ = $1; }
     |   ZMast AST                                                               {
-
+                                                                                    $$ = create_simple_node("Pointer");
+                                                                                    $$->next_brother = $1;
                                                                                 }
     ;
 
@@ -527,6 +550,17 @@ void add_child(tree_node * father , tree_node * son){
     } else {
         father->luke = son;
         father->luke->darth_vader = father;
+    }
+}
+
+void add_brother_end(tree_node* brother, tree_node* new_son) {
+    tree_node* aux = brother;
+    if(aux!= NULL && new_son != NULL) {
+        while(aux->next_brother != NULL) {
+            aux = aux->next_brother;
+        }
+        aux->next_brother = new_son;
+        new_son->darth_vader = brother->darth_vader;
     }
 }
 
