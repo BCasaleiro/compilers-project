@@ -26,6 +26,7 @@
     } tree_node;
 
     int flag_error = 0;
+    int stat_list = 0;
 
     tree_node* root = NULL;
     tree_node* auxId = NULL;
@@ -119,7 +120,7 @@
 
 %nonassoc "then"
 %nonassoc ELSE
-%nonassoc POS NEG
+%nonassoc "pos" "neg"
 
 
 %left COMMA
@@ -132,8 +133,6 @@
 %left AST DIV MOD
 %right NOT AMP
 %left LPAR RPAR LSQ RSQ LBRACE RBRACE
-
-
 
 %%
  //Start
@@ -530,11 +529,11 @@ ExprSpecial:    ExprSpecial ASSIGN ExprSpecial                                  
                                                                                     $$ = create_simple_node("Not");
                                                                                     add_child($$,$2);
                                                                                 }
-        |       MINUS ExprSpecial                                               {
+        |       MINUS ExprSpecial %prec "neg"                                   {
                                                                                     $$ = create_simple_node("Minus");
                                                                                     add_child($$,$2);
                                                                                 }
-        |       PLUS ExprSpecial                                                {
+        |       PLUS ExprSpecial %prec "pos"                                    {
                                                                                     $$ = create_simple_node("Plus");
                                                                                     add_child($$,$2);
                                                                                 }
