@@ -1,2 +1,2 @@
 int a, b, c;
-int *a, **v;
+int *d, **f;

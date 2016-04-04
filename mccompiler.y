@@ -261,8 +261,12 @@ Declaration:    TypeSpec Declarator CommaDeclarator SEMI                        
                                                                                     }
 
                                                                                     tree_node* aux = $$;
+                                                                                    tree_node aux2 = *$1;
                                                                                     while(aux != NULL) {
-                                                                                        add_brother_end(aux->luke, $1);
+                                                                                        aux2.next_brother = aux->luke;
+                                                                                        aux2.darth_vader = aux;
+                                                                                        aux->luke = (tree_node*) malloc(sizeof(tree_node));
+                                                                                        *(aux->luke) = aux2;
 
                                                                                         aux = aux->next_brother;
                                                                                     }
@@ -310,7 +314,7 @@ Declarator: ZMast ID                                                            
                                                                                         add_brother_end($$->luke, auxIntLit);
                                                                                     } else {
                                                                                         add_child($$, auxIntLit);
-                                                                                        add_child($$, auxId);
+                                                                                        add_brother_end(auxIntLit, auxId);
                                                                                     }
                                                                                 }
         ;
@@ -318,9 +322,7 @@ Declarator: ZMast ID                                                            
 CommaDeclarator:    Empty                                                       { $$ = $1; }
             |       COMMA Declarator CommaDeclarator                            {
                                                                                     $$ = $2;
-                                                                                    if($3 != NULL) {
-                                                                                        add_brother_end($$, $3);
-                                                                                    }
+                                                                                    add_brother_end($2, $3);
 
                                                                                 }
             ;
@@ -396,7 +398,7 @@ Expr:    ExprSpecial                                                            
                                                                                     $$ = $1;
                                                                                 }
     |    Expr COMMA ExprSpecial                                                 {
-                                                                                    $$ = $3; /*caso virgula, nao sei se esta bem (os valores são todos descartados excepto o mais a direita)*/
+                                                                                    $$ = $3;
                                                                                 }
     ;
 

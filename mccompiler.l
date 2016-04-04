@@ -314,6 +314,7 @@ void print_tree(tree_node* node, int level){
             }
 
         }
+        free(node);
     }
 }
 
@@ -333,9 +334,7 @@ int main(int argc, char const *argv[])
         yyparse();
 
         if(flag == 3 && flag_error == 0) {
-            printf("---TREE---\n\n");
             print_tree(root, 0);
-            printf("\n---TREE---\n");
         }
     } else {
         yylex();
