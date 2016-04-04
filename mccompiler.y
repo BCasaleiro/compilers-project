@@ -3,7 +3,6 @@
     #include <stdlib.h>
     #include <string.h>
 
-    #define DEBUG 1
     #define MAX_STR 100
 
     extern int yylineno;
@@ -148,37 +147,35 @@ Start:  FunctionDefinition Restart                                              
                                                                                     $$ = create_simple_node("Program");
                                                                                     root = $$;
                                                                                     add_child($$, $1);
-                                                                                    $1->next_brother = $2;
+                                                                                    add_brother_end($1, $2);
                                                                                 }
     |   FunctionDeclaration Restart                                             {
                                                                                     $$ = create_simple_node("Program");
                                                                                     root = $$;
                                                                                     add_child($$, $1);
-                                                                                    $1->next_brother = $2;
+                                                                                    add_brother_end($1, $2);
                                                                                 }
     |   Declaration Restart                                                     {
                                                                                     $$ = create_simple_node("Program");
                                                                                     root = $$;
 
                                                                                     add_child($$, $1);
-                                                                                    $1->next_brother = $2;
+                                                                                    add_brother_end($1, $2);
                                                                                 }
     ;
 
-Restart:    Empty                                                               {
-                                                                                    $$ = $1;
-                                                                                }
+Restart:    Empty                                                               { $$ = $1; }
     |       FunctionDefinition Restart                                          {
                                                                                     $$ = $1;
-                                                                                    $$->next_brother = $2;
+                                                                                    add_brother_end($$, $2);
                                                                                 }
     |       FunctionDeclaration Restart                                         {
                                                                                     $$ = $1;
-                                                                                    $$->next_brother = $2;
+                                                                                    add_brother_end($$, $2);
                                                                                 }
     |       Declaration Restart                                                 {
                                                                                     $$ = $1;
-                                                                                    $$->next_brother = $2;
+                                                                                    add_brother_end($$, $2);
                                                                                 }
     ;
 
@@ -228,10 +225,15 @@ CommaParameterDeclaration:COMMA ParameterDeclaration CommaParameterDeclaration  
  //Declaration
 Declaration:    TypeSpec Declarator CommaDeclarator SEMI                        {
                                                                                     $$ = $2;
-                                                                                    $$->next_brother = $3;
+
+                                                                                    if($3 != NULL) {
+                                                                                        add_brother_end($$, $3);
+                                                                                    }
+
                                                                                     tree_node* aux = $$;
                                                                                     while(aux != NULL) {
-                                                                                        add_child(aux, $1);
+                                                                                        add_brother_end(aux->luke, $1);
+
                                                                                         aux = aux->next_brother;
                                                                                     }
                                                                                 }
@@ -285,7 +287,10 @@ Declarator: ZMast ID                                                            
 CommaDeclarator:    Empty                                                       { $$ = $1; }
             |       COMMA Declarator CommaDeclarator                            {
                                                                                     $$ = $2;
-                                                                                    $$->next_brother = $3;
+                                                                                    if($3 != NULL) {
+                                                                                        add_brother_end($$, $3);
+                                                                                    }
+
                                                                                 }
             ;
 
@@ -540,14 +545,13 @@ tree_node* create_str_node(char* name, char* value) {
 
 /*Adicionar o filho son ao fim da lista de filhos de father*/
 void add_child(tree_node * father , tree_node * son){
-    tree_node * aux = father;
-    if(aux->luke != NULL) {
+    if(father->luke != NULL) {
         son->next_brother = father->luke;
         son->darth_vader = father;
         father->luke = son;
     } else {
+        son->darth_vader = father;
         father->luke = son;
-        father->luke->darth_vader = father;
     }
 }
 
@@ -562,9 +566,11 @@ void add_brother_end(tree_node* brother, tree_node* new_son) {
     }
 }
 
-void print(char* s) {
-    if (DEBUG) {
-        printf("%s\n", s);
+void add_brother_begining(tree_node* brother, tree_node* new_son) {
+    tree_node* aux = brother;
+    if(aux!= NULL && new_son != NULL) {
+        brother = new_son;
+        brother->next_brother = aux;
     }
 }
 
