@@ -348,28 +348,38 @@ StatementSpecial:   ZUExpr SEMI                                                 
         |           LBRACE RBRACE                                               { $$ = NULL; }
         |           LBRACE error RBRACE                                         { $$ = NULL; }
         |           IF LPAR Expr RPAR Statement %prec "then"                    {
-                                                                                    $$ = create_simple_node("If");
-                                                                                    add_child($$,$3);
-                                                                                    if($5 != NULL) {
-                                                                                        add_brother_end($3,$5);
-                                                                                    } else {
+                                                                                    if($3 != NULL) {
+                                                                                        $$ = create_simple_node("If");
+
+                                                                                        add_child($$,$3);
+                                                                                        if($5 != NULL) {
+                                                                                            add_brother_end($3,$5);
+                                                                                        } else {
+                                                                                            add_brother_end($3,create_simple_node("Null"));
+                                                                                        }
                                                                                         add_brother_end($3,create_simple_node("Null"));
+                                                                                    } else {
+                                                                                        $$ = NULL;
                                                                                     }
-                                                                                    add_brother_end($3,create_simple_node("Null"));
                                                                                     // add_brother_end($$->luke, create_simple_node("Null")); /* porque if tem de ter 3 filhos*/
                                                                                 }
         |           IF LPAR Expr RPAR Statement ELSE Statement                  {
-                                                                                    $$ = create_simple_node("If");
-                                                                                    add_child($$,$3);
-                                                                                    if($5 != NULL) {
-                                                                                        add_brother_end($3,$5);
+                                                                                    if( $3 != NULL ) {
+                                                                                        $$ = create_simple_node("If");
+                                                                                        add_child($$, $3);
+                                                                                        if($5 != NULL) {
+                                                                                            add_brother_end($3,$5);
+                                                                                        } else {
+                                                                                            add_brother_end($3,create_simple_node("Null"));
+                                                                                        }
+
+                                                                                        if($7 != NULL) {
+                                                                                            add_brother_end($3,$7);
+                                                                                        } else {
+                                                                                            add_brother_end($3,create_simple_node("Null"));
+                                                                                        }
                                                                                     } else {
-                                                                                        add_brother_end($3,create_simple_node("Null"));
-                                                                                    }
-                                                                                    if($7 != NULL) {
-                                                                                        add_brother_end($3,$7);
-                                                                                    } else {
-                                                                                        add_brother_end($3,create_simple_node("Null"));
+                                                                                        $$ = NULL;
                                                                                     }
                                                                                 }
         |           FOR LPAR ZUExpr SEMI ZUExpr SEMI ZUExpr RPAR Statement      {
