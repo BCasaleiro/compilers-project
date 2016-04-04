@@ -427,16 +427,28 @@ StatList:       Statement Statement Restatement                                 
 ReSpecialStatement: Empty                                                       { $$ = $1; }
 
                 |   StatementSpecial ReSpecialStatement                         {
-                                                                                    $$ = $1;
-                                                                                    add_brother_end($$,$2);
+                                                                                    if($1 != NULL){
+                                                                                        $$ = $1;
+                                                                                        add_brother_end($$,$2);
+                                                                                    }
+                                                                                    else{
+                                                                                        $$ = $2;
+                                                                                    }
+                                                                                    
+                                                                                    
                                                                                 }
                 ;
 
 Restatement:    Empty                                                           { $$ = $1; }
 
         |       Statement Restatement                                           {
-                                                                                    $$ = $1;
-                                                                                    add_brother_end($$,$2);
+                                                                                    if($1 != NULL){
+                                                                                        $$ = $1;
+                                                                                        add_brother_end($$,$2);
+                                                                                    }
+                                                                                    else{
+                                                                                        $$ = $2;
+                                                                                    }
                                                                                 }
         ;
 
