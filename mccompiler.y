@@ -119,7 +119,7 @@
 }
 
 %nonassoc "then"
-%nonassoc ELSE
+
 
 
 %left COMMA
@@ -130,9 +130,10 @@
 %left GE LE GT LT
 %left PLUS MINUS
 %left AST DIV MOD
-%nonassoc "pos" "neg"
+%nonassoc "pos" "neg" "pointer"
 %right NOT AMP
 %left LPAR RPAR LSQ RSQ LBRACE RBRACE
+%nonassoc ELSE
 
 %%
  //Start
@@ -184,8 +185,8 @@ FunctionDefinition: TypeSpec FunctionDeclarator FunctionBody                    
  //FunctionDeclaration
 FunctionDeclaration: TypeSpec FunctionDeclarator SEMI                           {
                                                                                     $$ = create_simple_node("FuncDeclaration");
-                                                                                    add_child($$, $2);
                                                                                     add_child($$, $1);
+                                                                                    add_brother_end($$->luke,$2);
                                                                                 }
                 ;
 
@@ -561,7 +562,7 @@ ExprSpecial:    ExprSpecial ASSIGN ExprSpecial                                  
                                                                                     $$ = create_simple_node("Plus");
                                                                                     add_child($$,$2);
                                                                                 }
-        |       AST ExprSpecial                                                 {
+        |       AST ExprSpecial  %prec "Pointer"                                             {
                                                                                     $$ = create_simple_node("Deref"); /* PODE ESTAR TROCADO COM O DE BAIXO*/
                                                                                     add_child($$,$2);
                                                                                 }
@@ -666,7 +667,7 @@ tree_node* create_simple_node(char* name) {
         new_node->luke = NULL;
         new_node->darth_vader = NULL;
     } else {
-        printf("ERROR SIMPLE NODE\n");
+        /*printf("ERROR SIMPLE NODE\n");*/
     }
 
     return new_node;
@@ -683,7 +684,7 @@ tree_node* create_int_node(char* name, int value) {
 
         new_node->value_int = value;
     } else {
-        printf("ERROR INT NODE\n");
+        /*printf("ERROR INT NODE\n");*/
     }
 
     return new_node;
@@ -700,7 +701,7 @@ tree_node* create_str_node(char* name, char* value) {
 
         strcpy(new_node->value_str, value);
     } else {
-        printf("ERROR STR NODE\n");
+        /*printf("ERROR STR NODE\n");*/
     }
 
     return new_node;
