@@ -29,6 +29,7 @@
 
     tree_node* root = NULL;
     tree_node* auxId = NULL;
+    tree_node* auxNull = NULL;
     tree_node* auxIntLit = NULL;
     tree_node* auxChrLit = NULL;
     tree_node* auxStrLit = NULL;
@@ -215,17 +216,17 @@ FunctionDeclarator: ZMast ID LPAR ParameterList RPAR                            
  //FunctionBody
 FunctionBody: LBRACE Redeclaration ReSpecialStatement  RBRACE                   {
                                                                                     $$ = create_simple_node("FuncBody");
-                                                                                    if($2 != NULL){
-                                                                                        add_child($$, $2);
-                                                                                        add_brother_end($2,$3);
+                                                                                    if($2 != NULL || $3 != NULL) {
+                                                                                        if($2 != NULL){
+                                                                                            add_child($$, $2);
+                                                                                            add_brother_end($2,$3);
+                                                                                        }
+                                                                                        else{
+                                                                                            add_child($$, $3);
+                                                                                        }
                                                                                     }
-                                                                                    else{
-                                                                                        add_child($$, $3);
-                                                                                    }
-
-
                                                                                 }
-        |     LBRACE error  RBRACE                                              { }
+        |     LBRACE error  RBRACE                                              { $$ = NULL; }
         ;
 
  //ParameterList
@@ -271,7 +272,7 @@ Declaration:    TypeSpec Declarator CommaDeclarator SEMI                        
                                                                                         aux = aux->next_brother;
                                                                                     }
                                                                                 }
-        |       error SEMI                                                      { }
+        |       error SEMI                                                      { $$ = NULL; }
         ;
 
 Redeclaration:  Empty                                                           { $$ = $1; }
@@ -328,7 +329,7 @@ CommaDeclarator:    Empty                                                       
             ;
 
  //Statement
-Statement:      error SEMI                                                      { }
+Statement:      error SEMI                                                      { $$ = NULL; }
         |       StatementSpecial                                                { $$ = $1; }
         ;
 
@@ -342,24 +343,43 @@ StatementSpecial:   ZUExpr SEMI                                                 
                                                                                     $$ = $2;
                                                                                 }
         |           LBRACE RBRACE                                               { $$ = NULL; }
-        |           LBRACE error RBRACE                                         {  }
+        |           LBRACE error RBRACE                                         { $$ = NULL; }
         |           IF LPAR Expr RPAR Statement %prec "then"                    {
                                                                                     $$ = create_simple_node("If");
                                                                                     add_child($$,$3);
-                                                                                    add_brother_end($$->luke,$5);
-                                                                                    add_brother_end($$->luke, create_simple_node("Null")); /* porque if tem de ter 3 filhos*/
+                                                                                    if($5 != NULL) {
+                                                                                        add_brother_end($3,$5);
+                                                                                    }
+                                                                                    // add_brother_end($$->luke, create_simple_node("Null")); /* porque if tem de ter 3 filhos*/
                                                                                 }
         |           IF LPAR Expr RPAR Statement ELSE Statement                  {
                                                                                     $$ = create_simple_node("If");
                                                                                     add_child($$,$3);
-                                                                                    add_brother_end($$->luke,$5);
-                                                                                    add_brother_end($$->luke,$7);
+                                                                                    add_brother_end($3,$5);
+                                                                                    if($7 != NULL) {
+                                                                                        add_brother_end($3,$7);
+                                                                                    }
                                                                                 }
         |           FOR LPAR ZUExpr SEMI ZUExpr SEMI ZUExpr RPAR Statement      {
                                                                                     $$ = create_simple_node("For");
-                                                                                    add_child($$,$3);
-                                                                                    add_brother_end($$->luke,$5);
-                                                                                    add_brother_end($$->luke,$7);
+                                                                                    if($3 != NULL) {
+                                                                                        add_child($$,$3);
+                                                                                    } else {
+                                                                                        auxNull = create_simple_node("Null");
+                                                                                        add_child($$,auxNull);
+                                                                                    }
+                                                                                    if ($5 != NULL) {
+                                                                                        add_brother_end($$->luke,$5);
+                                                                                    } else {
+                                                                                        auxNull = create_simple_node("Null");
+                                                                                        add_brother_end($$->luke,auxNull);
+                                                                                    }
+                                                                                    if ($7 != NULL) {
+                                                                                        add_brother_end($$->luke,$7);
+                                                                                    } else {
+                                                                                        auxNull = create_simple_node("Null");
+                                                                                        add_brother_end($$->luke,auxNull);
+                                                                                    }
                                                                                     add_brother_end($$->luke,$9);
                                                                                 }
         |           RETURN ZUExpr SEMI                                          {
@@ -513,13 +533,13 @@ ExprSpecial:    ExprSpecial ASSIGN ExprSpecial                                  
         |       LPAR Expr RPAR                                                  {
                                                                                     $$ = $2;
                                                                                 }
-        |       LPAR error RPAR                                                 { }
+        |       LPAR error RPAR                                                 { $$ = NULL; }
         |       ID LPAR ZUExprZMComma RPAR                                      {
                                                                                     $$ = create_simple_node("Call");
                                                                                     add_child($$, create_str_node("Id",$1));
                                                                                     add_brother_end($$->luke,$3);
                                                                                 }
-        |       ID LPAR error RPAR                                              { }
+        |       ID LPAR error RPAR                                              { $$ = NULL; }
         |       ExprSpecial LSQ Expr RSQ                                        {
                                                                                     $$ = create_simple_node("Deref");
                                                                                     add_child($$, create_simple_node("Add"));
@@ -559,7 +579,7 @@ ZUid:   Empty                                                                   
                                                                                 }
     ;
 
-ZUExpr: Empty                                                                   { $$ = create_simple_node("Null"); }
+ZUExpr: Empty                                                                   { /*$$ = create_simple_node("Null");*/ $$ = NULL; } // CREATE NODE??
     |   Expr                                                                    {
                                                                                     $$ = $1;
                                                                                 }
