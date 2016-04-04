@@ -304,8 +304,9 @@ Declarator: ZMast ID                                                            
                                                                                         add_brother_end($$->luke, auxId);
                                                                                         add_brother_end($$->luke, auxIntLit);
                                                                                     } else {
-                                                                                        add_child($$, auxIntLit);
-                                                                                        add_brother_end(auxIntLit, auxId);
+
+                                                                                        add_child($$, auxId);
+                                                                                        add_brother_end(auxId, auxIntLit);
                                                                                     }
                                                                                 }
         ;
@@ -393,9 +394,9 @@ StatementSpecial:   ZUExpr SEMI                                                 
                                                                                         add_child($$, create_simple_node("Null"));
                                                                                     }
                                                                                     else{
-                                                                                        add_child($$,$2);    
+                                                                                        add_child($$,$2);
                                                                                     }
-                                                                                    
+
                                                                                 }
         ;
 

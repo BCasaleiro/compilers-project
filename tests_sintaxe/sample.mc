@@ -1,6 +1,2 @@
-char buffer[20];
-int main(int argc, char **argv) {
-
-    
-
-}
+int a[10], b[20];
+int *c[10], **d[20];
