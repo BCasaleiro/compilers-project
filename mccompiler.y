@@ -120,7 +120,6 @@
 
 %nonassoc "then"
 %nonassoc ELSE
-%nonassoc "pos" "neg"
 
 
 %left COMMA
@@ -131,6 +130,7 @@
 %left GE LE GT LT
 %left PLUS MINUS
 %left AST DIV MOD
+%nonassoc "pos" "neg"
 %right NOT AMP
 %left LPAR RPAR LSQ RSQ LBRACE RBRACE
 
@@ -402,20 +402,35 @@ StatementSpecial:   ZUExpr SEMI                                                 
 
 
 StatList:       Statement Statement Restatement                                 {
+                                                                                    int stat_num = 0;
+                                                                                    tree_node * stat_aux = $3;
+                                                                                    while (stat_aux != NULL) {
+                                                                                        stat_num +=1;
+                                                                                        stat_aux = stat_aux -> next_brother;
+                                                                                    }                                                                                    
                                                                                     if($1 != NULL && $2 != NULL) {
                                                                                         $$ = create_simple_node("StatList");
                                                                                         add_child($$,$1);
                                                                                         add_brother_end($$->luke,$2);
                                                                                         add_brother_end($$->luke,$3);
                                                                                     } else {
-                                                                                        if($1 != NULL && $2 == NULL) {
-                                                                                            $$ = $1;
-                                                                                            add_brother_end($$, $3);
-                                                                                        } else if($2 != NULL && $1 == NULL) {
+                                                                                        if($1 != NULL && $2 == NULL && stat_num >=1) {
+                                                                                            $$ = create_simple_node("StatList");
+                                                                                            add_child($$,$1);
+                                                                                            add_brother_end($$->luke, $3);
+                                                                                        }else if($2 != NULL && $1 == NULL && stat_num >=1){
+                                                                                            $$ = create_simple_node("StatList");
+                                                                                            add_child($$,$2);
+                                                                                            add_brother_end($$->luke, $3);
+                                                                                        }else if($2 != NULL && $1 == NULL) {
                                                                                             $$ = $2;
                                                                                             add_brother_end($$, $3);
-                                                                                        } else if($2 == NULL && $1 == NULL) {
-                                                                                            $$ = $3;
+                                                                                        }else if($1 != NULL && $2 == NULL){
+                                                                                            $$ = $1;
+                                                                                            add_brother_end($$, $3);
+                                                                                        }else if($2 == NULL && $1 == NULL && stat_num >=2) {
+                                                                                            $$ = create_simple_node("StatList");
+                                                                                            add_child($$,$3);
                                                                                         }
                                                                                     }
                                                                                 }
