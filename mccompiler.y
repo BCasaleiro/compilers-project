@@ -349,15 +349,24 @@ StatementSpecial:   ZUExpr SEMI                                                 
                                                                                     add_child($$,$3);
                                                                                     if($5 != NULL) {
                                                                                         add_brother_end($3,$5);
+                                                                                    } else {
+                                                                                        add_brother_end($3,create_simple_node("Null"));
                                                                                     }
+                                                                                    add_brother_end($3,create_simple_node("Null"));
                                                                                     // add_brother_end($$->luke, create_simple_node("Null")); /* porque if tem de ter 3 filhos*/
                                                                                 }
         |           IF LPAR Expr RPAR Statement ELSE Statement                  {
                                                                                     $$ = create_simple_node("If");
                                                                                     add_child($$,$3);
-                                                                                    add_brother_end($3,$5);
+                                                                                    if($5 != NULL) {
+                                                                                        add_brother_end($3,$5);
+                                                                                    } else {
+                                                                                        add_brother_end($3,create_simple_node("Null"));
+                                                                                    }
                                                                                     if($7 != NULL) {
                                                                                         add_brother_end($3,$7);
+                                                                                    } else {
+                                                                                        add_brother_end($3,create_simple_node("Null"));
                                                                                     }
                                                                                 }
         |           FOR LPAR ZUExpr SEMI ZUExpr SEMI ZUExpr RPAR Statement      {
@@ -380,7 +389,12 @@ StatementSpecial:   ZUExpr SEMI                                                 
                                                                                         auxNull = create_simple_node("Null");
                                                                                         add_brother_end($$->luke,auxNull);
                                                                                     }
-                                                                                    add_brother_end($$->luke,$9);
+                                                                                    if($9 != NULL) {
+                                                                                        add_brother_end($$->luke,$9);
+                                                                                    } else {
+                                                                                        auxNull = create_simple_node("Null");
+                                                                                        add_brother_end($$->luke,auxNull);
+                                                                                    }
                                                                                 }
         |           RETURN ZUExpr SEMI                                          {
                                                                                     $$ = create_simple_node("Return");

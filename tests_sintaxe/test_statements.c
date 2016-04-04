@@ -23,7 +23,7 @@ int main(int argc, char **argv) {
 
     if (ass == ssa){
     	;;
-    	a + b; 
+    	a + b;
     	;
     	;;
     	a + c;
@@ -49,7 +49,7 @@ int main(int argc, char **argv) {
 
 			    if (ass == ssa){
 			    	;;
-			    	a + b; 
+			    	a + b;
 			    	;
 			    	;;
 			    	a + c;
@@ -62,7 +62,7 @@ int main(int argc, char **argv) {
 			    	{{}}
 			    	{{}a = b + c; }
 			    }
-    			
+
     		}
     	}
 
@@ -75,7 +75,7 @@ int main(int argc, char **argv) {
     	for ( ; ; ){
     		if (ass == ssa * nt){
 		    	;;
-		    	a + b; 
+		    	a + b;
 		    	;
 		    	;;
 		    	a + c;
@@ -94,7 +94,7 @@ int main(int argc, char **argv) {
             if(a == t){
                 sdf = d + 1;
             }
-			
+
     	}
         ;
         {{}}
@@ -103,7 +103,7 @@ int main(int argc, char **argv) {
         ;
         {};
 
-        
+
 
         if(a==b){if(a==b){if(a==b){}else{}}else{if(a==b){if(a==b){if(a==b){if(a==b){if(a==b){};}}};};} c = a + b;}else{if(a==b){if(a==b){}else{}}else{if(a==b){}else{}}}
 
@@ -135,6 +135,6 @@ int main(int argc, char **argv) {
     a(1,b,*a,&as);
     **a(1,b,*a,&as);
 
-	return 0; 
+	return 0;
 
 }
