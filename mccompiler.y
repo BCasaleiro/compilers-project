@@ -399,7 +399,13 @@ StatementSpecial:   ZUExpr SEMI                                                 
                                                                                 }
         |           RETURN ZUExpr SEMI                                          {
                                                                                     $$ = create_simple_node("Return");
-                                                                                    add_child($$,$2);
+                                                                                    if($2 == NULL){
+                                                                                        add_child($$, create_simple_node("Null"));
+                                                                                    }
+                                                                                    else{
+                                                                                        add_child($$,$2);    
+                                                                                    }
+                                                                                    
                                                                                 }
         ;
 
