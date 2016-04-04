@@ -21,8 +21,7 @@
 
         char name[MAX_STR];
 
-        int value_int;
-        char value_str[MAX_STR];
+        char value[MAX_STR];
     } tree_node;
 
     int flag_error = 0;
@@ -112,7 +111,7 @@
 
 %union{
     char*   id;
-    int     intlit;
+    char*   intlit;
     char*   chrlit;
     char*   strlit;
     struct _tree_node* node;
@@ -120,7 +119,6 @@
 
 %nonassoc "then"
 %nonassoc ELSE
-
 
 %left COMMA
 %right ASSIGN
@@ -139,36 +137,48 @@
 Start:  FunctionDefinition Restart                                              {
                                                                                     $$ = create_simple_node("Program");
                                                                                     root = $$;
-                                                                                    add_child($$, $1);
-                                                                                    add_brother_end($1, $2);
+                                                                                    if($1 != NULL) {
+                                                                                        add_child($$, $1);
+                                                                                        add_brother_end($1, $2);
+                                                                                    }
                                                                                 }
     |   FunctionDeclaration Restart                                             {
                                                                                     $$ = create_simple_node("Program");
                                                                                     root = $$;
-                                                                                    add_child($$, $1);
-                                                                                    add_brother_end($1, $2);
+                                                                                    if($1 != NULL) {
+                                                                                        add_child($$, $1);
+                                                                                        add_brother_end($1, $2);
+                                                                                    }
                                                                                 }
     |   Declaration Restart                                                     {
                                                                                     $$ = create_simple_node("Program");
                                                                                     root = $$;
 
-                                                                                    add_child($$, $1);
-                                                                                    add_brother_end($1, $2);
+                                                                                    if($1 != NULL) {
+                                                                                        add_child($$, $1);
+                                                                                        add_brother_end($1, $2);
+                                                                                    }
                                                                                 }
     ;
 
 Restart:    Empty                                                               { $$ = $1; }
     |       FunctionDefinition Restart                                          {
                                                                                     $$ = $1;
-                                                                                    add_brother_end($$, $2);
+                                                                                    if($1 != NULL) {
+                                                                                        add_brother_end($1, $2);
+                                                                                    }
                                                                                 }
     |       FunctionDeclaration Restart                                         {
                                                                                     $$ = $1;
-                                                                                    add_brother_end($$, $2);
+                                                                                    if($1 != NULL) {
+                                                                                        add_brother_end($1, $2);
+                                                                                    }
                                                                                 }
     |       Declaration Restart                                                 {
                                                                                     $$ = $1;
-                                                                                    add_brother_end($$, $2);
+                                                                                    if($1 != NULL) {
+                                                                                        add_brother_end($1, $2);
+                                                                                    }
                                                                                 }
     ;
 
@@ -298,7 +308,7 @@ Declarator: ZMast ID                                                            
         |   ZMast ID LSQ INTLIT RSQ                                             {
                                                                                     $$ = create_simple_node("ArrayDeclaration");
                                                                                     auxId = create_str_node("Id", $2);
-                                                                                    auxIntLit = create_int_node("IntLit", $4);
+                                                                                    auxIntLit = create_str_node("IntLit", $4);
                                                                                     if($1 != NULL) {
                                                                                         $$->luke = $1;
                                                                                         add_brother_end($$->luke, auxId);
@@ -573,7 +583,7 @@ ExprSpecial:    ExprSpecial ASSIGN ExprSpecial                                  
                                                                                     $$ = create_str_node("Id",$1);
                                                                                 }
         |       INTLIT                                                          {
-                                                                                    $$ = create_int_node("IntLit",$1);
+                                                                                    $$ = create_str_node("IntLit",$1);
                                                                                 }
         |       CHRLIT                                                          {
                                                                                     $$ = create_str_node("ChrLit",$1);
@@ -652,8 +662,8 @@ typedef struct _tree_node {
     struct _tree_node* luke;
     char* name;
 
-    int value_int;
-    char* value_str;
+    int value;
+    char* value;
 } tree_node;
 */
 
@@ -672,23 +682,6 @@ tree_node* create_simple_node(char* name) {
     return new_node;
 }
 
-tree_node* create_int_node(char* name, int value) {
-    tree_node* new_node = (tree_node*)malloc(sizeof(tree_node));
-
-    if(new_node != NULL) {
-        strcpy(new_node->name, name);
-        new_node->next_brother = NULL;
-        new_node->luke = NULL;
-        new_node->darth_vader = NULL;
-
-        new_node->value_int = value;
-    } else {
-        printf("ERROR INT NODE\n");
-    }
-
-    return new_node;
-}
-
 tree_node* create_str_node(char* name, char* value) {
     tree_node* new_node = (tree_node*)malloc(sizeof(tree_node));
 
@@ -698,7 +691,7 @@ tree_node* create_str_node(char* name, char* value) {
         new_node->luke = NULL;
         new_node->darth_vader = NULL;
 
-        strcpy(new_node->value_str, value);
+        strcpy(new_node->value, value);
     } else {
         printf("ERROR STR NODE\n");
     }
@@ -726,14 +719,6 @@ void add_brother_end(tree_node* brother, tree_node* new_son) {
         }
         aux->next_brother = new_son;
         new_son->darth_vader = brother->darth_vader;
-    }
-}
-
-void add_brother_begining(tree_node* brother, tree_node* new_son) {
-    tree_node* aux = brother;
-    if(aux!= NULL && new_son != NULL) {
-        brother = new_son;
-        brother->next_brother = aux;
     }
 }
 

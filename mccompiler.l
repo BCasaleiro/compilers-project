@@ -21,8 +21,7 @@
 
         char name[MAX_STR];
 
-        int value_int;
-        char value_str[MAX_STR];
+        char value[MAX_STR];
     } tree_node;
 
     extern int flag_error;
@@ -219,7 +218,7 @@ return                          {
                                 }
 {intlit}                        {
                                     print_with_content("INTLIT", yytext);
-                                    yylval.intlit = atoi(yytext);
+                                    yylval.intlit = strdup(yytext);
                                     if(flag == 0 || flag == 3) { return INTLIT; }
                                 }
 {chrlit}                        {
@@ -279,11 +278,7 @@ int yywrap()
 }
 
 void print_terminal(tree_node* node){
-    if(strcmp(node->name, "Id") == 0 || strcmp(node->name, "ChrLit") == 0 || strcmp(node->name, "StrLit") == 0) {
-        printf("%s(%s)\n", node->name, node->value_str);
-    } else {
-        printf("%s(%d)\n", node->name, node->value_int);
-    }
+    printf("%s(%s)\n", node->name, node->value);
 }
 
 void print_points(int n){
@@ -331,7 +326,7 @@ int main(int argc, char const *argv[])
 
     if (flag == 0 || flag == 3) {
         yyparse();
-        
+
         if(flag == 3 && flag_error == 0) {
             print_tree(root, 0);
         }
