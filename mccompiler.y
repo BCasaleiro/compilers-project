@@ -389,7 +389,13 @@ StatementSpecial:   ZUExpr SEMI                                                 
                                                                                 }
         |           RETURN ZUExpr SEMI                                          {
                                                                                     $$ = create_simple_node("Return");
-                                                                                    add_child($$,$2);
+                                                                                    if($2 == NULL){
+                                                                                        add_child($$, create_simple_node("Null"));
+                                                                                    }
+                                                                                    else{
+                                                                                        add_child($$,$2);    
+                                                                                    }
+                                                                                    
                                                                                 }
         ;
 
@@ -445,7 +451,9 @@ Expr:    ExprSpecial                                                            
                                                                                     $$ = $1;
                                                                                 }
     |    Expr COMMA ExprSpecial                                                 {
-                                                                                    $$ = $3;
+                                                                                    $$ = create_simple_node("Comma");
+                                                                                    add_child($$,$1);
+                                                                                    add_brother_end($$->luke,$3);
                                                                                 }
     ;
 
