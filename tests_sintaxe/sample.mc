@@ -1,17 +1,9 @@
-char buffer[20];
+char buffer[20],,;
 int main(int argc, char **argv) {
 
-    if (ass == ssa){
+    if (a==b){
         ;;
-        a + b;
-        ;
-        a + c;
-        ;;;
-        d + o;
-        d + y;
-        {a = 2;};
-        {}{}
-        {{}}
+        a+1;
     }
 
 }

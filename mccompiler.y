@@ -119,29 +119,20 @@
 
 %nonassoc "then"
 %nonassoc ELSE
+%nonassoc POS NEG
 
 
-%left LPAR
-%left RPAR
-%left LSQ
-%left RSQ
-%right ASSIGN
 %left COMMA
-%left MOD
-%left AST
-%left DIV
-%left MINUS
-%left PLUS
-%left GE
-%left LE
-%left GT
-%left LT
-%left EQ
-%left NE
-%left NOT
+%right ASSIGN
 %left OR
 %left AND
-%left AMP
+%left EQ NE
+%left GE LE GT LT
+%left PLUS MINUS
+%left AST DIV MOD
+%right NOT AMP
+%left LPAR RPAR LSQ RSQ LBRACE RBRACE
+
 
 
 %%
@@ -428,7 +419,9 @@ ReSpecialStatement: Empty                                                       
 
                 |   StatementSpecial ReSpecialStatement                         {
                                                                                     $$ = $1;
-                                                                                    add_brother_end($$,$2);
+                                                                                    if($2 != NULL) {
+                                                                                        add_brother_end($$,$2);
+                                                                                    }
                                                                                 }
                 ;
 
@@ -436,7 +429,10 @@ Restatement:    Empty                                                           
 
         |       Statement Restatement                                           {
                                                                                     $$ = $1;
-                                                                                    add_brother_end($$,$2);
+                                                                                    if($2 != NULL) {
+                                                                                        add_brother_end($$,$2);
+                                                                                    }
+
                                                                                 }
         ;
 
