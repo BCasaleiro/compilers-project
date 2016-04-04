@@ -418,9 +418,12 @@ StatList:       Statement Statement Restatement                                 
 ReSpecialStatement: Empty                                                       { $$ = $1; }
 
                 |   StatementSpecial ReSpecialStatement                         {
-                                                                                    $$ = $1;
-                                                                                    if($2 != NULL){
+                                                                                    if($1 != NULL){
+                                                                                        $$ = $1;
                                                                                         add_brother_end($$,$2);
+                                                                                    }
+                                                                                    else{
+                                                                                        $$ = $2;
                                                                                     }
                                                                                 }
                 ;
@@ -428,11 +431,13 @@ ReSpecialStatement: Empty                                                       
 Restatement:    Empty                                                           { $$ = $1; }
 
         |       Statement Restatement                                           {
-                                                                                    $$ = $1;
-                                                                                    if($2 != NULL) {
+                                                                                    if($1 != NULL){
+                                                                                        $$ = $1;
                                                                                         add_brother_end($$,$2);
                                                                                     }
-
+                                                                                    else{
+                                                                                        $$ = $2;
+                                                                                    }
                                                                                 }
         ;
 
