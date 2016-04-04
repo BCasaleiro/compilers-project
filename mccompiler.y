@@ -419,7 +419,7 @@ ReSpecialStatement: Empty                                                       
 
                 |   StatementSpecial ReSpecialStatement                         {
                                                                                     $$ = $1;
-                                                                                    if($2 != NULL) {
+                                                                                    if($2 != NULL){
                                                                                         add_brother_end($$,$2);
                                                                                     }
                                                                                 }
