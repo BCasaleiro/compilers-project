@@ -331,7 +331,7 @@ int main(int argc, char const *argv[])
 
     if (flag == 0 || flag == 3) {
         yyparse();
-
+        
         if(flag == 3 && flag_error == 0) {
             print_tree(root, 0);
         }
