@@ -120,10 +120,13 @@
 %nonassoc "then"
 %nonassoc ELSE
 
+
 %left LPAR
 %left RPAR
 %left LSQ
 %left RSQ
+%right ASSIGN
+%left COMMA
 %left MOD
 %left AST
 %left DIV
@@ -139,8 +142,7 @@
 %left OR
 %left AND
 %left AMP
-%right ASSIGN
-%left COMMA
+
 
 %%
  //Start
@@ -184,7 +186,10 @@ Restart:    Empty                                                               
 
  //FunctionDefinition
 FunctionDefinition: TypeSpec FunctionDeclarator FunctionBody                    {
-
+                                                                                    $$ = create_simple_node("FuncDefinition");
+                                                                                    add_child($$, $1);
+                                                                                    add_brother_end($1,$2);
+                                                                                    add_brother_end($1,$3);
                                                                                 }
                 ;
 
@@ -212,6 +217,15 @@ FunctionDeclarator: ZMast ID LPAR ParameterList RPAR                            
 
  //FunctionBody
 FunctionBody: LBRACE Redeclaration ReSpecialStatement  RBRACE                   {
+                                                                                    $$ = create_simple_node("FuncBody");
+                                                                                    if($2 != NULL){
+                                                                                        add_child($$, $2);
+                                                                                        add_brother_end($2,$3);
+                                                                                    }
+                                                                                    else{
+                                                                                        add_child($$, $3);
+                                                                                    }
+
 
                                                                                 }
         |     LBRACE error  RBRACE                                              { }
@@ -254,9 +268,10 @@ Declaration:    TypeSpec Declarator CommaDeclarator SEMI                        
         |       error SEMI                                                      { }
         ;
 
-Redeclaration:  Empty                                                           {  }
+Redeclaration:  Empty                                                           { $$ = $1; }
         |       Declaration Redeclaration                                       {
-
+                                                                                    add_brother_end($$,$2);
+                                                                                    $$ = $1;
                                                                                 }
         ;
 
@@ -307,157 +322,216 @@ CommaDeclarator:    Empty                                                       
 
  //Statement
 Statement:      error SEMI                                                      { }
-        |       StatementSpecial                                                {  }
+        |       StatementSpecial                                                { $$ = $1; }
         ;
 
 StatementSpecial:   ZUExpr SEMI                                                 {
-
+                                                                                    $$ = $1;
                                                                                 }
         |           LBRACE StatList RBRACE                                      {
-
+                                                                                    $$ = $2;
                                                                                 }
-        |           LBRACE RBRACE                                               {  }
+        |           LBRACE Statement RBRACE                                     {
+                                                                                    $$ = $2;
+                                                                                }
+        |           LBRACE RBRACE                                               { $$ = NULL; }
         |           LBRACE error RBRACE                                         {  }
         |           IF LPAR Expr RPAR Statement %prec "then"                    {
-
+                                                                                    $$ = create_simple_node("If");
+                                                                                    add_child($$,$3);
+                                                                                    add_brother_end($$->luke,$5);
+                                                                                    add_brother_end($$->luke, create_simple_node("Null")); /* porque if tem de ter 3 filhos*/
                                                                                 }
         |           IF LPAR Expr RPAR Statement ELSE Statement                  {
-
+                                                                                    $$ = create_simple_node("If");
+                                                                                    add_child($$,$3);
+                                                                                    add_brother_end($$->luke,$5);
+                                                                                    add_brother_end($$->luke,$7);
                                                                                 }
         |           FOR LPAR ZUExpr SEMI ZUExpr SEMI ZUExpr RPAR Statement      {
-
+                                                                                    $$ = create_simple_node("For");
+                                                                                    add_child($$,$3);
+                                                                                    add_brother_end($$->luke,$5);
+                                                                                    add_brother_end($$->luke,$7);
+                                                                                    add_brother_end($$->luke,$9);
                                                                                 }
         |           RETURN ZUExpr SEMI                                          {
-
+                                                                                    $$ = create_simple_node("Return");
+                                                                                    add_child($$,$2);
                                                                                 }
         ;
 
 
-StatList:       Statement Restatement                                           {
-
+StatList:       Statement Statement Restatement                                 {
+                                                                                    $$ = create_simple_node("StatList");
+                                                                                    add_child($$,$1);
+                                                                                    add_brother_end($$->luke,$2);
+                                                                                    add_brother_end($$->luke,$3);
                                                                                 }
     ;
 
-ReSpecialStatement: Empty                                                       {  }
+ReSpecialStatement: Empty                                                       { $$ = $1; }
 
                 |   StatementSpecial ReSpecialStatement                         {
-
+                                                                                    $$ = $1;
+                                                                                    add_brother_end($$,$2);
                                                                                 }
                 ;
 
-Restatement:    Empty                                                           {  }
+Restatement:    Empty                                                           { $$ = $1; }
 
         |       Statement Restatement                                           {
-
+                                                                                    $$ = $1;
+                                                                                    add_brother_end($$,$2);
                                                                                 }
         ;
 
  //Expr
 Expr:    ExprSpecial                                                            {
-
+                                                                                    $$ = $1;
                                                                                 }
     |    Expr COMMA ExprSpecial                                                 {
-
+                                                                                    $$ = $3; /*caso virgula, nao sei se esta bem (os valores são todos descartados excepto o mais a direita)*/
                                                                                 }
     ;
 
 ExprSpecial:    ExprSpecial ASSIGN ExprSpecial                                  {
-
+                                                                                    $$ = create_simple_node("Store");
+                                                                                    add_child($$,$1);
+                                                                                    add_brother_end($1,$3);
                                                                                 }
 
         |       ExprSpecial AND ExprSpecial                                     {
-
+                                                                                    $$ = create_simple_node("And");
+                                                                                    add_child($$,$1);
+                                                                                    add_brother_end($1,$3);
                                                                                 }
 
 
         |       ExprSpecial OR ExprSpecial                                      {
-
+                                                                                    $$ = create_simple_node("Or");
+                                                                                    add_child($$,$1);
+                                                                                    add_brother_end($1,$3);
                                                                                 }
 
         |       ExprSpecial EQ ExprSpecial                                      {
-
+                                                                                    $$ = create_simple_node("Eq");
+                                                                                    add_child($$,$1);
+                                                                                    add_brother_end($1,$3);
                                                                                 }
 
         |       ExprSpecial NE ExprSpecial                                      {
-
+                                                                                    $$ = create_simple_node("Ne");
+                                                                                    add_child($$,$1);
+                                                                                    add_brother_end($1,$3);
                                                                                 }
 
         |       ExprSpecial LT ExprSpecial                                      {
-
+                                                                                    $$ = create_simple_node("Lt");
+                                                                                    add_child($$,$1);
+                                                                                    add_brother_end($1,$3);
                                                                                 }
         |       ExprSpecial GT ExprSpecial                                      {
-
+                                                                                    $$ = create_simple_node("Gt");
+                                                                                    add_child($$,$1);
+                                                                                    add_brother_end($1,$3);
                                                                                 }
         |       ExprSpecial LE ExprSpecial                                      {
-
+                                                                                    $$ = create_simple_node("Le");
+                                                                                    add_child($$,$1);
+                                                                                    add_brother_end($1,$3);
                                                                                 }
         |       ExprSpecial GE ExprSpecial                                      {
-
+                                                                                    $$ = create_simple_node("Ge");
+                                                                                    add_child($$,$1);
+                                                                                    add_brother_end($1,$3);
                                                                                 }
         |       ExprSpecial PLUS ExprSpecial                                    {
-
+                                                                                    $$ = create_simple_node("Add");
+                                                                                    add_child($$,$1);
+                                                                                    add_brother_end($1,$3);
                                                                                 }
         |       ExprSpecial MINUS ExprSpecial                                   {
-
+                                                                                    $$ = create_simple_node("Sub");
+                                                                                    add_child($$,$1);
+                                                                                    add_brother_end($1,$3);
                                                                                 }
         |       ExprSpecial AST ExprSpecial                                     {
-
+                                                                                    $$ = create_simple_node("Mul");
+                                                                                    add_child($$,$1);
+                                                                                    add_brother_end($1,$3);
                                                                                 }
         |       ExprSpecial DIV ExprSpecial                                     {
-
+                                                                                    $$ = create_simple_node("Div");
+                                                                                    add_child($$,$1);
+                                                                                    add_brother_end($1,$3);
                                                                                 }
         |       ExprSpecial MOD ExprSpecial                                     {
-
+                                                                                    $$ = create_simple_node("Mod");
+                                                                                    add_child($$,$1);
+                                                                                    add_brother_end($1,$3);
                                                                                 }
         |       NOT ExprSpecial                                                 {
-
+                                                                                    $$ = create_simple_node("Not");
+                                                                                    add_child($$,$2);
                                                                                 }
         |       MINUS ExprSpecial                                               {
-
+                                                                                    $$ = create_simple_node("Minus");
+                                                                                    add_child($$,$2);
                                                                                 }
         |       PLUS ExprSpecial                                                {
-
+                                                                                    $$ = create_simple_node("Plus");
+                                                                                    add_child($$,$2);
                                                                                 }
         |       AST ExprSpecial                                                 {
-
+                                                                                    $$ = create_simple_node("Deref"); /* PODE ESTAR TROCADO COM O DE BAIXO*/
+                                                                                    add_child($$,$2);
                                                                                 }
         |       AMP ExprSpecial                                                 {
-
+                                                                                    $$ = create_simple_node("Addr"); /* PODE ESTAR TROCADO COM O DE CIMA*/
+                                                                                    add_child($$,$2);
                                                                                 }
         |       ID                                                              {
-
+                                                                                    $$ = create_str_node("Id",$1);
                                                                                 }
         |       INTLIT                                                          {
-
+                                                                                    $$ = create_int_node("IntLit",$1);
                                                                                 }
         |       CHRLIT                                                          {
-
+                                                                                    $$ = create_str_node("ChrLit",$1);
                                                                                 }
         |       STRLIT                                                          {
-
+                                                                                    $$ = create_str_node("StrLit",$1);
                                                                                 }
         |       LPAR Expr RPAR                                                  {
-
+                                                                                    $$ = $2;
                                                                                 }
         |       LPAR error RPAR                                                 { }
         |       ID LPAR ZUExprZMComma RPAR                                      {
-
+                                                                                    $$ = create_simple_node("Call");
+                                                                                    add_child($$, create_str_node("Id",$1));
+                                                                                    add_brother_end($$->luke,$3);
                                                                                 }
         |       ID LPAR error RPAR                                              { }
         |       ExprSpecial LSQ Expr RSQ                                        {
-
+                                                                                    $$ = create_simple_node("Deref");
+                                                                                    add_child($$, create_simple_node("Add"));
+                                                                                    add_child($$->luke,$1);
+                                                                                    add_brother_end($$->luke->luke,$3);
                                                                                 }
         ;
 
 ZUExprZMComma:  Empty                                                           { $$ = $1; }
             |   ExprSpecial ZMComma                                             {
-
+                                                                                    $$ = $1;
+                                                                                    add_brother_end($$,$2);
                                                                                 }
             ;
 
 ZMComma:    Empty                                                               { $$ = $1; }
-    |       ZMComma COMMA ExprSpecial                                           {
-
+    |       COMMA ExprSpecial ZMComma                                           {
+                                                                                    $$ = $2;
+                                                                                    add_brother_end($$,$3);
                                                                                 }
     ;
 
@@ -478,9 +552,9 @@ ZUid:   Empty                                                                   
                                                                                 }
     ;
 
-ZUExpr: Empty                                                                   {  }
+ZUExpr: Empty                                                                   { $$ = create_simple_node("Null"); }
     |   Expr                                                                    {
-
+                                                                                    $$ = $1;
                                                                                 }
     ;
 
