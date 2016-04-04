@@ -341,6 +341,7 @@ StatementSpecial:   ZUExpr SEMI                                                 
                                                                                 }
         |           LBRACE Statement RBRACE                                     {
                                                                                     $$ = $2;
+
                                                                                 }
         |           LBRACE RBRACE                                               { $$ = NULL; }
         |           LBRACE error RBRACE                                         { $$ = NULL; }
@@ -404,10 +405,22 @@ StatementSpecial:   ZUExpr SEMI                                                 
 
 
 StatList:       Statement Statement Restatement                                 {
-                                                                                    $$ = create_simple_node("StatList");
-                                                                                    add_child($$,$1);
-                                                                                    add_brother_end($$->luke,$2);
-                                                                                    add_brother_end($$->luke,$3);
+                                                                                    if($1 != NULL && $2 != NULL) {
+                                                                                        $$ = create_simple_node("StatList");
+                                                                                        add_child($$,$1);
+                                                                                        add_brother_end($$->luke,$2);
+                                                                                        add_brother_end($$->luke,$3);
+                                                                                    } else {
+                                                                                        if($1 != NULL && $2 == NULL) {
+                                                                                            $$ = $1;
+                                                                                            add_brother_end($$, $3);
+                                                                                        } else if($2 != NULL && $1 == NULL) {
+                                                                                            $$ = $2;
+                                                                                            add_brother_end($$, $3);
+                                                                                        } else if($2 == NULL && $1 == NULL) {
+                                                                                            $$ = $3;
+                                                                                        }
+                                                                                    }
                                                                                 }
     ;
 
@@ -593,7 +606,7 @@ ZUid:   Empty                                                                   
                                                                                 }
     ;
 
-ZUExpr: Empty                                                                   { /*$$ = create_simple_node("Null");*/ $$ = NULL; } // CREATE NODE??
+ZUExpr: Empty                                                                   { $$ = NULL; }
     |   Expr                                                                    {
                                                                                     $$ = $1;
                                                                                 }
