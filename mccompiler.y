@@ -452,7 +452,9 @@ Expr:    ExprSpecial                                                            
                                                                                     $$ = $1;
                                                                                 }
     |    Expr COMMA ExprSpecial                                                 {
-                                                                                    $$ = $3;
+                                                                                    $$ = create_simple_node("Comma");
+                                                                                    add_child($$,$1);
+                                                                                    add_brother_end($$->luke,$3);
                                                                                 }
     ;
 
