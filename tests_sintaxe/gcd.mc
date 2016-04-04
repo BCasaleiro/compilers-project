@@ -4,7 +4,7 @@ int main(int argc, char **argv) {
     int a, b;
 
     a = atoi(argv[1]);
-    b = atoi(argv[1]);
+    b = atoi(argv[2]);
 
     if(a == 0) {
         puts(itoa(b, buffer));

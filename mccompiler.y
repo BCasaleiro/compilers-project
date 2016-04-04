@@ -130,7 +130,7 @@
 %left GE LE GT LT
 %left PLUS MINUS
 %left AST DIV MOD
-%nonassoc "pos" "neg"
+%nonassoc "pos" "neg" "pointer"
 %right NOT AMP
 %left LPAR RPAR LSQ RSQ LBRACE RBRACE
 
@@ -407,7 +407,7 @@ StatList:       Statement Statement Restatement                                 
                                                                                     while (stat_aux != NULL) {
                                                                                         stat_num +=1;
                                                                                         stat_aux = stat_aux -> next_brother;
-                                                                                    }                                                                                    
+                                                                                    }
                                                                                     if($1 != NULL && $2 != NULL) {
                                                                                         $$ = create_simple_node("StatList");
                                                                                         add_child($$,$1);
@@ -561,7 +561,7 @@ ExprSpecial:    ExprSpecial ASSIGN ExprSpecial                                  
                                                                                     $$ = create_simple_node("Plus");
                                                                                     add_child($$,$2);
                                                                                 }
-        |       AST ExprSpecial                                                 {
+        |       AST ExprSpecial %prec "pointer"                                 {
                                                                                     $$ = create_simple_node("Deref"); /* PODE ESTAR TROCADO COM O DE BAIXO*/
                                                                                     add_child($$,$2);
                                                                                 }
