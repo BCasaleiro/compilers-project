@@ -8,4 +8,5 @@ int main(char *argv, int argc){
 	int a;
 	int a;
 	a = (b*3>a || a,c*3<b);
+
 }
