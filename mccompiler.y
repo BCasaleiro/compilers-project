@@ -2,8 +2,7 @@
     #include <stdio.h>
     #include <stdlib.h>
     #include <string.h>
-
-    #define MAX_STR 100
+    #include "ast.h"
 
     extern int yylineno;
     extern char * yytext;
@@ -14,32 +13,16 @@
     void yyerror (char *s);
     extern int yylex();
 
-    typedef struct _tree_node {
-        struct _tree_node* darth_vader;
-        struct _tree_node* next_brother;
-        struct _tree_node* luke;
-
-        char name[MAX_STR];
-
-        char value[MAX_STR];
-    } tree_node;
-
     int flag_error = 0;
     int stat_list = 0;
 
     tree_node* root = NULL;
+
     tree_node* auxId = NULL;
     tree_node* auxNull = NULL;
     tree_node* auxIntLit = NULL;
     tree_node* auxChrLit = NULL;
     tree_node* auxStrLit = NULL;
-
-    tree_node* create_simple_node(char* name);
-    tree_node* create_int_node(char* name, int value);
-    tree_node* create_str_node(char* name, char* value);
-
-    void add_child(tree_node * father , tree_node * son);
-    void add_brother_end(tree_node* father, tree_node* new_son);
 %}
 
 %token AND
@@ -666,73 +649,6 @@ Empty:                                                                          
 %%
 
 /* A função main() está do lado do lex */
-
-/*
-typedef struct _tree_node {
-    struct _tree_node* darth_vader;
-    struct _tree_node* next_brother;
-    struct _tree_node* luke;
-    char* name;
-
-    int value;
-    char* value;
-} tree_node;
-*/
-
-tree_node* create_simple_node(char* name) {
-    tree_node* new_node = (tree_node*) malloc( sizeof(tree_node) );
-
-    if (new_node != NULL) {
-        strcpy(new_node->name, name);
-        new_node->next_brother = NULL;
-        new_node->luke = NULL;
-        new_node->darth_vader = NULL;
-    } else {
-        /*printf("ERROR SIMPLE NODE\n");*/
-    }
-
-    return new_node;
-}
-
-tree_node* create_str_node(char* name, char* value) {
-    tree_node* new_node = (tree_node*)malloc(sizeof(tree_node));
-
-    if(new_node != NULL) {
-        strcpy(new_node->name, name);
-        new_node->next_brother = NULL;
-        new_node->luke = NULL;
-        new_node->darth_vader = NULL;
-
-        strcpy(new_node->value, value);
-    } else {
-        /*printf("ERROR STR NODE\n");*/
-    }
-
-    return new_node;
-}
-
-/*Adicionar o filho son ao fim da lista de filhos de father*/
-void add_child(tree_node * father , tree_node * son){
-    if(father->luke != NULL) {
-        son->next_brother = father->luke;
-        son->darth_vader = father;
-        father->luke = son;
-    } else {
-        son->darth_vader = father;
-        father->luke = son;
-    }
-}
-
-void add_brother_end(tree_node* brother, tree_node* new_son) {
-    tree_node* aux = brother;
-    if(aux!= NULL && new_son != NULL) {
-        while(aux->next_brother != NULL) {
-            aux = aux->next_brother;
-        }
-        aux->next_brother = new_son;
-        new_son->darth_vader = brother->darth_vader;
-    }
-}
 
 void yyerror (char *s) {
 
