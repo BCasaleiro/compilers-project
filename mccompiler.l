@@ -6,7 +6,7 @@
     #include <string.h>
     #include <stdbool.h>
     #include "y.tab.h"
-    #include "ast.h"
+    #include "semantics.h"
 
     #define MAX_STR 100
 
@@ -297,6 +297,8 @@ int main(int argc, char const *argv[])
         if(flag == 3 && flag_error == 0) {
             print_tree(root, 0);
         }
+
+        semantics(root);
     } else {
         yylex();
     }
