@@ -10,6 +10,7 @@ table* init_table() {
 
     if(aux != NULL) {
         strcpy(aux->name, "Global Symbol Table");
+        aux->is_defined = true;
         insert_pre_defined_functions(aux);
     } else {
         printf("ERROR SYMBOL TABLE");
@@ -47,12 +48,15 @@ void insert_pre_defined_functions(table* c_table) {
     insert_function(c_table, "puts", "int", 0, char_puts);
 }
 
-table* insert_table(table* c_table, char* name) {
+table* insert_table(table* c_table, char* name, bool defined) {
     table* new_table = (table*) malloc( sizeof(table) );
     table* aux;
 
     if(new_table != NULL) {
         aux = c_table;
+
+        strcpy(new_table->name, name);
+        new_table->is_defined = defined;
 
         while(aux->next != NULL) {
             aux = aux->next;
@@ -156,6 +160,51 @@ void insert_symbol(table* symbol_table, char* symbol_name, char* symbol_type, in
     }
 }
 
+element_param* get_param_info(tree_node* node) {
+    element_param* param = (element_param*) malloc( sizeof(element_param) );
+    tree_node* aux = node->luke;
+
+    param->pointer = 0;
+
+    while(aux != NULL) {
+        if(strcmp(aux->name, "Id") == 0) {
+            strcpy(param->name, aux->value);
+        } else if(strcmp(aux->name, "Pointer") == 0) {
+            (param->pointer)++;
+        } else {
+            strcpy(param->type, aux->name);
+        }
+
+        aux = aux->next_brother;
+    }
+
+    return param;
+}
+
+element_param* get_params(tree_node* node) {
+    element_param* params = NULL;
+    element_param* aux_param;
+    element_param* aux_params;
+    tree_node* aux = node->luke;
+
+    while(aux != NULL) {
+        if(params == NULL) {
+            params = get_param_info(aux);
+        } else {
+            aux_param = get_param_info(aux);
+            aux_params = params;
+            while(aux_params->next != NULL) {
+                aux_params = aux_params->next;
+            }
+            aux_params->next = aux_param;
+        }
+
+        aux = aux->next_brother;
+    }
+
+    return params;
+}
+
 table_element *search_symbol(char *name) {
     table_element* symbol = NULL;
 
@@ -233,9 +282,11 @@ void print_tables(table* c_table) {
     table* aux = c_table;
 
     while(aux != NULL) {
-        printf("===== %s =====\n", aux->name);
+        if(aux->is_defined) {
+            printf("===== %s =====\n", aux->name);
 
-        print_elements(aux);
+            print_elements(aux);
+        }
 
         aux = aux->next;
     }
