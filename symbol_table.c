@@ -3,6 +3,7 @@
 #include <string.h>
 #include "symbol_table.h"
 
+
 table* init_table() {
     table* aux = (table*) malloc( sizeof(table) );
 
@@ -173,6 +174,10 @@ element_param* get_param_info(tree_node* node) {
     while(aux != NULL) {
         if(strcmp(aux->name, "Id") == 0) {
             strcpy(param->name, aux->value);
+            /*
+            to_lower_case(param->type);
+            strcpy(aux->type, param->type);
+            */
         } else if(strcmp(aux->name, "Pointer") == 0) {
             (param->pointer)++;
         } else {
@@ -209,12 +214,6 @@ element_param* get_params(tree_node* node) {
     return params;
 }
 
-table_element *search_symbol(char *name) {
-    table_element* symbol = NULL;
-
-    return symbol;
-}
-
 table* search_table(table* tables, char *name) { //TODO: maybe add params to the search
     table* target = NULL;
     table* aux = tables;
@@ -228,6 +227,29 @@ table* search_table(table* tables, char *name) { //TODO: maybe add params to the
     }
 
     return target;
+}
+
+table_element* search_symbol(table* g_table, table* c_table, char *name) { //TODO: maybe add params to the search
+    table_element* table_symbols = c_table->symbols;
+    table_element* global_symbols = g_table->symbols;
+
+    while(table_symbols != NULL) {
+        if(strcmp(table_symbols->name, name) == 0) {
+            return table_symbols;
+        }
+
+        table_symbols = table_symbols->next;
+    }
+
+    while (global_symbols != NULL) {
+        if(strcmp(global_symbols->name, name) == 0) {
+            return global_symbols;
+        }
+
+        global_symbols = global_symbols->next;
+    }
+
+    return NULL;
 }
 
 void print_params(element_param* param) {

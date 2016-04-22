@@ -567,24 +567,24 @@ ExprSpecial:    ExprSpecial ASSIGN ExprSpecial                                  
                                                                                 }
         |       AST ExprSpecial %prec "pointer"                                 {
 
-                                                                                    $$ = create_simple_node("Deref"); /* PODE ESTAR TROCADO COM O DE BAIXO*/
+                                                                                    $$ = create_simple_node("Deref");
                                                                                     add_child($$,$2);
                                                                                 }
         |       AMP ExprSpecial                                                 {
-                                                                                    $$ = create_simple_node("Addr"); /* PODE ESTAR TROCADO COM O DE CIMA*/
+                                                                                    $$ = create_simple_node("Addr");
                                                                                     add_child($$,$2);
                                                                                 }
         |       ID                                                              {
                                                                                     $$ = create_str_node("Id",$1);
                                                                                 }
         |       INTLIT                                                          {
-                                                                                    $$ = create_str_node("IntLit",$1);
+                                                                                    $$ = create_str_node_with_type("IntLit",$1, "int");
                                                                                 }
         |       CHRLIT                                                          {
-                                                                                    $$ = create_str_node("ChrLit",$1);
+                                                                                    $$ = create_str_node_with_type("ChrLit",$1, "char");
                                                                                 }
         |       STRLIT                                                          {
-                                                                                    $$ = create_str_node("StrLit",$1);
+                                                                                    $$ = create_strlit_node("StrLit",$1, "char");
                                                                                 }
         |       LPAR Expr RPAR                                                  {
                                                                                     $$ = $2;

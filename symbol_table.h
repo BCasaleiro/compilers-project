@@ -3,14 +3,6 @@
 
 #define MAX_STR 100
 
-typedef struct _element_param {
-    char type[MAX_STR];
-    char name[MAX_STR];
-    int pointer;
-
-    struct _element_param* next;
-} element_param;
-
 typedef struct _table_element{
 	char name[MAX_STR];
     char type[MAX_STR];
@@ -47,7 +39,7 @@ element_param* get_params(tree_node* node);
 element_param* get_param_info(tree_node* node);
 
 table* search_table(table* tables, char *name);
-table_element *search_symbol(char *name);
+table_element* search_symbol(table* g_table, table* c_table, char *name);
 
 void print_tables(table* c_table);
 void print_elements(table* table);

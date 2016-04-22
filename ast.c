@@ -9,6 +9,8 @@ tree_node* create_simple_node(char* name) {
         new_node->next_brother = NULL;
         new_node->luke = NULL;
         new_node->darth_vader = NULL;
+        new_node->pointer = 0;
+        strcpy(new_node->size, "-1");
     } else {
         printf("ERROR SIMPLE NODE\n");
     }
@@ -24,8 +26,54 @@ tree_node* create_str_node(char* name, char* value) {
         new_node->next_brother = NULL;
         new_node->luke = NULL;
         new_node->darth_vader = NULL;
+        new_node->pointer = 0;
+        strcpy(new_node->size, "-1");
 
         strcpy(new_node->value, value);
+    } else {
+        printf("ERROR STR NODE\n");
+    }
+
+    return new_node;
+}
+
+tree_node* create_str_node_with_type(char* name, char* value, char* type) {
+    tree_node* new_node = (tree_node*)malloc(sizeof(tree_node));
+
+    if(new_node != NULL) {
+        strcpy(new_node->name, name);
+        new_node->next_brother = NULL;
+        new_node->luke = NULL;
+        new_node->darth_vader = NULL;
+        new_node->pointer = 0;
+        strcpy(new_node->size, "-1");
+
+        strcpy(new_node->value, value);
+        strcpy(new_node->type, type);
+    } else {
+        printf("ERROR STR NODE\n");
+    }
+
+    return new_node;
+}
+
+tree_node* create_strlit_node(char* name, char* value, char* type) {
+    tree_node* new_node = (tree_node*)malloc(sizeof(tree_node));
+    char size[MAX_STR];
+
+    sprintf(size, "%ld", strlen(value) - 1);
+
+    if(new_node != NULL) {
+        strcpy(new_node->name, name);
+        new_node->next_brother = NULL;
+        new_node->luke = NULL;
+        new_node->darth_vader = NULL;
+        new_node->pointer = 0;
+        strcpy(new_node->size, "-1");
+
+        strcpy(new_node->value, value);
+        strcpy(new_node->type, type);
+        strcpy(new_node->size, size );
     } else {
         printf("ERROR STR NODE\n");
     }
@@ -85,6 +133,82 @@ void print_tree(tree_node* node, int level){
             while(child->next_brother != NULL){
                 child = child->next_brother;
                 print_tree(child, level + 1);
+            }
+
+        }
+    }
+}
+
+/* PRINTING ANNOTATED */
+void print_annotated_params(element_param* params) {
+    printf("(");
+    while(params != NULL) {
+        printf("%s", params->type);
+
+        for (int i = 0; i < params->pointer; i++) {
+            printf("*");
+        }
+
+        if(params->next != NULL) {
+            printf(",");
+        }
+
+        params = params->next;
+    }
+    printf(")");
+}
+
+void print_annotated_terminal(tree_node* node) {
+    if(strcmp(node->type, "") != 0) {
+        printf("%s(%s) - %s", node->name, node->value, node->type);
+
+        for(int i = 0; i < node->pointer; i++) {
+            printf("*");
+        }
+
+        if(strcmp(node->size, "-1") != 0) {
+            printf("[%s]", node->size);
+        }
+
+        if (node->params != NULL) {
+            print_annotated_params(node->params);
+        }
+
+        printf("\n");
+    } else {
+        printf("%s(%s)\n", node->name, node->value);
+    }
+
+}
+
+void print_annotated_tree(tree_node* node, int level) {
+    if(node != NULL) {
+        print_points(level);
+
+        if(strcmp(node->name, "Id") == 0 || strcmp(node->name, "ChrLit") == 0 || strcmp(node->name, "StrLit") == 0 || strcmp(node->name, "IntLit") == 0){
+            print_annotated_terminal(node);
+        } else {
+            if(strcmp(node->type, "") != 0) {
+                printf("%s - %s", node->name, node->type);
+
+                for(int i = 0; i < node->pointer; i++) {
+                    printf("*");
+                }
+
+                printf("\n");
+            } else {
+                printf("%s\n", node->name);
+            }
+        }
+
+        tree_node* child = node->luke;
+
+        if(child != NULL){
+            print_annotated_tree(child, level + 1);
+
+            while(child->next_brother != NULL){
+                child = child->next_brother;
+                print_annotated_tree(child, level + 1);
             }
 
         }

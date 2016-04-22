@@ -266,8 +266,7 @@ void print_invalid_error(char* error, int line, int col, char* token) {
     printf(error, line, col, token);
 }
 
-int yywrap()
-{
+int yywrap() {
     return 1;
 }
 
@@ -298,7 +297,14 @@ int main(int argc, char const *argv[])
             print_tree(root, 0);
         }
 
-        semantics(root);
+        if( (flag == 0 || flag == 5) && flag_error == 0 ) {
+            semantics(root);
+        }
+
+        if(flag == 5 && flag_error == 0) {
+            print_tables(symbol_tables);
+            print_annotated_tree(root, 0);
+        }
     } else {
         yylex();
     }

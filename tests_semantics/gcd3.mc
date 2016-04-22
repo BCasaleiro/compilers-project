@@ -1,7 +1,34 @@
 char buffer[20];
 
 int gdc(int a, int b) {
-    if(a == 0) {
+
+    int c, d;
+
+    if(!a) {
+
+    }
+
+    if(!1) {
+
+    }
+
+    if(-a) {
+
+    }
+
+    if(-1) {
+
+    }
+
+    if(+a) {
+
+    }
+
+    if(+1) {
+
+    }
+
+    if(a == 0 || a == 2) {
         return b;
     } else {
         for ( ; b > 0 ; )
