@@ -11,3 +11,4 @@ void is_declaration(table* c_tab, tree_node* node);
 void is_array_declaration(table* c_tab, tree_node* node);
 void is_param_declaration(table* c_tab, tree_node* node);
 void is_func_declaration(table* c_tab, tree_node* node);
+void is_func_definition(table* c_tab, tree_node* node);

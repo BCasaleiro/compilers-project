@@ -6,10 +6,8 @@
 table* init_table() {
     table* aux = (table*) malloc( sizeof(table) );
 
-    printf("[init_table]\n");
-
     if(aux != NULL) {
-        strcpy(aux->name, "Global Symbol Table");
+        strcpy(aux->name, "Global");
         aux->is_defined = true;
         insert_pre_defined_functions(aux);
     } else {
@@ -24,8 +22,6 @@ void insert_pre_defined_functions(table* c_table) {
     element_param* char_itoa = (element_param*) malloc( sizeof(element_param) );
     element_param* int_itoa = (element_param*) malloc( sizeof(element_param) );
     element_param* char_puts = (element_param*) malloc( sizeof(element_param) );
-
-    printf("[insert_pre_defined_functions]\n");
 
     strcpy(char_atoi->type, "char");
     char_atoi->pointer = 1;
@@ -105,8 +101,6 @@ void insert_array_symbol(table* symbol_table, char* symbol_name, char* symbol_ty
     table_element* aux = symbol_table->symbols;
     table_element* new_element = (table_element*) malloc( sizeof(table_element) );
 
-    printf("[insert_symbol]\n");
-
     if(new_element != NULL) {
         strcpy(new_element->name, symbol_name);
         strcpy(new_element->type, symbol_type);
@@ -135,8 +129,6 @@ void insert_symbol(table* symbol_table, char* symbol_name, char* symbol_type, in
     table_element* aux = symbol_table->symbols;
     table_element* new_element = (table_element*) malloc( sizeof(table_element) );
 
-    printf("[insert_symbol]\n");
-
     if(new_element != NULL) {
         strcpy(new_element->name, symbol_name);
         strcpy(new_element->type, symbol_type);
@@ -157,6 +149,18 @@ void insert_symbol(table* symbol_table, char* symbol_name, char* symbol_type, in
 
     } else {
         printf("ERROR TABLE ELEMENT\n");
+    }
+}
+
+void insert_params(table* c_table, element_param* params) {
+    element_param* aux = params;
+
+    while(aux != NULL) {
+        if(strcmp(aux->type, "Void") != 0) {
+            insert_symbol(c_table, aux->name, aux->type, aux->pointer, true);
+        }
+
+        aux = aux->next;
     }
 }
 
@@ -209,6 +213,21 @@ table_element *search_symbol(char *name) {
     table_element* symbol = NULL;
 
     return symbol;
+}
+
+table* search_table(table* tables, char *name) { //TODO: maybe add params to the search
+    table* target = NULL;
+    table* aux = tables;
+
+    while(aux != NULL) {
+        if(strcmp(aux->name, name) == 0) {
+            return aux;
+        }
+
+        aux = aux->next;
+    }
+
+    return target;
 }
 
 void print_params(element_param* param) {
@@ -282,11 +301,17 @@ void print_tables(table* c_table) {
     table* aux = c_table;
 
     while(aux != NULL) {
-        if(aux->is_defined) {
-            printf("===== %s =====\n", aux->name);
+        if(aux == c_table) {
+            printf("===== %s Symbol Table =====\n", aux->name);
+
+            print_elements(aux);
+        } else if(aux->is_defined) {
+            printf("===== Function %s Symbol Table =====\n", aux->name);
 
             print_elements(aux);
         }
+
+        printf("\n");
 
         aux = aux->next;
     }

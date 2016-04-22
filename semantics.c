@@ -26,21 +26,9 @@ void check_node_type(table* c_tab, tree_node* node) {
     } else if ( strcmp(node->name, "FuncDeclaration") == 0 ) { // functions
         is_func_declaration(c_tab, node);
     } else if ( strcmp(node->name, "FuncDefinition") == 0 ) {
-
-    } else if ( strcmp(node->name, "ParamList") == 0 ) {
-
+        is_func_definition(c_tab, node);
     } else if ( strcmp(node->name, "ParamDeclaration") == 0 ) {
         is_param_declaration(c_tab, node);
-    } else if ( strcmp(node->name, "FuncBody") == 0 ) {
-
-    } else if ( strcmp(node->name, "StatList") == 0 ) { // statements
-
-    } else if ( strcmp(node->name, "If") == 0 ) {
-
-    } else if ( strcmp(node->name, "For") == 0 ) {
-
-    } else if ( strcmp(node->name, "Return") == 0 ) {
-
     }
 }
 
@@ -146,10 +134,61 @@ void is_func_declaration(table* c_tab, tree_node* node) {
         }
 
         insert_function(c_table, name, type, pointer, params);
+        insert_table(symbol_tables, name, false);
     }
 
 }
 
 void is_func_definition(table* c_tab, tree_node* node) {
-    
+    table* declared_func;
+    tree_node* aux = node->luke;
+    tree_node* aux_func_body;
+    element_param* params;
+    char name[MAX_STR];
+    char type[MAX_STR];
+    int pointer = 0;
+
+    if(aux != NULL) {
+
+        strcpy(type, aux->name);
+
+        while(aux != NULL) {
+            if(strcmp(aux->name, "Pointer") == 0) {
+                pointer++;
+            } else if (strcmp(aux->name, "Id") == 0) {
+                strcpy(name, aux->value);
+            } else if(strcmp(aux->name, "ParamList") == 0){
+                params = get_params(aux);
+            } else if(strcmp(aux->name, "FuncBody") == 0) {
+                if((declared_func = search_table(symbol_tables, name)) != NULL) {
+                    c_table = declared_func;
+                    c_table->is_defined = true;
+                } else {
+                    insert_function(c_table, name, type, pointer, params);
+                    c_table = insert_table(symbol_tables, name, false);
+                    c_table->is_defined = true;
+                }
+
+                insert_symbol(c_table, "return", type, pointer, false);
+                insert_params(c_table, params);
+
+                aux_func_body = aux->luke;
+
+                while(aux_func_body != NULL) {
+
+                    check_node_type(c_table, aux_func_body);
+
+                    aux_func_body = aux_func_body->next_brother;
+                }
+
+                c_table = symbol_tables;
+
+            }
+
+            aux = aux->next_brother;
+        }
+
+
+
+    }
 }
