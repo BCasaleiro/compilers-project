@@ -24,6 +24,9 @@ typedef struct _tree_node {
     char size[MAX_STR];
     element_param* params;
 
+    int line;
+    int col;
+
 } tree_node;
 
 void to_lower_case(char* str);

@@ -175,13 +175,10 @@ element_param* get_param_info(tree_node* node) {
     while(aux != NULL) {
         if(strcmp(aux->name, "Id") == 0) {
             strcpy(param->name, aux->value);
-            /*
-            to_lower_case(param->type);
-            strcpy(aux->type, param->type);
-            */
         } else if(strcmp(aux->name, "Pointer") == 0) {
             (param->pointer)++;
         } else {
+            to_lower_case(aux->name);
             strcpy(param->type, aux->name);
         }
 

@@ -1,8 +1,14 @@
 char buffer[20];
 
+void test(void) {
+
+}
+
 int gdc(int a, int b) {
 
     int c, d;
+
+    a = 1, b = 2, c = 3;
 
     &c;
 

@@ -113,10 +113,6 @@ void is_declaration(table* c_tab, tree_node* node) {
             pointer++;
         } else if(strcmp(aux->name, "Id") == 0) {
             strcpy(name, aux->value);
-            /*
-            to_lower_case(type);
-            strcpy(aux->type, type);
-            */
         } else {
             strcpy(type, aux->name);
         }
@@ -140,10 +136,6 @@ void is_array_declaration(table* c_tab, tree_node* node) {
             pointer++;
         } else if(strcmp(aux->name, "Id") == 0) {
             strcpy(name, aux->value);
-            /*
-            to_lower_case(type);
-            strcpy(aux->type, type);
-            */
         } else if(strcmp(aux->name, "IntLit") == 0) {
             strcpy(size, aux->value);
         } else {
@@ -189,18 +181,27 @@ void is_func_definition(table* c_tab, tree_node* node) {
     char name[MAX_STR];
     char type[MAX_STR];
     int pointer = 0;
+    int line = 0;
+    int col = 0;
 
     while(aux != NULL) {
         if(strcmp(aux->name, "Pointer") == 0) {
             pointer++;
         } else if (strcmp(aux->name, "Id") == 0) {
             strcpy(name, aux->value);
+            line = aux->line;
+            col = aux->col;
         } else if(strcmp(aux->name, "ParamList") == 0){
             params = get_params(aux);
         } else if(strcmp(aux->name, "FuncBody") == 0) {
             if((declared_func = search_table(symbol_tables, name)) != NULL) {
-                c_table = declared_func;
-                c_table->is_defined = true;
+                if(!declared_func->is_defined) {
+                    c_table = declared_func;
+                    c_table->is_defined = true;
+                } else {
+                    printf("Line %d, col %d: Symbol %s already defined\n", aux->line, aux->col, name);
+                }
+
             } else {
 
                 insert_function(c_table, name, type, pointer, params);
@@ -242,8 +243,13 @@ void is_return(table* c_table, tree_node* node) {
 
     if(strcmp("Id", aux->name) == 0) {
         aux_t_element = search_symbol(symbol_tables, c_table, aux->value);
-        to_lower_case(aux_t_element->type);
-        strcpy(aux->type, aux_t_element->type);
+        if(aux != NULL) {
+            to_lower_case(aux_t_element->type);
+            strcpy(aux->type, aux_t_element->type);
+        } else {
+            printf("Line %d, col %d: Unkown symbol %s\n", aux->line, aux->col, aux->value);
+            strcpy(aux->type, "undef");
+        }
     }
 }
 
@@ -254,14 +260,26 @@ void is_or(table* c_table, tree_node* node) {
 
     if(strcmp(f_eq->name, "Id") == 0) {
         aux = search_symbol(symbol_tables, c_table, f_eq->value);
-        to_lower_case(aux->type);
-        strcpy(f_eq->type, aux->type);
+        if(aux != NULL) {
+            to_lower_case(aux->type);
+            strcpy(f_eq->type, aux->type);
+        } else {
+            printf("Line %d, col %d: Unkown symbol %s\n", f_eq->line, f_eq->col, f_eq->value); //TODO: change line and col
+            strcpy(f_eq->type, "undef");
+        }
+
     }
 
     if(strcmp(s_eq->name, "Id") == 0) {
         aux = search_symbol(symbol_tables, c_table, s_eq->value);
-        to_lower_case(aux->type);
-        strcpy(s_eq->type, aux->type);
+        if(aux != NULL) {
+            to_lower_case(aux->type);
+            strcpy(s_eq->type, aux->type);
+        } else {
+            printf("Line %d, col %d: Unkown symbol %s\n", s_eq->line, s_eq->col, s_eq->value); //TODO: change line and col
+            strcpy(s_eq->type, "undef");
+        }
+
     }
 
     if(strcmp(f_eq->type, s_eq->type) == 0) {
@@ -276,14 +294,24 @@ void is_and(table* c_table, tree_node* node) {
 
     if(strcmp(f_eq->name, "Id") == 0) {
         aux = search_symbol(symbol_tables, c_table, f_eq->value);
-        to_lower_case(aux->type);
-        strcpy(f_eq->type, aux->type);
+        if(aux != NULL) {
+            to_lower_case(aux->type);
+            strcpy(f_eq->type, aux->type);
+        } else {
+            printf("Line %d, col %d: Unkown symbol %s\n", f_eq->line, f_eq->col, f_eq->value); //TODO: change line and col
+            strcpy(f_eq->type, "undef");
+        }
     }
 
     if(strcmp(s_eq->name, "Id") == 0) {
         aux = search_symbol(symbol_tables, c_table, s_eq->value);
-        to_lower_case(aux->type);
-        strcpy(s_eq->type, aux->type);
+        if(aux != NULL) {
+            to_lower_case(aux->type);
+            strcpy(s_eq->type, aux->type);
+        } else {
+            printf("Line %d, col %d: Unkown symbol %s\n", s_eq->line, s_eq->col, s_eq->value); //TODO: change line and col
+            strcpy(s_eq->type, "undef");
+        }
     }
 
     if(strcmp(f_eq->type, s_eq->type) == 0) {
@@ -298,14 +326,24 @@ void is_eq(table* c_table, tree_node* node) {
 
     if(strcmp(f_eq->name, "Id") == 0) {
         aux = search_symbol(symbol_tables, c_table, f_eq->value);
-        to_lower_case(aux->type);
-        strcpy(f_eq->type, aux->type);
+        if(aux != NULL) {
+            to_lower_case(aux->type);
+            strcpy(f_eq->type, aux->type);
+        } else {
+            printf("Line %d, col %d: Unkown symbol %s\n", f_eq->line, f_eq->col, f_eq->value); //TODO: change line and col
+            strcpy(f_eq->type, "undef");
+        }
     }
 
     if(strcmp(s_eq->name, "Id") == 0) {
         aux = search_symbol(symbol_tables, c_table, s_eq->value);
-        to_lower_case(aux->type);
-        strcpy(s_eq->type, aux->type);
+        if(aux != NULL) {
+            to_lower_case(aux->type);
+            strcpy(s_eq->type, aux->type);
+        } else {
+            printf("Line %d, col %d: Unkown symbol %s\n", s_eq->line, s_eq->col, s_eq->value); //TODO: change line and col
+            strcpy(s_eq->type, "undef");
+        }
     }
 
     if(strcmp(f_eq->type, s_eq->type) == 0) {
@@ -321,14 +359,25 @@ void is_ne(table* c_table, tree_node* node) {
 
     if(strcmp(f_eq->name, "Id") == 0) {
         aux = search_symbol(symbol_tables, c_table, f_eq->value);
-        to_lower_case(aux->type);
-        strcpy(f_eq->type, aux->type);
+        if(aux != NULL) {
+            to_lower_case(aux->type);
+            strcpy(f_eq->type, aux->type);
+        } else {
+            printf("Line %d, col %d: Unkown symbol %s\n", f_eq->line, f_eq->col, f_eq->value); //TODO: change line and col
+            strcpy(f_eq->type, "undef");
+        }
     }
 
     if(strcmp(s_eq->name, "Id") == 0) {
         aux = search_symbol(symbol_tables, c_table, s_eq->value);
-        to_lower_case(aux->type);
-        strcpy(s_eq->type, aux->type);
+        if(aux != NULL) {
+            to_lower_case(aux->type);
+            strcpy(s_eq->type, aux->type);
+        } else {
+            printf("Line %d, col %d: Unkown symbol %s\n", s_eq->line, s_eq->col, s_eq->value); //TODO: change line and col
+            strcpy(s_eq->type, "undef");
+        }
+
     }
 
     if(strcmp(f_eq->type, s_eq->type) == 0) {
@@ -344,14 +393,24 @@ void is_lt(table* c_table, tree_node* node) {
 
     if(strcmp(f_eq->name, "Id") == 0) {
         aux = search_symbol(symbol_tables, c_table, f_eq->value);
-        to_lower_case(aux->type);
-        strcpy(f_eq->type, aux->type);
+        if(aux != NULL) {
+            to_lower_case(aux->type);
+            strcpy(f_eq->type, aux->type);
+        } else {
+            printf("Line %d, col %d: Unkown symbol %s\n", f_eq->line, f_eq->col, f_eq->value); //TODO: change line and col
+            strcpy(f_eq->type, "undef");
+        }
     }
 
     if(strcmp(s_eq->name, "Id") == 0) {
         aux = search_symbol(symbol_tables, c_table, s_eq->value);
-        to_lower_case(aux->type);
-        strcpy(s_eq->type, aux->type);
+        if(aux != NULL) {
+            to_lower_case(aux->type);
+            strcpy(s_eq->type, aux->type);
+        } else {
+            printf("Line %d, col %d: Unkown symbol %s\n", s_eq->line, s_eq->col, s_eq->value); //TODO: change line and col
+            strcpy(s_eq->type, "undef");
+        }
     }
 
     if(strcmp(f_eq->type, s_eq->type) == 0) {
@@ -367,14 +426,24 @@ void is_gt(table* c_table, tree_node* node) {
 
     if(strcmp(f_eq->name, "Id") == 0) {
         aux = search_symbol(symbol_tables, c_table, f_eq->value);
-        to_lower_case(aux->type);
-        strcpy(f_eq->type, aux->type);
+        if(aux != NULL) {
+            to_lower_case(aux->type);
+            strcpy(f_eq->type, aux->type);
+        } else {
+            printf("Line %d, col %d: Unkown symbol %s\n", f_eq->line, f_eq->col, f_eq->value); //TODO: change line and col
+            strcpy(f_eq->type, "undef");
+        }
     }
 
     if(strcmp(s_eq->name, "Id") == 0) {
         aux = search_symbol(symbol_tables, c_table, s_eq->value);
-        to_lower_case(aux->type);
-        strcpy(s_eq->type, aux->type);
+        if(aux != NULL) {
+            to_lower_case(aux->type);
+            strcpy(s_eq->type, aux->type);
+        } else {
+            printf("Line %d, col %d: Unkown symbol %s\n", s_eq->line, s_eq->col, s_eq->value); //TODO: change line and col
+            strcpy(s_eq->type, "undef");
+        }
     }
 
     if(strcmp(f_eq->type, s_eq->type) == 0) {
@@ -390,14 +459,24 @@ void is_le(table* c_table, tree_node* node) {
 
     if(strcmp(f_eq->name, "Id") == 0) {
         aux = search_symbol(symbol_tables, c_table, f_eq->value);
-        to_lower_case(aux->type);
-        strcpy(f_eq->type, aux->type);
+        if(aux != NULL) {
+            to_lower_case(aux->type);
+            strcpy(f_eq->type, aux->type);
+        } else {
+            printf("Line %d, col %d: Unkown symbol %s\n", f_eq->line, f_eq->col, f_eq->value); //TODO: change line and col
+            strcpy(f_eq->type, "undef");
+        }
     }
 
     if(strcmp(s_eq->name, "Id") == 0) {
         aux = search_symbol(symbol_tables, c_table, s_eq->value);
-        to_lower_case(aux->type);
-        strcpy(s_eq->type, aux->type);
+        if(aux != NULL) {
+            to_lower_case(aux->type);
+            strcpy(s_eq->type, aux->type);
+        } else {
+            printf("Line %d, col %d: Unkown symbol %s\n", s_eq->line, s_eq->col, s_eq->value); //TODO: change line and col
+            strcpy(s_eq->type, "undef");
+        }
     }
 
     if(strcmp(f_eq->type, s_eq->type) == 0) {
@@ -413,14 +492,24 @@ void is_ge(table* c_table, tree_node* node) {
 
     if(strcmp(f_eq->name, "Id") == 0) {
         aux = search_symbol(symbol_tables, c_table, f_eq->value);
-        to_lower_case(aux->type);
-        strcpy(f_eq->type, aux->type);
+        if(aux != NULL) {
+            to_lower_case(aux->type);
+            strcpy(f_eq->type, aux->type);
+        } else {
+            printf("Line %d, col %d: Unkown symbol %s\n", f_eq->line, f_eq->col, f_eq->value); //TODO: change line and col
+            strcpy(f_eq->type, "undef");
+        }
     }
 
     if(strcmp(s_eq->name, "Id") == 0) {
         aux = search_symbol(symbol_tables, c_table, s_eq->value);
-        to_lower_case(aux->type);
-        strcpy(s_eq->type, aux->type);
+        if(aux != NULL) {
+            to_lower_case(aux->type);
+            strcpy(s_eq->type, aux->type);
+        } else {
+            printf("Line %d, col %d: Unkown symbol %s\n", s_eq->line, s_eq->col, s_eq->value); //TODO: change line and col
+            strcpy(s_eq->type, "undef");
+        }
     }
 
     if(strcmp(f_eq->type, s_eq->type) == 0) {
@@ -436,14 +525,24 @@ void is_add(table* c_table, tree_node* node) {
 
     if(strcmp(f_eq->name, "Id") == 0) {
         aux = search_symbol(symbol_tables, c_table, f_eq->value);
-        to_lower_case(aux->type);
-        strcpy(f_eq->type, aux->type);
+        if(aux != NULL) {
+            to_lower_case(aux->type);
+            strcpy(f_eq->type, aux->type);
+        } else {
+            printf("Line %d, col %d: Unkown symbol %s\n", f_eq->line, f_eq->col, f_eq->value); //TODO: change line and col
+            strcpy(f_eq->type, "undef");
+        }
     }
 
     if(strcmp(s_eq->name, "Id") == 0) {
         aux = search_symbol(symbol_tables, c_table, s_eq->value);
-        to_lower_case(aux->type);
-        strcpy(s_eq->type, aux->type);
+        if(aux != NULL) {
+            to_lower_case(aux->type);
+            strcpy(s_eq->type, aux->type);
+        } else {
+            printf("Line %d, col %d: Unkown symbol %s\n", s_eq->line, s_eq->col, s_eq->value); //TODO: change line and col
+            strcpy(s_eq->type, "undef");
+        }
     }
 
     if(strcmp(f_eq->type, s_eq->type) == 0) {
@@ -459,14 +558,24 @@ void is_sub(table* c_table, tree_node* node) {
 
     if(strcmp(f_eq->name, "Id") == 0) {
         aux = search_symbol(symbol_tables, c_table, f_eq->value);
-        to_lower_case(aux->type);
-        strcpy(f_eq->type, aux->type);
+        if(aux != NULL) {
+            to_lower_case(aux->type);
+            strcpy(f_eq->type, aux->type);
+        } else {
+            printf("Line %d, col %d: Unkown symbol %s\n", f_eq->line, f_eq->col, f_eq->value); //TODO: change line and col
+            strcpy(f_eq->type, "undef");
+        }
     }
 
     if(strcmp(s_eq->name, "Id") == 0) {
         aux = search_symbol(symbol_tables, c_table, s_eq->value);
-        to_lower_case(aux->type);
-        strcpy(s_eq->type, aux->type);
+        if(aux != NULL) {
+            to_lower_case(aux->type);
+            strcpy(s_eq->type, aux->type);
+        } else {
+            printf("Line %d, col %d: Unkown symbol %s\n", s_eq->line, s_eq->col, s_eq->value); //TODO: change line and col
+            strcpy(s_eq->type, "undef");
+        }
     }
 
     if(strcmp(f_eq->type, s_eq->type) == 0) {
@@ -482,14 +591,24 @@ void is_mul(table* c_table, tree_node* node) {
 
     if(strcmp(f_eq->name, "Id") == 0) {
         aux = search_symbol(symbol_tables, c_table, f_eq->value);
-        to_lower_case(aux->type);
-        strcpy(f_eq->type, aux->type);
+        if(aux != NULL) {
+            to_lower_case(aux->type);
+            strcpy(f_eq->type, aux->type);
+        } else {
+            printf("Line %d, col %d: Unkown symbol %s\n", f_eq->line, f_eq->col, f_eq->value); //TODO: change line and col
+            strcpy(f_eq->type, "undef");
+        }
     }
 
     if(strcmp(s_eq->name, "Id") == 0) {
         aux = search_symbol(symbol_tables, c_table, s_eq->value);
-        to_lower_case(aux->type);
-        strcpy(s_eq->type, aux->type);
+        if(aux != NULL) {
+            to_lower_case(aux->type);
+            strcpy(s_eq->type, aux->type);
+        } else {
+            printf("Line %d, col %d: Unkown symbol %s\n", s_eq->line, s_eq->col, s_eq->value); //TODO: change line and col
+            strcpy(s_eq->type, "undef");
+        }
     }
 
     if(strcmp(f_eq->type, s_eq->type) == 0) {
@@ -505,14 +624,24 @@ void is_div(table* c_table, tree_node* node) {
 
     if(strcmp(f_eq->name, "Id") == 0) {
         aux = search_symbol(symbol_tables, c_table, f_eq->value);
-        to_lower_case(aux->type);
-        strcpy(f_eq->type, aux->type);
+        if(aux != NULL) {
+            to_lower_case(aux->type);
+            strcpy(f_eq->type, aux->type);
+        } else {
+            printf("Line %d, col %d: Unkown symbol %s\n", f_eq->line, f_eq->col, f_eq->value); //TODO: change line and col
+            strcpy(f_eq->type, "undef");
+        }
     }
 
     if(strcmp(s_eq->name, "Id") == 0) {
         aux = search_symbol(symbol_tables, c_table, s_eq->value);
-        to_lower_case(aux->type);
-        strcpy(s_eq->type, aux->type);
+        if(aux != NULL) {
+            to_lower_case(aux->type);
+            strcpy(s_eq->type, aux->type);
+        } else {
+            printf("Line %d, col %d: Unkown symbol %s\n", s_eq->line, s_eq->col, s_eq->value); //TODO: change line and col
+            strcpy(s_eq->type, "undef");
+        }
     }
 
     if(strcmp(f_eq->type, s_eq->type) == 0) {
@@ -528,14 +657,24 @@ void is_mod(table* c_table, tree_node* node) {
 
     if(strcmp(f_eq->name, "Id") == 0) {
         aux = search_symbol(symbol_tables, c_table, f_eq->value);
-        to_lower_case(aux->type);
-        strcpy(f_eq->type, aux->type);
+        if(aux != NULL) {
+            to_lower_case(aux->type);
+            strcpy(f_eq->type, aux->type);
+        } else {
+            printf("Line %d, col %d: Unkown symbol %s\n", f_eq->line, f_eq->col, f_eq->value); //TODO: change line and col
+            strcpy(f_eq->type, "undef");
+        }
     }
 
     if(strcmp(s_eq->name, "Id") == 0) {
         aux = search_symbol(symbol_tables, c_table, s_eq->value);
-        to_lower_case(aux->type);
-        strcpy(s_eq->type, aux->type);
+        if(aux != NULL) {
+            to_lower_case(aux->type);
+            strcpy(s_eq->type, aux->type);
+        } else {
+            printf("Line %d, col %d: Unkown symbol %s\n", s_eq->line, s_eq->col, s_eq->value); //TODO: change line and col
+            strcpy(s_eq->type, "undef");
+        }
     }
 
     if(strcmp(f_eq->type, s_eq->type) == 0) {
@@ -550,8 +689,13 @@ void is_not(table* c_table, tree_node* node) {
 
     if(strcmp(not->name, "Id") == 0) {
         aux = search_symbol(symbol_tables, c_table, not->value);
-        to_lower_case(aux->type);
-        strcpy(not->type, aux->type);
+        if(aux != NULL) {
+            to_lower_case(aux->type);
+            strcpy(not->type, aux->type);
+        } else {
+            printf("Line %d, col %d: Unkown symbol %s\n", not->line, not->col, not->value); //TODO: change line and col
+            strcpy(not->type, "undef");
+        }
     }
 
     strcpy(node->type, not->type); //TODO: check if not gets the int
@@ -563,8 +707,13 @@ void is_minus(table* c_table, tree_node* node) {
 
     if(strcmp(minus->name, "Id") == 0) {
         aux = search_symbol(symbol_tables, c_table, minus->value);
-        to_lower_case(aux->type);
-        strcpy(minus->type, aux->type);
+        if(aux != NULL) {
+            to_lower_case(aux->type);
+            strcpy(minus->type, aux->type);
+        } else {
+            printf("Line %d, col %d: Unkown symbol %s\n", minus->line, minus->col, minus->value); //TODO: change line and col
+            strcpy(minus->type, "undef");
+        }
     }
 
     strcpy(node->type, minus->type); //TODO: check if not gets the int
@@ -576,8 +725,13 @@ void is_plus(table* c_table, tree_node* node) {
 
     if(strcmp(plus->name, "Id") == 0) {
         aux = search_symbol(symbol_tables, c_table, plus->value);
-        to_lower_case(aux->type);
-        strcpy(plus->type, aux->type);
+        if(aux != NULL) {
+            to_lower_case(aux->type);
+            strcpy(plus->type, aux->type);
+        } else {
+            printf("Line %d, col %d: Unkown symbol %s\n", plus->line, plus->col, plus->value); //TODO: change line and col
+            strcpy(plus->type, "undef");
+        }
     }
 
     strcpy(node->type, plus->type); //TODO: check if not gets the int
@@ -590,12 +744,18 @@ tree_node* is_addr(table* c_table, tree_node* node) {
 
     if(strcmp(son->name, "Id") == 0) {
         aux = search_symbol(symbol_tables, c_table, son->value);
-        to_lower_case(aux->type);
-        strcpy(son->type, aux->type);
-        son->pointer = aux->pointer;
+        if(aux != NULL) {
+            to_lower_case(aux->type);
+            strcpy(son->type, aux->type);
+            son->pointer = aux->pointer;
 
-        strcpy(node->type, aux->type);
-        node->pointer = aux->pointer + 1;
+            strcpy(node->type, aux->type);
+            node->pointer = aux->pointer + 1;
+        } else {
+            printf("Line %d, col %d: Unkown symbol %s\n", son->line, son->col, son->value); //TODO: change line and col
+            strcpy(son->type, "undef");
+            strcpy(node->type, son->type); //TODO: confirm
+        }
 
         return node;
     } else if(strcmp(son->name, "Call") == 0) {
@@ -620,12 +780,19 @@ tree_node* is_deref(table* c_table, tree_node* node) {
 
     if(strcmp(son->name, "Id") == 0) {
         aux = search_symbol(symbol_tables, c_table, son->value);
-        to_lower_case(aux->type);
-        strcpy(son->type, aux->type);
-        son->pointer = aux->pointer;
+        if(aux != NULL) {
+            to_lower_case(aux->type);
+            strcpy(son->type, aux->type);
+            son->pointer = aux->pointer;
 
-        strcpy(node->type, aux->type);
-        node->pointer = aux->pointer - 1;
+            strcpy(node->type, aux->type);
+            node->pointer = aux->pointer - 1;
+        } else {
+            printf("Line %d, col %d: Unkown symbol %s\n", son->line, son->col, son->value);
+            strcpy(son->type, "undef");
+            strcpy(node->type, son->type); //TODO: confirm
+        }
+
 
         return node;
     } else if(strcmp(son->name, "Add") == 0) {
@@ -657,13 +824,21 @@ void is_deref_call(table* c_table, tree_node* node) {
     if(strcmp(function->name, "Id") == 0) {
         aux = search_symbol(symbol_tables, c_table, function->value);
 
-        to_lower_case(aux->type);
-        strcpy(node->type, aux->type);
-        node->pointer = aux->pointer;
+        if(aux != NULL) {
+            to_lower_case(aux->type);
+            strcpy(node->type, aux->type);
+            node->pointer = aux->pointer;
 
-        strcpy(function->type, aux->type);
-        function->pointer = aux->pointer;
-        function->params = aux->func_param;
+            strcpy(function->type, aux->type);
+            function->pointer = aux->pointer;
+            function->params = aux->func_param;
+        } else {
+            printf("Line %d, col %d: Unkown symbol %s\n", function->line, function->col, function->value);
+            strcpy(function->type, "undef");
+            strcpy(node->type, "undef");
+        }
+
+
     }
 
     repeat_check_brother(c_table, function);
@@ -675,12 +850,18 @@ void is_deref_add(table* c_table, tree_node* node) {
 
     if(strcmp(f_node->name, "Id") == 0) {
         aux = search_symbol(symbol_tables, c_table, f_node->value);
-        to_lower_case(aux->type);
-        strcpy(f_node->type, aux->type);
-        f_node->pointer = aux->pointer;
+        if(aux != NULL) {
+            to_lower_case(aux->type);
+            strcpy(f_node->type, aux->type);
+            f_node->pointer = aux->pointer;
 
-        strcpy(node->type, aux->type);
-        node->pointer = aux->pointer;
+            strcpy(node->type, aux->type);
+            node->pointer = aux->pointer;
+        } else {
+            printf("Line %d, col %d: Unkown symbol %s\n", f_node->line, f_node->col, f_node->value);
+            strcpy(f_node->type, "undef");
+            strcpy(node->type, "undef");
+        }
     }
 }
 
@@ -690,8 +871,13 @@ void is_store(table* c_table, tree_node* node) {
 
     if(strcmp(target->name, "Id") == 0) {
         aux = search_symbol(symbol_tables, c_table, target->value);
-        to_lower_case(aux->type);
-        strcpy(target->type, aux->type);
+        if(aux != NULL) {
+            to_lower_case(aux->type);
+            strcpy(target->type, aux->type);
+        } else {
+            printf("Line %d, col %d: Unkown symbol %s\n", target->line, target->col, target->value);
+            strcpy(target->type, "undef");
+        }
     }
 
     strcpy(node->type, target->type);
@@ -700,7 +886,8 @@ void is_store(table* c_table, tree_node* node) {
 }
 
 void is_comma(table* c_table, tree_node* node) {
-
+    repeat_check(c_table, node);
+    repeat_check_brother(c_table, node->luke);
 }
 
 void is_call(table* c_table, tree_node* node) {
@@ -710,13 +897,20 @@ void is_call(table* c_table, tree_node* node) {
     if(strcmp(function->name, "Id") == 0) {
         aux = search_symbol(symbol_tables, c_table, function->value);
 
-        to_lower_case(aux->type);
-        strcpy(node->type, aux->type);
-        node->pointer = aux->pointer;
+        if(aux != NULL) {
+            to_lower_case(aux->type);
+            strcpy(node->type, aux->type);
+            node->pointer = aux->pointer;
 
-        strcpy(function->type, aux->type);
-        function->pointer = aux->pointer;
-        function->params = aux->func_param;
+            strcpy(function->type, aux->type);
+            function->pointer = aux->pointer;
+            function->params = aux->func_param;
+        } else {
+            printf("Line %d, col %d: Unkown symbol %s\n", function->line, function->col, function->value);
+            strcpy(function->type, "undef");
+            strcpy(node->type, "undef");
+        }
+
     }
 
     repeat_check_brother(c_table, function);
@@ -726,17 +920,22 @@ void is_call(table* c_table, tree_node* node) {
 void is_id(table* c_table, tree_node* node) {
     table_element* aux = search_symbol(symbol_tables, c_table, node->value);
 
-    to_lower_case(aux->type);
-    if(aux->is_func) {
-        strcpy(node->type, aux->type);
-        node->pointer = aux->pointer;
-        node->params = aux->func_param;
-    } else if(aux->is_array) {
-        strcpy(node->type, aux->type);
-        node->pointer = aux->pointer;
-        strcpy(node->size, aux->array_size);
+    if(aux != NULL) {
+        to_lower_case(aux->type);
+        if(aux->is_func) {
+            strcpy(node->type, aux->type);
+            node->pointer = aux->pointer;
+            node->params = aux->func_param;
+        } else if(aux->is_array) {
+            strcpy(node->type, aux->type);
+            node->pointer = aux->pointer;
+            strcpy(node->size, aux->array_size);
+        } else {
+            strcpy(node->type, aux->type);
+            node->pointer = aux->pointer;
+        }
     } else {
-        strcpy(node->type, aux->type);
-        node->pointer = aux->pointer;
+        printf("Line %d, col %d: Unkown symbol %s\n", node->line, node->col, node->value);
+        strcpy(node->type, "undef");
     }
 }
