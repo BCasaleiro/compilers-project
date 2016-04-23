@@ -583,12 +583,105 @@ void is_plus(table* c_table, tree_node* node) {
     strcpy(node->type, plus->type); //TODO: check if not gets the int
 }
 
-void is_addr(table* c_table, tree_node* node) {
+tree_node* is_addr(table* c_table, tree_node* node) {
+    tree_node* son = node->luke;
+    tree_node* ret;
+    table_element* aux;
 
+    if(strcmp(son->name, "Id") == 0) {
+        aux = search_symbol(symbol_tables, c_table, son->value);
+        to_lower_case(aux->type);
+        strcpy(son->type, aux->type);
+        son->pointer = aux->pointer;
+
+        strcpy(node->type, aux->type);
+        node->pointer = aux->pointer + 1;
+
+        return node;
+    } else if(strcmp(son->name, "Call") == 0) {
+        is_deref_call(c_table, son);
+
+        strcpy(node->type, son->type);
+        node->pointer = son->pointer + 1;
+
+        return node;
+    } else {
+        ret = is_addr(c_table, son);
+        strcpy(node->type, ret->type);
+        node->pointer = ret->pointer + 1;
+        return node;
+    }
 }
 
-void is_deref(table* c_table, tree_node* node) {
+tree_node* is_deref(table* c_table, tree_node* node) {
+    tree_node* son = node->luke;
+    tree_node* ret;
+    table_element* aux;
 
+    if(strcmp(son->name, "Id") == 0) {
+        aux = search_symbol(symbol_tables, c_table, son->value);
+        to_lower_case(aux->type);
+        strcpy(son->type, aux->type);
+        son->pointer = aux->pointer;
+
+        strcpy(node->type, aux->type);
+        node->pointer = aux->pointer - 1;
+
+        return node;
+    } else if(strcmp(son->name, "Add") == 0) {
+        is_deref_add(c_table, son);
+
+        strcpy(node->type, son->type);
+        node->pointer = son->pointer - 1;
+
+        return node;
+    } else if(strcmp(son->name, "Call") == 0) {
+        is_deref_call(c_table, son);
+
+        strcpy(node->type, son->type);
+        node->pointer = son->pointer - 1;
+
+        return node;
+    } else {
+        ret = is_deref(c_table, son);
+        strcpy(node->type, ret->type);
+        node->pointer = ret->pointer - 1;
+        return node;
+    }
+}
+
+void is_deref_call(table* c_table, tree_node* node) {
+    tree_node* function = node->luke;
+    table_element* aux;
+
+    if(strcmp(function->name, "Id") == 0) {
+        aux = search_symbol(symbol_tables, c_table, function->value);
+
+        to_lower_case(aux->type);
+        strcpy(node->type, aux->type);
+        node->pointer = aux->pointer;
+
+        strcpy(function->type, aux->type);
+        function->pointer = aux->pointer;
+        function->params = aux->func_param;
+    }
+
+    repeat_check_brother(c_table, function);
+}
+
+void is_deref_add(table* c_table, tree_node* node) {
+    tree_node* f_node = node->luke;
+    table_element* aux;
+
+    if(strcmp(f_node->name, "Id") == 0) {
+        aux = search_symbol(symbol_tables, c_table, f_node->value);
+        to_lower_case(aux->type);
+        strcpy(f_node->type, aux->type);
+        f_node->pointer = aux->pointer;
+
+        strcpy(node->type, aux->type);
+        node->pointer = aux->pointer;
+    }
 }
 
 void is_store(table* c_table, tree_node* node) {

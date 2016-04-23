@@ -4,6 +4,20 @@ int gdc(int a, int b) {
 
     int c, d;
 
+    &c;
+
+    &(&d);
+
+    &gdc();
+
+    *a;
+
+    **b;
+
+    ***c;
+
+    *gdc();
+
     if(!a) {
 
     }
