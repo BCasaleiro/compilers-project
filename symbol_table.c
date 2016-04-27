@@ -98,7 +98,7 @@ void insert_function(table* function_table, char* function_name, char* r_type, i
 
 }
 
-void insert_array_symbol(table* symbol_table, char* symbol_name, char* symbol_type, int symbol_pointer, char* symbol_size, bool symbol_param) {
+void insert_array_symbol(table* symbol_table, char* symbol_name, char* symbol_type, int symbol_pointer, char* symbol_size, int symbol_size_dec, bool symbol_param) {
     table_element* aux = symbol_table->symbols;
     table_element* new_element = (table_element*) malloc( sizeof(table_element) );
 
@@ -109,6 +109,7 @@ void insert_array_symbol(table* symbol_table, char* symbol_name, char* symbol_ty
         new_element->pointer = symbol_pointer;
         new_element->is_func = false;
         new_element->is_array = true;
+        new_element->array_size_dec = symbol_size_dec;
         new_element->param = symbol_param;
 
         if(aux != NULL) {
@@ -157,7 +158,7 @@ void insert_params(table* c_table, element_param* params) {
     element_param* aux = params;
 
     while(aux != NULL) {
-        if(strcmp(aux->type, "Void") != 0) {
+        if(strcmp(aux->type, "void") != 0) {
             to_lower_case(aux->type);
             insert_symbol(c_table, aux->name, aux->type, aux->pointer, true);
         }
@@ -178,8 +179,8 @@ element_param* get_param_info(tree_node* node) {
         } else if(strcmp(aux->name, "Pointer") == 0) {
             (param->pointer)++;
         } else {
-            to_lower_case(aux->name);
             strcpy(param->type, aux->name);
+            to_lower_case(param->type);
         }
 
         aux = aux->next_brother;
@@ -288,7 +289,7 @@ void print_elements(table* table) {
             printf(")\n");
 
         } else if(aux->is_array) {
-            printf("%s\t%s[%s]", aux->name, aux->type, aux->array_size);
+            printf("%s\t%s[%d]", aux->name, aux->type, aux->array_size_dec);
 
             for(int i = 0; i < aux->pointer; i++){
                 printf("*");

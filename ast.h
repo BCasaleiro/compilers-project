@@ -22,6 +22,7 @@ typedef struct _tree_node {
     char type[MAX_STR];
     int pointer;
     char size[MAX_STR];
+    int size_dec;
     element_param* params;
 
     int line;

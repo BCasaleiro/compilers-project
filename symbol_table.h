@@ -11,6 +11,7 @@ typedef struct _table_element{
 
     bool is_array;
     char array_size[MAX_STR];
+    int  array_size_dec;
 
     bool is_func;
     element_param* func_param;
@@ -31,7 +32,7 @@ table* insert_table(table* c_table, char* name, bool defined);
 
 void insert_pre_defined_functions(table* c_table);
 void insert_symbol(table* symbol_table, char* symbol_name, char* symbol_type, int symbol_pointer, bool symbol_param);
-void insert_array_symbol(table* symbol_table, char* symbol_name, char* symbol_type, int symbol_pointer, char* symbol_size, bool symbol_param);
+void insert_array_symbol(table* symbol_table, char* symbol_name, char* symbol_type, int symbol_pointer, char* symbol_size, int symbol_size_dec, bool symbol_param);
 void insert_function(table* function_table, char* function_name, char* r_type, int r_pointer, element_param* function_params);
 void insert_params(table* c_table, element_param* params);
 

@@ -1,17 +1,71 @@
+atoi 1
+atoi 1
+puts 1
+itoa 1
+gdc 1
+puts 1
+===== Global Symbol Table =====
+atoi	int(char*)
+itoa	char*(int,char*)
+puts	int(char*)
+buffer	char[20]
+test	void(void)
+testa	int(int,char)
+gdc	int(int,int)
+main	int(int,char**)
+
+===== Function test Symbol Table =====
+return	void
+
+===== Function testa Symbol Table =====
+return	int
+	int	param
+	char	param
+
+===== Function gdc Symbol Table =====
+return	int
+a	int	param
+b	int	param
+c	int
+d	int
+
+===== Function main Symbol Table =====
+return	int
+argc	int	param
+argv	char**	param
+a	int
+b	int
+
 Program
 ..ArrayDeclaration
 ....Char
 ....Id(buffer)
 ....IntLit(20)
 ..FuncDefinition
+....Void
+....Id(test)
+....ParamList
+......ParamDeclaration
+........void
+....FuncBody
+..FuncDefinition
+....Int
+....Id(testa)
+....ParamList
+......ParamDeclaration
+........int
+......ParamDeclaration
+........char
+....FuncBody
+..FuncDefinition
 ....Int
 ....Id(gdc)
 ....ParamList
 ......ParamDeclaration
-........Int
+........int
 ........Id(a)
 ......ParamDeclaration
-........Int
+........int
 ........Id(b)
 ....FuncBody
 ......Declaration
@@ -20,43 +74,62 @@ Program
 ......Declaration
 ........Int
 ........Id(d)
-......If
-........Not - int
-..........Id(a) - int
-........Null
-........Null
-......If
-........Not - int
-..........IntLit(1) - int
-........Null
-........Null
-......If
-........Minus - undef
-..........Id(a) - int
-........Null
-........Null
-......If
-........Minus - undef
-..........IntLit(1) - int
-........Null
-........Null
-......If
-........Plus - undef
-..........Id(a) - int
-........Null
-........Null
-......If
-........Plus - undef
-..........IntLit(1) - int
-........Null
-........Null
-......If
-........Or - undef
-..........Eq - int
+......Comma
+........Comma
+..........Store - int
 ............Id(a) - int
+............IntLit(1) - int
+..........Store - int
+............Id(b) - int
+............IntLit(2) - int
+........Store - int
+..........Id(c) - int
+..........IntLit(3) - int
+......Addr - int*
+........Id(c) - int
+......Addr - int**
+........Addr - int*
+..........Id(d) - int
+......Addr - int*
+........Call - int
+..........Id(gdc) - int(int,int)
+......If
+........Not - int
+..........Id(a) - int
+........Null
+........Null
+......If
+........Not - int
+..........IntLit(1) - int
+........Null
+........Null
+......If
+........Minus - int
+..........Id(a) - int
+........Null
+........Null
+......If
+........Minus - int
+..........IntLit(1) - int
+........Null
+........Null
+......If
+........Plus - int
+..........Id(a) - int
+........Null
+........Null
+......If
+........Plus - int
+..........IntLit(1) - int
+........Null
+........Null
+......If
+........Or
+..........Eq
+............Id(a)
 ............IntLit(0) - int
-..........Eq - int
-............Id(a) - int
+..........Eq
+............Id(a)
 ............IntLit(2) - int
 ........Return
 ..........Id(b) - int
@@ -88,10 +161,10 @@ Program
 ....Id(main)
 ....ParamList
 ......ParamDeclaration
-........Int
+........int
 ........Id(argc)
 ......ParamDeclaration
-........Char
+........char
 ........Pointer
 ........Pointer
 ........Id(argv)

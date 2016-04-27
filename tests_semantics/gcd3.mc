@@ -1,6 +1,13 @@
-char buffer[20];
+char buffer[012];
+
+int a;
+int a;
 
 void test(void) {
+
+}
+
+int testa(int, char) {
 
 }
 
@@ -15,14 +22,6 @@ int gdc(int a, int b) {
     &(&d);
 
     &gdc();
-
-    *a;
-
-    **b;
-
-    ***c;
-
-    *gdc();
 
     if(!a) {
 

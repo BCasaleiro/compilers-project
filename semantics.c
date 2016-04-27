@@ -104,6 +104,7 @@ void repeat_check_brother(table* c_table, tree_node* node) {
 
 void is_declaration(table* c_tab, tree_node* node) {
     tree_node* aux = node->luke;
+    table_element* aux_repeat;
     char type[MAX_STR];
     char name[MAX_STR];
     int pointer = 0;
@@ -120,15 +121,22 @@ void is_declaration(table* c_tab, tree_node* node) {
         aux = aux->next_brother;
     }
 
-    to_lower_case(type);
-    insert_symbol(c_tab, name, type, pointer, false);
+    aux_repeat = search_symbol(symbol_tables, c_table, name); //TODO: check if table is global
+    if(aux_repeat == NULL) {
+        to_lower_case(type);
+        insert_symbol(c_tab, name, type, pointer, false);
+    } else {
+        //TODO: add error message
+    }
 }
 
 void is_array_declaration(table* c_tab, tree_node* node) {
     tree_node* aux = node->luke;
+    table_element* aux_repeat;
     char type[MAX_STR];
     char name[MAX_STR];
     char size[MAX_STR];
+    int size_dec;
     int pointer = 0;
 
     while(aux != NULL) {
@@ -138,6 +146,9 @@ void is_array_declaration(table* c_tab, tree_node* node) {
             strcpy(name, aux->value);
         } else if(strcmp(aux->name, "IntLit") == 0) {
             strcpy(size, aux->value);
+            size_dec = to_dec_convertion(size);
+
+            aux->size_dec = size_dec;
         } else {
             strcpy(type, aux->name);
         }
@@ -145,7 +156,12 @@ void is_array_declaration(table* c_tab, tree_node* node) {
         aux = aux->next_brother;
     }
 
-    insert_array_symbol(c_tab, name, type, pointer, size, false);
+    aux_repeat = search_symbol(symbol_tables, c_table, name); //TODO: check if table is global
+    if(aux_repeat == NULL) {
+        insert_array_symbol(c_tab, name, type, pointer, size, size_dec, false);
+    } else {
+        //TODO: add error message
+    }
 }
 
 void is_func_declaration(table* c_tab, tree_node* node) {
@@ -898,13 +914,19 @@ void is_call(table* c_table, tree_node* node) {
         aux = search_symbol(symbol_tables, c_table, function->value);
 
         if(aux != NULL) {
-            to_lower_case(aux->type);
-            strcpy(node->type, aux->type);
-            node->pointer = aux->pointer;
+            if(aux->is_func) {
+                to_lower_case(aux->type);
+                strcpy(node->type, aux->type);
+                node->pointer = aux->pointer;
 
-            strcpy(function->type, aux->type);
-            function->pointer = aux->pointer;
-            function->params = aux->func_param;
+                strcpy(function->type, aux->type);
+                function->pointer = aux->pointer;
+                function->params = aux->func_param;
+            } else {
+                printf("Line %d, col %d: Symbol %s is not a function\n", function->line, function->col, function->value);
+                strcpy(function->type, "undef");
+                strcpy(node->type, "undef");
+            }
         } else {
             printf("Line %d, col %d: Unkown symbol %s\n", function->line, function->col, function->value);
             strcpy(function->type, "undef");

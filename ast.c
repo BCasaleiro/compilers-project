@@ -10,6 +10,7 @@ tree_node* create_simple_node(char* name) {
         new_node->luke = NULL;
         new_node->darth_vader = NULL;
         new_node->pointer = 0;
+        new_node->size_dec = -1;
         strcpy(new_node->size, "-1");
     } else {
         printf("ERROR SIMPLE NODE\n");
@@ -27,6 +28,7 @@ tree_node* create_str_node(char* name, char* value) {
         new_node->luke = NULL;
         new_node->darth_vader = NULL;
         new_node->pointer = 0;
+        new_node->size_dec = -1;
         strcpy(new_node->size, "-1");
 
         strcpy(new_node->value, value);
@@ -46,6 +48,7 @@ tree_node* create_str_node_with_type(char* name, char* value, char* type) {
         new_node->luke = NULL;
         new_node->darth_vader = NULL;
         new_node->pointer = 0;
+        new_node->size_dec = -1;
         strcpy(new_node->size, "-1");
 
         strcpy(new_node->value, value);
@@ -69,6 +72,7 @@ tree_node* create_strlit_node(char* name, char* value, char* type) {
         new_node->luke = NULL;
         new_node->darth_vader = NULL;
         new_node->pointer = 0;
+        new_node->size_dec = -1;
         strcpy(new_node->size, "-1");
 
         strcpy(new_node->value, value);
@@ -167,7 +171,7 @@ void print_annotated_terminal(tree_node* node) {
         }
 
         if(strcmp(node->size, "-1") != 0) {
-            printf("[%s]", node->size);
+            printf("[%d]", node->size_dec);
         }
 
         if (node->params != NULL) {
@@ -176,7 +180,11 @@ void print_annotated_terminal(tree_node* node) {
 
         printf("\n");
     } else {
-        printf("%s(%s)\n", node->name, node->value);
+        if(node->size_dec != -1) {
+            printf("%s(%d)\n", node->name, node->size_dec);
+        } else {
+            printf("%s(%s)\n", node->name, node->value);
+        }
     }
 
 }
