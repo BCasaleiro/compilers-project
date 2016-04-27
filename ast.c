@@ -182,11 +182,7 @@ void print_annotated_terminal(tree_node* node) {
 
         printf("\n");
     } else {
-        if(node->size_dec != -1) {
-            printf("%s(%d)\n", node->name, node->size_dec);
-        } else {
-            printf("%s(%s)\n", node->name, node->value);
-        }
+        printf("%s(%s)\n", node->name, node->value);
     }
 
 }
