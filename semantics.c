@@ -151,6 +151,7 @@ void is_array_declaration(table* c_tab, tree_node* node) {
             aux->size_dec = size_dec;
         } else {
             strcpy(type, aux->name);
+            to_lower_case(type);
         }
 
         aux = aux->next_brother;

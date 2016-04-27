@@ -289,11 +289,13 @@ void print_elements(table* table) {
             printf(")\n");
 
         } else if(aux->is_array) {
-            printf("%s\t%s[%d]", aux->name, aux->type, aux->array_size_dec);
+            printf("%s\t%s", aux->name, aux->type);
 
             for(int i = 0; i < aux->pointer; i++){
                 printf("*");
             }
+
+            printf("[%d]", aux->array_size_dec);
 
             if(aux->param) {
                 printf("\tparam");

@@ -170,8 +170,10 @@ void print_annotated_terminal(tree_node* node) {
             printf("*");
         }
 
-        if(strcmp(node->size, "-1") != 0) {
+        if(node->size_dec != -1) {
             printf("[%d]", node->size_dec);
+        } else if(strcmp(node->size, "-1") != 0) {
+            printf("[%s]", node->size);
         }
 
         if (node->params != NULL) {
