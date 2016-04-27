@@ -161,6 +161,9 @@ void insert_params(table* c_table, element_param* params) {
         if(strcmp(aux->type, "void") != 0) {
             to_lower_case(aux->type);
             insert_symbol(c_table, aux->name, aux->type, aux->pointer, true);
+        } else if(strcmp(aux->type, "void") == 0 && aux->pointer > 0) {
+            to_lower_case(aux->type);
+            insert_symbol(c_table, aux->name, aux->type, aux->pointer, true);
         }
 
         aux = aux->next;

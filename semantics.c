@@ -168,6 +168,7 @@ void is_array_declaration(table* c_tab, tree_node* node) {
 void is_func_declaration(table* c_tab, tree_node* node) {
     tree_node* aux = node->luke;
     element_param* params;
+    table_element* aux_repeat;
     char name[MAX_STR];
     char type[MAX_STR];
     int pointer = 0;
@@ -186,9 +187,15 @@ void is_func_declaration(table* c_tab, tree_node* node) {
         aux = aux->next_brother;
     }
 
-    to_lower_case(type);
-    insert_function(c_table, name, type, pointer, params);
-    insert_table(symbol_tables, name, false);
+
+    aux_repeat = search_symbol(symbol_tables, c_table, name); //TODO: check if table is global
+    if(aux_repeat == NULL) {
+        to_lower_case(type);
+        insert_function(c_table, name, type, pointer, params);
+        insert_table(symbol_tables, name, false);
+    } else {
+        //TODO: add error message
+    }
 }
 
 void is_func_definition(table* c_tab, tree_node* node) {
