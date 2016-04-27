@@ -277,7 +277,6 @@ void print_elements(table* table) {
     table_element* aux = table->symbols;
 
     while(aux != NULL) {
-
         if(aux->is_func) {
             printf("%s\t%s", aux->name, aux->type);
 
@@ -289,7 +288,7 @@ void print_elements(table* table) {
 
             print_params(aux->func_param);
 
-            printf(")\n");
+            printf(")");
 
         } else if(aux->is_array) {
             printf("%s\t%s", aux->name, aux->type);
@@ -303,8 +302,6 @@ void print_elements(table* table) {
             if(aux->param) {
                 printf("\tparam");
             }
-
-            printf("\n");
         } else {
             printf("%s\t%s", aux->name, aux->type);
 
@@ -316,8 +313,10 @@ void print_elements(table* table) {
                 printf("\tparam");
             }
 
-            printf("\n");
+
         }
+
+        printf("\n");
 
         aux = aux->next;
     }
@@ -331,13 +330,13 @@ void print_tables(table* c_table) {
             printf("===== %s Symbol Table =====\n", aux->name);
 
             print_elements(aux);
+            printf("\n");
         } else if(aux->is_defined) {
             printf("===== Function %s Symbol Table =====\n", aux->name);
 
             print_elements(aux);
+            printf("\n");
         }
-
-        printf("\n");
 
         aux = aux->next;
     }

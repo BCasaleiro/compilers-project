@@ -32,10 +32,10 @@ typedef struct _tree_node {
 
 void to_lower_case(char* str);
 
-tree_node* create_simple_node(char* name);
-tree_node* create_str_node(char* name, char* value);
-tree_node* create_str_node_with_type(char* name, char* value, char* type);
-tree_node* create_strlit_node(char* name, char* value, char* type);
+tree_node* create_simple_node(char* name, int line, int col);
+tree_node* create_str_node(char* name, char* value, int line, int col);
+tree_node* create_str_node_with_type(char* name, char* value, char* type, int line, int col);
+tree_node* create_strlit_node(char* name, char* value, char* type, int line, int col);
 
 void add_child(tree_node * father , tree_node * son);
 void add_brother_end(tree_node* father, tree_node* new_son);

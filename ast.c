@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include "ast.h"
 
-tree_node* create_simple_node(char* name) {
+tree_node* create_simple_node(char* name, int line, int col) {
     tree_node* new_node = (tree_node*) malloc( sizeof(tree_node) );
 
     if (new_node != NULL) {
@@ -12,6 +12,8 @@ tree_node* create_simple_node(char* name) {
         new_node->pointer = 0;
         new_node->size_dec = -1;
         strcpy(new_node->size, "-1");
+        new_node->line = line;
+        new_node->col = col;
     } else {
         printf("ERROR SIMPLE NODE\n");
     }
@@ -19,7 +21,7 @@ tree_node* create_simple_node(char* name) {
     return new_node;
 }
 
-tree_node* create_str_node(char* name, char* value) {
+tree_node* create_str_node(char* name, char* value, int line, int col) {
     tree_node* new_node = (tree_node*)malloc(sizeof(tree_node));
 
     if(new_node != NULL) {
@@ -30,6 +32,8 @@ tree_node* create_str_node(char* name, char* value) {
         new_node->pointer = 0;
         new_node->size_dec = -1;
         strcpy(new_node->size, "-1");
+        new_node->line = line;
+        new_node->col = col;
 
         strcpy(new_node->value, value);
     } else {
@@ -39,7 +43,7 @@ tree_node* create_str_node(char* name, char* value) {
     return new_node;
 }
 
-tree_node* create_str_node_with_type(char* name, char* value, char* type) {
+tree_node* create_str_node_with_type(char* name, char* value, char* type, int line, int col) {
     tree_node* new_node = (tree_node*)malloc(sizeof(tree_node));
 
     if(new_node != NULL) {
@@ -50,6 +54,8 @@ tree_node* create_str_node_with_type(char* name, char* value, char* type) {
         new_node->pointer = 0;
         new_node->size_dec = -1;
         strcpy(new_node->size, "-1");
+        new_node->line = line;
+        new_node->col = col;
 
         strcpy(new_node->value, value);
         strcpy(new_node->type, type);
@@ -60,7 +66,7 @@ tree_node* create_str_node_with_type(char* name, char* value, char* type) {
     return new_node;
 }
 
-tree_node* create_strlit_node(char* name, char* value, char* type) {
+tree_node* create_strlit_node(char* name, char* value, char* type, int line, int col) {
     tree_node* new_node = (tree_node*)malloc(sizeof(tree_node));
     char size[MAX_STR];
 

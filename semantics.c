@@ -187,7 +187,6 @@ void is_func_declaration(table* c_tab, tree_node* node) {
         aux = aux->next_brother;
     }
 
-
     aux_repeat = search_symbol(symbol_tables, c_table, name); //TODO: check if table is global
     if(aux_repeat == NULL) {
         to_lower_case(type);
@@ -201,6 +200,7 @@ void is_func_declaration(table* c_tab, tree_node* node) {
 void is_func_definition(table* c_tab, tree_node* node) {
     table* declared_func;
     tree_node* aux = node->luke;
+    table_element* aux_repeat;
     element_param* params;
     char name[MAX_STR];
     char type[MAX_STR];
@@ -218,7 +218,10 @@ void is_func_definition(table* c_tab, tree_node* node) {
         } else if(strcmp(aux->name, "ParamList") == 0){
             params = get_params(aux);
         } else if(strcmp(aux->name, "FuncBody") == 0) {
-            if((declared_func = search_table(symbol_tables, name)) != NULL) {
+            aux_repeat = search_symbol(symbol_tables, c_tab, name);
+            declared_func = search_table(symbol_tables, name);
+
+            if(declared_func != NULL) {
                 if(!declared_func->is_defined) {
                     c_table = declared_func;
                     c_table->is_defined = true;
@@ -226,16 +229,22 @@ void is_func_definition(table* c_tab, tree_node* node) {
                     printf("Line %d, col %d: Symbol %s already defined\n", aux->line, aux->col, name);
                 }
 
-            } else {
+                insert_symbol(c_table, "return", type, pointer, false);
+                insert_params(c_table, params);
 
-                insert_function(c_table, name, type, pointer, params);
-                c_table = insert_table(symbol_tables, name, false);
-                c_table->is_defined = true;
+            } else {
+                if(aux_repeat == NULL) {
+                    insert_function(c_table, name, type, pointer, params);
+                    c_table = insert_table(symbol_tables, name, false);
+                    c_table->is_defined = true;
+                    insert_symbol(c_table, "return", type, pointer, false);
+                    insert_params(c_table, params);
+                }
+
             }
-            insert_symbol(c_table, "return", type, pointer, false);
-            insert_params(c_table, params);
 
             repeat_check(c_table, aux);
+
 
             c_table = symbol_tables;
 
