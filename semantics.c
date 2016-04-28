@@ -121,7 +121,7 @@ void is_declaration(table* c_tab, tree_node* node) {
         aux = aux->next_brother;
     }
 
-    aux_repeat = search_symbol(symbol_tables, c_table, name); //TODO: check if table is global
+    aux_repeat = search_symbol(symbol_tables, c_table, name, true); //TODO: check if table is glob, falseal
     if(aux_repeat == NULL) {
         to_lower_case(type);
         insert_symbol(c_tab, name, type, pointer, false);
@@ -157,7 +157,7 @@ void is_array_declaration(table* c_tab, tree_node* node) {
         aux = aux->next_brother;
     }
 
-    aux_repeat = search_symbol(symbol_tables, c_table, name); //TODO: check if table is global
+    aux_repeat = search_symbol(symbol_tables, c_table, name, false); //TODO: check if table is glob, falseal
     if(aux_repeat == NULL) {
         insert_array_symbol(c_tab, name, type, pointer, size, size_dec, false);
     } else {
@@ -187,7 +187,7 @@ void is_func_declaration(table* c_tab, tree_node* node) {
         aux = aux->next_brother;
     }
 
-    aux_repeat = search_symbol(symbol_tables, c_table, name); //TODO: check if table is global
+    aux_repeat = search_symbol(symbol_tables, c_table, name, false); //TODO: check if table is glob, falseal
     if(aux_repeat == NULL) {
         to_lower_case(type);
         insert_function(c_table, name, type, pointer, params);
@@ -218,7 +218,7 @@ void is_func_definition(table* c_tab, tree_node* node) {
         } else if(strcmp(aux->name, "ParamList") == 0){
             params = get_params(aux);
         } else if(strcmp(aux->name, "FuncBody") == 0) {
-            aux_repeat = search_symbol(symbol_tables, c_tab, name);
+            aux_repeat = search_symbol(symbol_tables, c_tab, name, false);
             declared_func = search_table(symbol_tables, name);
 
             if(declared_func != NULL) {
@@ -233,18 +233,16 @@ void is_func_definition(table* c_tab, tree_node* node) {
                 insert_params(c_table, params);
 
             } else {
-                if(aux_repeat == NULL) {
+
+                // if(aux_repeat == NULL) {
                     insert_function(c_table, name, type, pointer, params);
-                    c_table = insert_table(symbol_tables, name, false);
-                    c_table->is_defined = true;
+                    c_table = insert_table(symbol_tables, name, true);
                     insert_symbol(c_table, "return", type, pointer, false);
                     insert_params(c_table, params);
-                }
-
+                // }
             }
 
             repeat_check(c_table, aux);
-
 
             c_table = symbol_tables;
 
@@ -275,7 +273,7 @@ void is_return(table* c_table, tree_node* node) {
     table_element* aux_t_element;
 
     if(strcmp("Id", aux->name) == 0) {
-        aux_t_element = search_symbol(symbol_tables, c_table, aux->value);
+        aux_t_element = search_symbol(symbol_tables, c_table, aux->value, false);
         if(aux != NULL) {
             to_lower_case(aux_t_element->type);
             strcpy(aux->type, aux_t_element->type);
@@ -292,7 +290,7 @@ void is_or(table* c_table, tree_node* node) {
     table_element* aux;
 
     if(strcmp(f_eq->name, "Id") == 0) {
-        aux = search_symbol(symbol_tables, c_table, f_eq->value);
+        aux = search_symbol(symbol_tables, c_table, f_eq->value, false);
         if(aux != NULL) {
             to_lower_case(aux->type);
             strcpy(f_eq->type, aux->type);
@@ -304,7 +302,7 @@ void is_or(table* c_table, tree_node* node) {
     }
 
     if(strcmp(s_eq->name, "Id") == 0) {
-        aux = search_symbol(symbol_tables, c_table, s_eq->value);
+        aux = search_symbol(symbol_tables, c_table, s_eq->value, false);
         if(aux != NULL) {
             to_lower_case(aux->type);
             strcpy(s_eq->type, aux->type);
@@ -326,7 +324,7 @@ void is_and(table* c_table, tree_node* node) {
     table_element* aux;
 
     if(strcmp(f_eq->name, "Id") == 0) {
-        aux = search_symbol(symbol_tables, c_table, f_eq->value);
+        aux = search_symbol(symbol_tables, c_table, f_eq->value, false);
         if(aux != NULL) {
             to_lower_case(aux->type);
             strcpy(f_eq->type, aux->type);
@@ -337,7 +335,7 @@ void is_and(table* c_table, tree_node* node) {
     }
 
     if(strcmp(s_eq->name, "Id") == 0) {
-        aux = search_symbol(symbol_tables, c_table, s_eq->value);
+        aux = search_symbol(symbol_tables, c_table, s_eq->value, false);
         if(aux != NULL) {
             to_lower_case(aux->type);
             strcpy(s_eq->type, aux->type);
@@ -358,7 +356,7 @@ void is_eq(table* c_table, tree_node* node) {
     table_element* aux;
 
     if(strcmp(f_eq->name, "Id") == 0) {
-        aux = search_symbol(symbol_tables, c_table, f_eq->value);
+        aux = search_symbol(symbol_tables, c_table, f_eq->value, false);
         if(aux != NULL) {
             to_lower_case(aux->type);
             strcpy(f_eq->type, aux->type);
@@ -369,7 +367,7 @@ void is_eq(table* c_table, tree_node* node) {
     }
 
     if(strcmp(s_eq->name, "Id") == 0) {
-        aux = search_symbol(symbol_tables, c_table, s_eq->value);
+        aux = search_symbol(symbol_tables, c_table, s_eq->value, false);
         if(aux != NULL) {
             to_lower_case(aux->type);
             strcpy(s_eq->type, aux->type);
@@ -391,7 +389,7 @@ void is_ne(table* c_table, tree_node* node) {
     table_element* aux;
 
     if(strcmp(f_eq->name, "Id") == 0) {
-        aux = search_symbol(symbol_tables, c_table, f_eq->value);
+        aux = search_symbol(symbol_tables, c_table, f_eq->value, false);
         if(aux != NULL) {
             to_lower_case(aux->type);
             strcpy(f_eq->type, aux->type);
@@ -402,7 +400,7 @@ void is_ne(table* c_table, tree_node* node) {
     }
 
     if(strcmp(s_eq->name, "Id") == 0) {
-        aux = search_symbol(symbol_tables, c_table, s_eq->value);
+        aux = search_symbol(symbol_tables, c_table, s_eq->value, false);
         if(aux != NULL) {
             to_lower_case(aux->type);
             strcpy(s_eq->type, aux->type);
@@ -425,7 +423,7 @@ void is_lt(table* c_table, tree_node* node) {
     table_element* aux;
 
     if(strcmp(f_eq->name, "Id") == 0) {
-        aux = search_symbol(symbol_tables, c_table, f_eq->value);
+        aux = search_symbol(symbol_tables, c_table, f_eq->value, false);
         if(aux != NULL) {
             to_lower_case(aux->type);
             strcpy(f_eq->type, aux->type);
@@ -436,7 +434,7 @@ void is_lt(table* c_table, tree_node* node) {
     }
 
     if(strcmp(s_eq->name, "Id") == 0) {
-        aux = search_symbol(symbol_tables, c_table, s_eq->value);
+        aux = search_symbol(symbol_tables, c_table, s_eq->value, false);
         if(aux != NULL) {
             to_lower_case(aux->type);
             strcpy(s_eq->type, aux->type);
@@ -458,7 +456,7 @@ void is_gt(table* c_table, tree_node* node) {
     table_element* aux;
 
     if(strcmp(f_eq->name, "Id") == 0) {
-        aux = search_symbol(symbol_tables, c_table, f_eq->value);
+        aux = search_symbol(symbol_tables, c_table, f_eq->value, false);
         if(aux != NULL) {
             to_lower_case(aux->type);
             strcpy(f_eq->type, aux->type);
@@ -469,7 +467,7 @@ void is_gt(table* c_table, tree_node* node) {
     }
 
     if(strcmp(s_eq->name, "Id") == 0) {
-        aux = search_symbol(symbol_tables, c_table, s_eq->value);
+        aux = search_symbol(symbol_tables, c_table, s_eq->value, false);
         if(aux != NULL) {
             to_lower_case(aux->type);
             strcpy(s_eq->type, aux->type);
@@ -491,7 +489,7 @@ void is_le(table* c_table, tree_node* node) {
     table_element* aux;
 
     if(strcmp(f_eq->name, "Id") == 0) {
-        aux = search_symbol(symbol_tables, c_table, f_eq->value);
+        aux = search_symbol(symbol_tables, c_table, f_eq->value, false);
         if(aux != NULL) {
             to_lower_case(aux->type);
             strcpy(f_eq->type, aux->type);
@@ -502,7 +500,7 @@ void is_le(table* c_table, tree_node* node) {
     }
 
     if(strcmp(s_eq->name, "Id") == 0) {
-        aux = search_symbol(symbol_tables, c_table, s_eq->value);
+        aux = search_symbol(symbol_tables, c_table, s_eq->value, false);
         if(aux != NULL) {
             to_lower_case(aux->type);
             strcpy(s_eq->type, aux->type);
@@ -524,7 +522,7 @@ void is_ge(table* c_table, tree_node* node) {
     table_element* aux;
 
     if(strcmp(f_eq->name, "Id") == 0) {
-        aux = search_symbol(symbol_tables, c_table, f_eq->value);
+        aux = search_symbol(symbol_tables, c_table, f_eq->value, false);
         if(aux != NULL) {
             to_lower_case(aux->type);
             strcpy(f_eq->type, aux->type);
@@ -535,7 +533,7 @@ void is_ge(table* c_table, tree_node* node) {
     }
 
     if(strcmp(s_eq->name, "Id") == 0) {
-        aux = search_symbol(symbol_tables, c_table, s_eq->value);
+        aux = search_symbol(symbol_tables, c_table, s_eq->value, false);
         if(aux != NULL) {
             to_lower_case(aux->type);
             strcpy(s_eq->type, aux->type);
@@ -557,7 +555,7 @@ void is_add(table* c_table, tree_node* node) {
     table_element* aux;
 
     if(strcmp(f_eq->name, "Id") == 0) {
-        aux = search_symbol(symbol_tables, c_table, f_eq->value);
+        aux = search_symbol(symbol_tables, c_table, f_eq->value, false);
         if(aux != NULL) {
             to_lower_case(aux->type);
             strcpy(f_eq->type, aux->type);
@@ -568,7 +566,7 @@ void is_add(table* c_table, tree_node* node) {
     }
 
     if(strcmp(s_eq->name, "Id") == 0) {
-        aux = search_symbol(symbol_tables, c_table, s_eq->value);
+        aux = search_symbol(symbol_tables, c_table, s_eq->value, false);
         if(aux != NULL) {
             to_lower_case(aux->type);
             strcpy(s_eq->type, aux->type);
@@ -590,7 +588,7 @@ void is_sub(table* c_table, tree_node* node) {
     table_element* aux;
 
     if(strcmp(f_eq->name, "Id") == 0) {
-        aux = search_symbol(symbol_tables, c_table, f_eq->value);
+        aux = search_symbol(symbol_tables, c_table, f_eq->value, false);
         if(aux != NULL) {
             to_lower_case(aux->type);
             strcpy(f_eq->type, aux->type);
@@ -601,7 +599,7 @@ void is_sub(table* c_table, tree_node* node) {
     }
 
     if(strcmp(s_eq->name, "Id") == 0) {
-        aux = search_symbol(symbol_tables, c_table, s_eq->value);
+        aux = search_symbol(symbol_tables, c_table, s_eq->value, false);
         if(aux != NULL) {
             to_lower_case(aux->type);
             strcpy(s_eq->type, aux->type);
@@ -623,7 +621,7 @@ void is_mul(table* c_table, tree_node* node) {
     table_element* aux;
 
     if(strcmp(f_eq->name, "Id") == 0) {
-        aux = search_symbol(symbol_tables, c_table, f_eq->value);
+        aux = search_symbol(symbol_tables, c_table, f_eq->value, false);
         if(aux != NULL) {
             to_lower_case(aux->type);
             strcpy(f_eq->type, aux->type);
@@ -634,7 +632,7 @@ void is_mul(table* c_table, tree_node* node) {
     }
 
     if(strcmp(s_eq->name, "Id") == 0) {
-        aux = search_symbol(symbol_tables, c_table, s_eq->value);
+        aux = search_symbol(symbol_tables, c_table, s_eq->value, false);
         if(aux != NULL) {
             to_lower_case(aux->type);
             strcpy(s_eq->type, aux->type);
@@ -656,7 +654,7 @@ void is_div(table* c_table, tree_node* node) {
     table_element* aux;
 
     if(strcmp(f_eq->name, "Id") == 0) {
-        aux = search_symbol(symbol_tables, c_table, f_eq->value);
+        aux = search_symbol(symbol_tables, c_table, f_eq->value, false);
         if(aux != NULL) {
             to_lower_case(aux->type);
             strcpy(f_eq->type, aux->type);
@@ -667,7 +665,7 @@ void is_div(table* c_table, tree_node* node) {
     }
 
     if(strcmp(s_eq->name, "Id") == 0) {
-        aux = search_symbol(symbol_tables, c_table, s_eq->value);
+        aux = search_symbol(symbol_tables, c_table, s_eq->value, false);
         if(aux != NULL) {
             to_lower_case(aux->type);
             strcpy(s_eq->type, aux->type);
@@ -689,7 +687,7 @@ void is_mod(table* c_table, tree_node* node) {
     table_element* aux;
 
     if(strcmp(f_eq->name, "Id") == 0) {
-        aux = search_symbol(symbol_tables, c_table, f_eq->value);
+        aux = search_symbol(symbol_tables, c_table, f_eq->value, false);
         if(aux != NULL) {
             to_lower_case(aux->type);
             strcpy(f_eq->type, aux->type);
@@ -700,7 +698,7 @@ void is_mod(table* c_table, tree_node* node) {
     }
 
     if(strcmp(s_eq->name, "Id") == 0) {
-        aux = search_symbol(symbol_tables, c_table, s_eq->value);
+        aux = search_symbol(symbol_tables, c_table, s_eq->value, false);
         if(aux != NULL) {
             to_lower_case(aux->type);
             strcpy(s_eq->type, aux->type);
@@ -721,7 +719,7 @@ void is_not(table* c_table, tree_node* node) {
     table_element* aux;
 
     if(strcmp(not->name, "Id") == 0) {
-        aux = search_symbol(symbol_tables, c_table, not->value);
+        aux = search_symbol(symbol_tables, c_table, not->value, false);
         if(aux != NULL) {
             to_lower_case(aux->type);
             strcpy(not->type, aux->type);
@@ -739,7 +737,7 @@ void is_minus(table* c_table, tree_node* node) {
     table_element* aux;
 
     if(strcmp(minus->name, "Id") == 0) {
-        aux = search_symbol(symbol_tables, c_table, minus->value);
+        aux = search_symbol(symbol_tables, c_table, minus->value, false);
         if(aux != NULL) {
             to_lower_case(aux->type);
             strcpy(minus->type, aux->type);
@@ -757,7 +755,7 @@ void is_plus(table* c_table, tree_node* node) {
     table_element* aux;
 
     if(strcmp(plus->name, "Id") == 0) {
-        aux = search_symbol(symbol_tables, c_table, plus->value);
+        aux = search_symbol(symbol_tables, c_table, plus->value, false);
         if(aux != NULL) {
             to_lower_case(aux->type);
             strcpy(plus->type, aux->type);
@@ -776,7 +774,7 @@ tree_node* is_addr(table* c_table, tree_node* node) {
     table_element* aux;
 
     if(strcmp(son->name, "Id") == 0) {
-        aux = search_symbol(symbol_tables, c_table, son->value);
+        aux = search_symbol(symbol_tables, c_table, son->value, false);
         if(aux != NULL) {
             to_lower_case(aux->type);
             strcpy(son->type, aux->type);
@@ -812,7 +810,7 @@ tree_node* is_deref(table* c_table, tree_node* node) {
     table_element* aux;
 
     if(strcmp(son->name, "Id") == 0) {
-        aux = search_symbol(symbol_tables, c_table, son->value);
+        aux = search_symbol(symbol_tables, c_table, son->value, false);
         if(aux != NULL) {
             to_lower_case(aux->type);
             strcpy(son->type, aux->type);
@@ -855,7 +853,7 @@ void is_deref_call(table* c_table, tree_node* node) {
     table_element* aux;
 
     if(strcmp(function->name, "Id") == 0) {
-        aux = search_symbol(symbol_tables, c_table, function->value);
+        aux = search_symbol(symbol_tables, c_table, function->value, false);
 
         if(aux != NULL) {
             to_lower_case(aux->type);
@@ -882,7 +880,7 @@ void is_deref_add(table* c_table, tree_node* node) {
     table_element* aux;
 
     if(strcmp(f_node->name, "Id") == 0) {
-        aux = search_symbol(symbol_tables, c_table, f_node->value);
+        aux = search_symbol(symbol_tables, c_table, f_node->value, false);
         if(aux != NULL) {
             to_lower_case(aux->type);
             strcpy(f_node->type, aux->type);
@@ -903,7 +901,7 @@ void is_store(table* c_table, tree_node* node) {
     table_element* aux;
 
     if(strcmp(target->name, "Id") == 0) {
-        aux = search_symbol(symbol_tables, c_table, target->value);
+        aux = search_symbol(symbol_tables, c_table, target->value, false);
         if(aux != NULL) {
             to_lower_case(aux->type);
             strcpy(target->type, aux->type);
@@ -928,7 +926,7 @@ void is_call(table* c_table, tree_node* node) {
     table_element* aux;
 
     if(strcmp(function->name, "Id") == 0) {
-        aux = search_symbol(symbol_tables, c_table, function->value);
+        aux = search_symbol(symbol_tables, c_table, function->value, false);
 
         if(aux != NULL) {
             if(aux->is_func) {
@@ -957,7 +955,7 @@ void is_call(table* c_table, tree_node* node) {
 }
 
 void is_id(table* c_table, tree_node* node) {
-    table_element* aux = search_symbol(symbol_tables, c_table, node->value);
+    table_element* aux = search_symbol(symbol_tables, c_table, node->value, false);
 
     if(aux != NULL) {
         to_lower_case(aux->type);

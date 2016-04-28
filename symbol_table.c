@@ -43,6 +43,10 @@ void insert_pre_defined_functions(table* c_table) {
     insert_function(c_table, "atoi", "int", 0, char_atoi);
     insert_function(c_table, "itoa", "char", 1, int_itoa);
     insert_function(c_table, "puts", "int", 0, char_puts);
+
+    insert_table(c_table, "atoi", false);
+    insert_table(c_table, "itoa", false);
+    insert_table(c_table, "puts", false);
 }
 
 table* insert_table(table* c_table, char* name, bool defined) {
@@ -231,7 +235,7 @@ table* search_table(table* tables, char *name) { //TODO: maybe add params to the
     return target;
 }
 
-table_element* search_symbol(table* g_table, table* c_table, char *name) { //TODO: maybe add params to the search
+table_element* search_symbol(table* g_table, table* c_table, char *name, bool global_table) { //TODO: maybe add params to the search
     table_element* table_symbols = c_table->symbols;
     table_element* global_symbols = g_table->symbols;
 
@@ -243,12 +247,14 @@ table_element* search_symbol(table* g_table, table* c_table, char *name) { //TOD
         table_symbols = table_symbols->next;
     }
 
-    while (global_symbols != NULL) {
-        if(strcmp(global_symbols->name, name) == 0) {
-            return global_symbols;
-        }
+    if(!global_table) {
+        while (global_symbols != NULL) {
+            if(strcmp(global_symbols->name, name) == 0) {
+                return global_symbols;
+            }
 
-        global_symbols = global_symbols->next;
+            global_symbols = global_symbols->next;
+        }
     }
 
     return NULL;
