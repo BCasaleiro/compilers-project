@@ -10,6 +10,7 @@ table* init_table() {
     if(aux != NULL) {
         strcpy(aux->name, "Global");
         aux->is_defined = true;
+        aux->symbols = NULL;
         insert_pre_defined_functions(aux);
     } else {
         printf("ERROR SYMBOL TABLE");
@@ -58,13 +59,13 @@ table* insert_table(table* c_table, char* name, bool defined) {
 
         strcpy(new_table->name, name);
         new_table->is_defined = defined;
+        new_table->symbols = NULL;
 
         while(aux->next != NULL) {
             aux = aux->next;
         }
 
         aux->next = new_table;
-
     } else {
         printf("ERROR SYMBOL TABLE");
     }
@@ -76,8 +77,6 @@ void insert_function(table* function_table, char* function_name, char* r_type, i
     table_element* aux = function_table->symbols;
     table_element* new_element = (table_element*) malloc( sizeof(table_element) );
 
-    // printf("[insert_function]\n");
-
     if(new_element != NULL) {
         strcpy(new_element->name, function_name);
         strcpy(new_element->type, r_type);
@@ -86,7 +85,7 @@ void insert_function(table* function_table, char* function_name, char* r_type, i
         new_element->is_array = false;
         new_element->func_param = function_params;
 
-        if(aux != NULL) {
+        if(function_table->symbols != NULL) {
             while(aux->next != NULL) {
                 aux = aux->next;
             }
@@ -116,7 +115,7 @@ void insert_array_symbol(table* symbol_table, char* symbol_name, char* symbol_ty
         new_element->array_size_dec = symbol_size_dec;
         new_element->param = symbol_param;
 
-        if(aux != NULL) {
+        if(symbol_table->symbols != NULL) {
             while(aux->next != NULL) {
                 aux = aux->next;
             }
@@ -143,7 +142,7 @@ void insert_symbol(table* symbol_table, char* symbol_name, char* symbol_type, in
         new_element->is_array = false;
         new_element->param = symbol_param;
 
-        if(aux != NULL) {
+        if(symbol_table->symbols != NULL) {
             while(aux->next != NULL) {
                 aux = aux->next;
             }

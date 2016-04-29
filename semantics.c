@@ -139,6 +139,7 @@ void is_array_declaration(table* c_tab, tree_node* node) {
     int size_dec;
     int pointer = 0;
 
+    
     while(aux != NULL) {
         if(strcmp(aux->name, "Pointer") == 0) {
             pointer++;
