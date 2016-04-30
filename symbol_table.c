@@ -11,6 +11,7 @@ table* init_table() {
         strcpy(aux->name, "Global");
         aux->is_defined = true;
         aux->symbols = NULL;
+        aux->next = NULL;
         insert_pre_defined_functions(aux);
     } else {
         printf("ERROR SYMBOL TABLE");
@@ -60,6 +61,7 @@ table* insert_table(table* c_table, char* name, bool defined) {
         strcpy(new_table->name, name);
         new_table->is_defined = defined;
         new_table->symbols = NULL;
+        new_table->next = NULL;
 
         while(aux->next != NULL) {
             aux = aux->next;
@@ -84,6 +86,7 @@ void insert_function(table* function_table, char* function_name, char* r_type, i
         new_element->is_func = true;
         new_element->is_array = false;
         new_element->func_param = function_params;
+        new_element->next = NULL;
 
         if(function_table->symbols != NULL) {
             while(aux->next != NULL) {
@@ -114,6 +117,8 @@ void insert_array_symbol(table* symbol_table, char* symbol_name, char* symbol_ty
         new_element->is_array = true;
         new_element->array_size_dec = symbol_size_dec;
         new_element->param = symbol_param;
+        new_element->next = NULL;
+        new_element->func_param = NULL;
 
         if(symbol_table->symbols != NULL) {
             while(aux->next != NULL) {
@@ -141,6 +146,8 @@ void insert_symbol(table* symbol_table, char* symbol_name, char* symbol_type, in
         new_element->is_func = false;
         new_element->is_array = false;
         new_element->param = symbol_param;
+        new_element->next = NULL;
+        new_element->func_param = NULL;
 
         if(symbol_table->symbols != NULL) {
             while(aux->next != NULL) {
@@ -161,10 +168,10 @@ void insert_params(table* c_table, element_param* params) {
     element_param* aux = params;
 
     while(aux != NULL) {
-        if(strcmp(aux->type, "void") != 0) {
+        if( strcmp(aux->type, "void") != 0 ) {
             to_lower_case(aux->type);
             insert_symbol(c_table, aux->name, aux->type, aux->pointer, true);
-        } else if(strcmp(aux->type, "void") == 0 && aux->pointer > 0) {
+        } else if( strcmp(aux->type, "void") == 0 && aux->pointer > 0 ) {
             to_lower_case(aux->type);
             insert_symbol(c_table, aux->name, aux->type, aux->pointer, true);
         }
@@ -191,6 +198,8 @@ element_param* get_param_info(tree_node* node) {
 
         aux = aux->next_brother;
     }
+
+    param->next = NULL;
 
     return param;
 }

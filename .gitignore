@@ -13,6 +13,10 @@ y.tab.h
 # Lex files
 *.yy.c
 mccompiler
+ast
+semantics
+symbol_table
+util
 *.zip
 
 # Object files

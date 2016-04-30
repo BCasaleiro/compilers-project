@@ -139,7 +139,7 @@ void is_array_declaration(table* c_tab, tree_node* node) {
     int size_dec;
     int pointer = 0;
 
-    
+
     while(aux != NULL) {
         if(strcmp(aux->name, "Pointer") == 0) {
             pointer++;
@@ -234,13 +234,10 @@ void is_func_definition(table* c_tab, tree_node* node) {
                 insert_params(c_table, params);
 
             } else {
-
-                // if(aux_repeat == NULL) {
-                    insert_function(c_table, name, type, pointer, params);
-                    c_table = insert_table(symbol_tables, name, true);
-                    insert_symbol(c_table, "return", type, pointer, false);
-                    insert_params(c_table, params);
-                // }
+                insert_function(c_table, name, type, pointer, params);
+                c_table = insert_table(symbol_tables, name, true);
+                insert_symbol(c_table, "return", type, pointer, false);
+                insert_params(c_table, params);
             }
 
             repeat_check(c_table, aux);
@@ -288,7 +285,7 @@ void is_return(table* c_table, tree_node* node) {
 void is_or(table* c_table, tree_node* node) {
     tree_node* f_eq = node->luke;
     tree_node* s_eq = f_eq->next_brother;
-    table_element* aux;
+    table_element* aux = NULL;
 
     if(strcmp(f_eq->name, "Id") == 0) {
         aux = search_symbol(symbol_tables, c_table, f_eq->value, false);
@@ -322,7 +319,7 @@ void is_or(table* c_table, tree_node* node) {
 void is_and(table* c_table, tree_node* node) {
     tree_node* f_eq = node->luke;
     tree_node* s_eq = f_eq->next_brother;
-    table_element* aux;
+    table_element* aux = NULL;
 
     if(strcmp(f_eq->name, "Id") == 0) {
         aux = search_symbol(symbol_tables, c_table, f_eq->value, false);
@@ -354,7 +351,7 @@ void is_and(table* c_table, tree_node* node) {
 void is_eq(table* c_table, tree_node* node) {
     tree_node* f_eq = node->luke;
     tree_node* s_eq = f_eq->next_brother;
-    table_element* aux;
+    table_element* aux = NULL;
 
     if(strcmp(f_eq->name, "Id") == 0) {
         aux = search_symbol(symbol_tables, c_table, f_eq->value, false);
@@ -378,16 +375,13 @@ void is_eq(table* c_table, tree_node* node) {
         }
     }
 
-    if(strcmp(f_eq->type, s_eq->type) == 0) {
-        strcpy(node->type, f_eq->type);
-    }
-
+    strcpy(node->type, "int");
 }
 
 void is_ne(table* c_table, tree_node* node) {
     tree_node* f_eq = node->luke;
     tree_node* s_eq = f_eq->next_brother;
-    table_element* aux;
+    table_element* aux = NULL;
 
     if(strcmp(f_eq->name, "Id") == 0) {
         aux = search_symbol(symbol_tables, c_table, f_eq->value, false);
@@ -412,16 +406,13 @@ void is_ne(table* c_table, tree_node* node) {
 
     }
 
-    if(strcmp(f_eq->type, s_eq->type) == 0) {
-        strcpy(node->type, f_eq->type);
-    }
-
+    strcpy(node->type, "int");
 }
 
 void is_lt(table* c_table, tree_node* node) {
     tree_node* f_eq = node->luke;
     tree_node* s_eq = f_eq->next_brother;
-    table_element* aux;
+    table_element* aux = NULL;
 
     if(strcmp(f_eq->name, "Id") == 0) {
         aux = search_symbol(symbol_tables, c_table, f_eq->value, false);
@@ -445,16 +436,13 @@ void is_lt(table* c_table, tree_node* node) {
         }
     }
 
-    if(strcmp(f_eq->type, s_eq->type) == 0) {
-        strcpy(node->type, f_eq->type);
-    }
-
+    strcpy(node->type, "int");
 }
 
 void is_gt(table* c_table, tree_node* node) {
     tree_node* f_eq = node->luke;
     tree_node* s_eq = f_eq->next_brother;
-    table_element* aux;
+    table_element* aux = NULL;
 
     if(strcmp(f_eq->name, "Id") == 0) {
         aux = search_symbol(symbol_tables, c_table, f_eq->value, false);
@@ -478,16 +466,13 @@ void is_gt(table* c_table, tree_node* node) {
         }
     }
 
-    if(strcmp(f_eq->type, s_eq->type) == 0) {
-        strcpy(node->type, f_eq->type);
-    }
-
+    strcpy(node->type, "int");
 }
 
 void is_le(table* c_table, tree_node* node) {
     tree_node* f_eq = node->luke;
     tree_node* s_eq = f_eq->next_brother;
-    table_element* aux;
+    table_element* aux = NULL;
 
     if(strcmp(f_eq->name, "Id") == 0) {
         aux = search_symbol(symbol_tables, c_table, f_eq->value, false);
@@ -511,16 +496,13 @@ void is_le(table* c_table, tree_node* node) {
         }
     }
 
-    if(strcmp(f_eq->type, s_eq->type) == 0) {
-        strcpy(node->type, f_eq->type);
-    }
-
+    strcpy(node->type, "int");
 }
 
 void is_ge(table* c_table, tree_node* node) {
     tree_node* f_eq = node->luke;
     tree_node* s_eq = f_eq->next_brother;
-    table_element* aux;
+    table_element* aux = NULL;
 
     if(strcmp(f_eq->name, "Id") == 0) {
         aux = search_symbol(symbol_tables, c_table, f_eq->value, false);
@@ -544,16 +526,13 @@ void is_ge(table* c_table, tree_node* node) {
         }
     }
 
-    if(strcmp(f_eq->type, s_eq->type) == 0) {
-        strcpy(node->type, f_eq->type);
-    }
-
+    strcpy(node->type, "int");
 }
 
 void is_add(table* c_table, tree_node* node) {
     tree_node* f_eq = node->luke;
     tree_node* s_eq = f_eq->next_brother;
-    table_element* aux;
+    table_element* aux = NULL;
 
     if(strcmp(f_eq->name, "Id") == 0) {
         aux = search_symbol(symbol_tables, c_table, f_eq->value, false);
@@ -586,7 +565,7 @@ void is_add(table* c_table, tree_node* node) {
 void is_sub(table* c_table, tree_node* node) {
     tree_node* f_eq = node->luke;
     tree_node* s_eq = f_eq->next_brother;
-    table_element* aux;
+    table_element* aux = NULL;
 
     if(strcmp(f_eq->name, "Id") == 0) {
         aux = search_symbol(symbol_tables, c_table, f_eq->value, false);
@@ -619,7 +598,7 @@ void is_sub(table* c_table, tree_node* node) {
 void is_mul(table* c_table, tree_node* node) {
     tree_node* f_eq = node->luke;
     tree_node* s_eq = f_eq->next_brother;
-    table_element* aux;
+    table_element* aux = NULL;
 
     if(strcmp(f_eq->name, "Id") == 0) {
         aux = search_symbol(symbol_tables, c_table, f_eq->value, false);
@@ -652,7 +631,7 @@ void is_mul(table* c_table, tree_node* node) {
 void is_div(table* c_table, tree_node* node) {
     tree_node* f_eq = node->luke;
     tree_node* s_eq = f_eq->next_brother;
-    table_element* aux;
+    table_element* aux = NULL;
 
     if(strcmp(f_eq->name, "Id") == 0) {
         aux = search_symbol(symbol_tables, c_table, f_eq->value, false);
@@ -685,7 +664,7 @@ void is_div(table* c_table, tree_node* node) {
 void is_mod(table* c_table, tree_node* node) {
     tree_node* f_eq = node->luke;
     tree_node* s_eq = f_eq->next_brother;
-    table_element* aux;
+    table_element* aux = NULL;
 
     if(strcmp(f_eq->name, "Id") == 0) {
         aux = search_symbol(symbol_tables, c_table, f_eq->value, false);
@@ -717,7 +696,7 @@ void is_mod(table* c_table, tree_node* node) {
 
 void is_not(table* c_table, tree_node* node) {
     tree_node* not = node->luke;
-    table_element* aux;
+    table_element* aux = NULL;
 
     if(strcmp(not->name, "Id") == 0) {
         aux = search_symbol(symbol_tables, c_table, not->value, false);
@@ -735,7 +714,7 @@ void is_not(table* c_table, tree_node* node) {
 
 void is_minus(table* c_table, tree_node* node) {
     tree_node* minus = node->luke;
-    table_element* aux;
+    table_element* aux = NULL;
 
     if(strcmp(minus->name, "Id") == 0) {
         aux = search_symbol(symbol_tables, c_table, minus->value, false);
@@ -753,7 +732,7 @@ void is_minus(table* c_table, tree_node* node) {
 
 void is_plus(table* c_table, tree_node* node) {
     tree_node* plus = node->luke;
-    table_element* aux;
+    table_element* aux = NULL;
 
     if(strcmp(plus->name, "Id") == 0) {
         aux = search_symbol(symbol_tables, c_table, plus->value, false);
@@ -772,7 +751,7 @@ void is_plus(table* c_table, tree_node* node) {
 tree_node* is_addr(table* c_table, tree_node* node) {
     tree_node* son = node->luke;
     tree_node* ret;
-    table_element* aux;
+    table_element* aux = NULL;
 
     if(strcmp(son->name, "Id") == 0) {
         aux = search_symbol(symbol_tables, c_table, son->value, false);
@@ -794,6 +773,7 @@ tree_node* is_addr(table* c_table, tree_node* node) {
         is_deref_call(c_table, son);
 
         strcpy(node->type, son->type);
+
         node->pointer = son->pointer + 1;
 
         return node;
@@ -808,7 +788,7 @@ tree_node* is_addr(table* c_table, tree_node* node) {
 tree_node* is_deref(table* c_table, tree_node* node) {
     tree_node* son = node->luke;
     tree_node* ret;
-    table_element* aux;
+    table_element* aux = NULL;
 
     if(strcmp(son->name, "Id") == 0) {
         aux = search_symbol(symbol_tables, c_table, son->value, false);
@@ -831,6 +811,7 @@ tree_node* is_deref(table* c_table, tree_node* node) {
         is_deref_add(c_table, son);
 
         strcpy(node->type, son->type);
+
         node->pointer = son->pointer - 1;
 
         return node;
@@ -851,7 +832,7 @@ tree_node* is_deref(table* c_table, tree_node* node) {
 
 void is_deref_call(table* c_table, tree_node* node) {
     tree_node* function = node->luke;
-    table_element* aux;
+    table_element* aux = NULL;
 
     if(strcmp(function->name, "Id") == 0) {
         aux = search_symbol(symbol_tables, c_table, function->value, false);
@@ -878,41 +859,39 @@ void is_deref_call(table* c_table, tree_node* node) {
 
 void is_deref_add(table* c_table, tree_node* node) {
     tree_node* f_node = node->luke;
-    table_element* aux;
+    table_element* aux = NULL;
 
-    if(strcmp(f_node->name, "Id") == 0) {
-        aux = search_symbol(symbol_tables, c_table, f_node->value, false);
-        if(aux != NULL) {
-            to_lower_case(aux->type);
-            strcpy(f_node->type, aux->type);
-            f_node->pointer = aux->pointer;
+    aux = search_symbol(symbol_tables, c_table, f_node->value, false);
+    if(aux != NULL) {
+        to_lower_case(aux->type);
+        strcpy(f_node->type, aux->type);
+        f_node->pointer = aux->pointer;
 
-            strcpy(node->type, aux->type);
-            node->pointer = aux->pointer;
-        } else {
-            printf("Line %d, col %d: Unkown symbol %s\n", f_node->line, f_node->col, f_node->value);
-            strcpy(f_node->type, "undef");
-            strcpy(node->type, "undef");
-        }
+        strcpy(node->type, aux->type);
+        node->pointer = aux->pointer;
+    } else {
+        printf("Line %d, col %d: Unkown symbol %s\n", f_node->line, f_node->col, f_node->value);
+        strcpy(f_node->type, "undef");
+        strcpy(node->type, "undef");
     }
 }
 
 void is_store(table* c_table, tree_node* node) {
     tree_node* target = node->luke;
-    table_element* aux;
+    table_element* aux = NULL;
 
     if(strcmp(target->name, "Id") == 0) {
         aux = search_symbol(symbol_tables, c_table, target->value, false);
         if(aux != NULL) {
             to_lower_case(aux->type);
             strcpy(target->type, aux->type);
+            strcpy(node->type, aux->type);
         } else {
             printf("Line %d, col %d: Unkown symbol %s\n", target->line, target->col, target->value);
             strcpy(target->type, "undef");
+            strcpy(node->type, "undef");
         }
     }
-
-    strcpy(node->type, target->type);
 
     repeat_check(c_table, node);
 }
@@ -924,7 +903,7 @@ void is_comma(table* c_table, tree_node* node) {
 
 void is_call(table* c_table, tree_node* node) {
     tree_node* function = node->luke;
-    table_element* aux;
+    table_element* aux = NULL;
 
     if(strcmp(function->name, "Id") == 0) {
         aux = search_symbol(symbol_tables, c_table, function->value, false);

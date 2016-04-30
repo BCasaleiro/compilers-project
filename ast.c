@@ -6,14 +6,17 @@ tree_node* create_simple_node(char* name, int line, int col) {
 
     if (new_node != NULL) {
         strcpy(new_node->name, name);
-        new_node->next_brother = NULL;
-        new_node->luke = NULL;
-        new_node->darth_vader = NULL;
         new_node->pointer = 0;
         new_node->size_dec = -1;
         strcpy(new_node->size, "-1");
         new_node->line = line;
         new_node->col = col;
+
+        new_node->next_brother = NULL;
+        new_node->luke = NULL;
+        new_node->darth_vader = NULL;
+        new_node->params = NULL;
+
     } else {
         printf("ERROR SIMPLE NODE\n");
     }
@@ -26,14 +29,16 @@ tree_node* create_str_node(char* name, char* value, int line, int col) {
 
     if(new_node != NULL) {
         strcpy(new_node->name, name);
-        new_node->next_brother = NULL;
-        new_node->luke = NULL;
-        new_node->darth_vader = NULL;
         new_node->pointer = 0;
         new_node->size_dec = -1;
         strcpy(new_node->size, "-1");
         new_node->line = line;
         new_node->col = col;
+
+        new_node->next_brother = NULL;
+        new_node->luke = NULL;
+        new_node->darth_vader = NULL;
+        new_node->params = NULL;
 
         strcpy(new_node->value, value);
     } else {
@@ -48,14 +53,16 @@ tree_node* create_str_node_with_type(char* name, char* value, char* type, int li
 
     if(new_node != NULL) {
         strcpy(new_node->name, name);
-        new_node->next_brother = NULL;
-        new_node->luke = NULL;
-        new_node->darth_vader = NULL;
         new_node->pointer = 0;
         new_node->size_dec = -1;
         strcpy(new_node->size, "-1");
         new_node->line = line;
         new_node->col = col;
+
+        new_node->next_brother = NULL;
+        new_node->luke = NULL;
+        new_node->darth_vader = NULL;
+        new_node->params = NULL;
 
         strcpy(new_node->value, value);
         strcpy(new_node->type, type);
@@ -74,12 +81,14 @@ tree_node* create_strlit_node(char* name, char* value, char* type, int line, int
 
     if(new_node != NULL) {
         strcpy(new_node->name, name);
-        new_node->next_brother = NULL;
-        new_node->luke = NULL;
-        new_node->darth_vader = NULL;
         new_node->pointer = 0;
         new_node->size_dec = -1;
         strcpy(new_node->size, "-1");
+
+        new_node->next_brother = NULL;
+        new_node->luke = NULL;
+        new_node->darth_vader = NULL;
+        new_node->params = NULL;
 
         strcpy(new_node->value, value);
         strcpy(new_node->type, type);
