@@ -12,6 +12,8 @@ tree_node* create_simple_node(char* name, int line, int col) {
         new_node->line = line;
         new_node->col = col;
 
+        strcpy(new_node->type, "");
+
         new_node->next_brother = NULL;
         new_node->luke = NULL;
         new_node->darth_vader = NULL;
@@ -34,6 +36,8 @@ tree_node* create_str_node(char* name, char* value, int line, int col) {
         strcpy(new_node->size, "-1");
         new_node->line = line;
         new_node->col = col;
+
+        strcpy(new_node->type, "");
 
         new_node->next_brother = NULL;
         new_node->luke = NULL;
