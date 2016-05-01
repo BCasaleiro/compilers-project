@@ -1,13 +1,9 @@
 int gdc(int a, int b) {
-    char c;
-    char* d;
-    char e[20];
+    int c;
+    char *d;
 
-    !a;
+    c = a + b;
 
-    +c;
+    d = b;
 
-    -d;
-
-    a || e;
 }
