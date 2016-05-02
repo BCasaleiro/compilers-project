@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include "ast.h"
+#include "util.h"
 
 tree_node* create_simple_node(char* name, int line, int col) {
     tree_node* new_node = (tree_node*) malloc( sizeof(tree_node) );
@@ -80,8 +81,11 @@ tree_node* create_str_node_with_type(char* name, char* value, char* type, int li
 tree_node* create_strlit_node(char* name, char* value, char* type, int line, int col) {
     tree_node* new_node = (tree_node*)malloc(sizeof(tree_node));
     char size[MAX_STR];
+    int strlit_size;
 
-    sprintf(size, "%ld", strlen(value) - 1);
+    strlit_size = get_str_size(value);
+
+    sprintf(size, "%d", strlit_size);
 
     if(new_node != NULL) {
         strcpy(new_node->name, name);
@@ -96,7 +100,7 @@ tree_node* create_strlit_node(char* name, char* value, char* type, int line, int
 
         strcpy(new_node->value, value);
         strcpy(new_node->type, type);
-        strcpy(new_node->size, size );
+        strcpy(new_node->size, size);
     } else {
         printf("ERROR STR NODE\n");
     }
