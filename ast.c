@@ -189,14 +189,20 @@ void print_annotated_terminal(tree_node* node) {
     if(strcmp(node->type, "") != 0) {
         printf("%s(%s) - %s", node->name, node->value, node->type);
 
-        for(int i = 0; i < node->pointer; i++) {
-            printf("*");
-        }
-
         if(node->size_dec != -1) {
+            for(int i = 0; i < node->pointer - 1; i++) {
+                printf("*");
+            }
             printf("[%d]", node->size_dec);
         } else if(strcmp(node->size, "-1") != 0) {
+            for(int i = 0; i < node->pointer - 1; i++) {
+                printf("*");
+            }
             printf("[%s]", node->size);
+        } else {
+            for(int i = 0; i < node->pointer; i++) {
+                printf("*");
+            }
         }
 
         if (node->params != NULL) {

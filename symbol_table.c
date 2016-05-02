@@ -307,7 +307,7 @@ void print_elements(table* table) {
         } else if(aux->is_array) {
             printf("%s\t%s", aux->name, aux->type);
 
-            for(int i = 0; i < aux->pointer; i++){
+            for(int i = 0; i < aux->pointer - 1; i++){
                 printf("*");
             }
 

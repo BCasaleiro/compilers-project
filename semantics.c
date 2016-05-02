@@ -133,7 +133,7 @@ void is_array_declaration(table* c_tab, tree_node* node) {
     char name[MAX_STR];
     char size[MAX_STR];
     int size_dec;
-    int pointer = 0;
+    int pointer =  1;
     int line = 0, col = 0;
 
 

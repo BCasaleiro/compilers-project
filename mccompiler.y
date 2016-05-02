@@ -581,7 +581,7 @@ ExprSpecial:    ExprSpecial ASSIGN ExprSpecial                                  
                                                                                     $$ = create_str_node_with_type("IntLit",$1, "int", yylineno, (int)(columnNumber - strlen($1)));
                                                                                 }
         |       CHRLIT                                                          {
-                                                                                    $$ = create_str_node_with_type("ChrLit",$1, "char", yylineno, (int)(columnNumber - strlen($1)));
+                                                                                    $$ = create_str_node_with_type("ChrLit",$1, "int", yylineno, (int)(columnNumber - strlen($1)));
                                                                                 }
         |       STRLIT                                                          {
                                                                                     $$ = create_strlit_node("StrLit",$1, "char", yylineno, (int)(columnNumber - strlen($1)));

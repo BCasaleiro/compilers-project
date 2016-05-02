@@ -1,6 +1,23 @@
-int gdc(int a, int b) {
-    int c, d;
+int gdc(int a) {
+    char c[10];
+    char *d[012];
 
-    c = a, d = b;
+    c + d; 
+
+    a + c;
+    c + a;
+    c + c;
+
+    a - c;
+    c - a;
+    c - c;
+
+    a / c;
+    c / a;
+    c / c;
+
+    a % c;
+    c % a;
+    c % c;
 
 }
