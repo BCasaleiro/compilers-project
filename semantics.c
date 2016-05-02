@@ -283,7 +283,7 @@ void is_return(table* c_table, tree_node* node) {
     //TODO: change to repeat_check
 }
 
-void is_or(table* c_table, tree_node* node) { //TODO: confirm
+void is_or(table* c_table, tree_node* node) {
     tree_node* or = node->luke;
 
     repeat_check(c_table, node);
@@ -292,7 +292,7 @@ void is_or(table* c_table, tree_node* node) { //TODO: confirm
     node->pointer = or->pointer;
 }
 
-void is_and(table* c_table, tree_node* node) { //TODO: confirm
+void is_and(table* c_table, tree_node* node) {
     tree_node* and = node->luke;
 
     repeat_check(c_table, node);
@@ -614,41 +614,25 @@ void is_store(table* c_table, tree_node* node) {
 }
 
 void is_comma(table* c_table, tree_node* node) {
+    tree_node* son = node->luke;
+
     repeat_check(c_table, node);
-    repeat_check_brother(c_table, node->luke);
+
+    while(son->next_brother != NULL) {
+        son = son->next_brother;
+    }
+
+    strcpy(node->type, son->type);
+    node->pointer = son->pointer;
 }
 
 void is_call(table* c_table, tree_node* node) {
     tree_node* function = node->luke;
-    table_element* aux = NULL;
 
-    if(strcmp(function->name, "Id") == 0) {
-        aux = search_symbol(symbol_tables, c_table, function->value, false);
+    repeat_check(c_table, node);
 
-        if(aux != NULL) {
-            if(aux->is_func) {
-                to_lower_case(aux->type);
-                strcpy(node->type, aux->type);
-                node->pointer = aux->pointer;
-
-                strcpy(function->type, aux->type);
-                function->pointer = aux->pointer;
-                function->params = aux->func_param;
-            } else {
-                printf("Line %d, col %d: Symbol %s is not a function\n", function->line, function->col, function->value);
-                strcpy(function->type, "undef");
-                strcpy(node->type, "undef");
-            }
-        } else {
-            printf("Line %d, col %d: Unkown symbol %s\n", function->line, function->col, function->value);
-            strcpy(function->type, "undef");
-            strcpy(node->type, "undef");
-        }
-
-    }
-
-    repeat_check_brother(c_table, function);
-
+    strcpy(node->type, function->type);
+    node->pointer = function->pointer;
 }
 
 void is_id(table* c_table, tree_node* node) {

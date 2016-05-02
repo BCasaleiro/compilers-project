@@ -1,9 +1,6 @@
 int gdc(int a, int b) {
-    int c;
-    char *d;
+    int c, d;
 
-    c = a + b;
-
-    d = b;
+    c = a, d = b;
 
 }
