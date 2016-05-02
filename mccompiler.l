@@ -51,7 +51,8 @@ inval_str           ([^"\n\\]|{invalid_stuff})
 
 strlit              \"{valid_str}*\"
 invalid_str         \"{inval_str}*\"
-unterminated_str    \"([^\"\n]|{valid_stuff})*
+/* unterminated_str    \"([^\"\n]|{valid_stuff})* */
+unterminated_str    \"({valid_stuff}*|(\\.|[^"\n\\]))*\\?
 
 ignore              ("\n"|"\t"|" ")
 reserved            ("--"|"++"|auto|break|case|const|continue|default|do|double|enum|extern|float|goto|long|register|short|signed|sizeof|static|struct|switch|typedef|union|unsigned|volatile|while)
