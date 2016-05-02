@@ -1,34 +1,9 @@
-char buffer[20];
-int function;
+int b[012];
+int b[10];
 
-int function(void);
+int a[20];
+int a[20];
 
-int gdc(int a, int b) {
-    if(a > c) {
+int main(int argc, char* argv) {
 
-    }
-}
-
-int function(void) {
-
-}
-
-int main(int argc, char **argv) {
-    int a, b;
-
-    *a;
-
-    **b;
-
-    ***c;
-
-    *gdc();
-
-    if (argc > 2) {
-        a = atoi(argv[1]);
-        b = atoi(argv[2]);
-        puts(itoa(gdc(a, b), buffer));
-    } else
-        puts("Error: two parameters required.");
-    return 0;
 }

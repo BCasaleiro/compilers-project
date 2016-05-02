@@ -10,7 +10,6 @@ void check_note(tree_node* node);
 
 void check_node_type(table* c_table, tree_node* node);
 void repeat_check(table* c_table, tree_node* node);
-void repeat_check_brother(table* c_table, tree_node* node);
 
 void is_declaration(table* c_tab, tree_node* node);
 void is_array_declaration(table* c_tab, tree_node* node);

@@ -8,7 +8,6 @@ void semantics(tree_node* root) {
     c_table = symbol_tables;
 
     while(aux != NULL) {
-
         check_node_type(c_table, aux);
 
         aux = aux->next_brother;
@@ -91,29 +90,21 @@ void repeat_check(table* c_table, tree_node* node) {
     }
 }
 
-void repeat_check_brother(table* c_table, tree_node* node) {
-    tree_node* aux = node->next_brother;
-
-    while(aux != NULL) {
-
-        check_node_type(c_table, aux);
-
-        aux = aux->next_brother;
-    }
-}
-
 void is_declaration(table* c_tab, tree_node* node) {
     tree_node* aux = node->luke;
     table_element* aux_repeat;
     char type[MAX_STR];
     char name[MAX_STR];
     int pointer = 0;
+    int line = 0, col = 0;
 
     while(aux != NULL) {
         if(strcmp(aux->name, "Pointer") == 0) {
             pointer++;
         } else if(strcmp(aux->name, "Id") == 0) {
             strcpy(name, aux->value);
+            line = aux->line;
+            col = aux->col;
         } else {
             strcpy(type, aux->name);
         }
@@ -121,12 +112,17 @@ void is_declaration(table* c_tab, tree_node* node) {
         aux = aux->next_brother;
     }
 
-    aux_repeat = search_symbol(symbol_tables, c_table, name, true); //TODO: check if table is glob, falseal
+    to_lower_case(type);
+
+    aux_repeat = search_symbol(symbol_tables, c_table, name, true);
     if(aux_repeat == NULL) {
-        to_lower_case(type);
         insert_symbol(c_tab, name, type, pointer, false);
+    } else if(symbol_tables != c_table) {
+        printf("Line %d, col %d: Symbol %s already defined\n", line, col, name);
     } else {
-        //TODO: add error message
+        if(strcmp(type, aux_repeat->type) != 0) {
+            printf("Line %d, col %d: Symbol %s already defined\n", line, col, name); //TODO: check if it is this error messages
+        }
     }
 }
 
@@ -138,6 +134,7 @@ void is_array_declaration(table* c_tab, tree_node* node) {
     char size[MAX_STR];
     int size_dec;
     int pointer = 0;
+    int line = 0, col = 0;
 
 
     while(aux != NULL) {
@@ -145,6 +142,8 @@ void is_array_declaration(table* c_tab, tree_node* node) {
             pointer++;
         } else if(strcmp(aux->name, "Id") == 0) {
             strcpy(name, aux->value);
+            line = aux->line;
+            col = aux->col;
         } else if(strcmp(aux->name, "IntLit") == 0) {
             strcpy(size, aux->value);
             size_dec = to_dec_convertion(size);
@@ -152,17 +151,22 @@ void is_array_declaration(table* c_tab, tree_node* node) {
             aux->size_dec = size_dec;
         } else {
             strcpy(type, aux->name);
-            to_lower_case(type);
         }
 
         aux = aux->next_brother;
     }
 
-    aux_repeat = search_symbol(symbol_tables, c_table, name, false); //TODO: check if table is glob, falseal
+    to_lower_case(type);
+
+    aux_repeat = search_symbol(symbol_tables, c_table, name, true);
     if(aux_repeat == NULL) {
         insert_array_symbol(c_tab, name, type, pointer, size, size_dec, false);
+    } else if(symbol_tables != c_table) {
+        printf("Line %d, col %d: Symbol %s already defined\n", line, col, name);
     } else {
-        //TODO: add error message
+        if(strcmp(type, aux_repeat->type) != 0 || size_dec != aux_repeat->array_size_dec) {
+            printf("Line %d, col %d: Symbol %s already defined\n", line, col, name); //TODO: check if it is this error messages
+        }
     }
 }
 
@@ -284,21 +288,15 @@ void is_return(table* c_table, tree_node* node) {
 }
 
 void is_or(table* c_table, tree_node* node) {
-    tree_node* or = node->luke;
-
     repeat_check(c_table, node);
 
-    strcpy(node->type, or->type);
-    node->pointer = or->pointer;
+    strcpy(node->type, "int");
 }
 
 void is_and(table* c_table, tree_node* node) {
-    tree_node* and = node->luke;
-
     repeat_check(c_table, node);
 
-    strcpy(node->type, and->type);
-    node->pointer = and->pointer;
+    strcpy(node->type, "int");
 }
 
 void is_eq(table* c_table, tree_node* node) {

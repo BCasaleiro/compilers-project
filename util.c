@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 int to_dec_convertion(char* value) {
     int out = 0;
@@ -18,9 +19,8 @@ int get_str_size(char* str) {
     int size = 0;
     int flag = 0;
 
-    printf("str: %s\n", str);
-
     for(int i = 0; i < strlen(str); i++) {
+
         if(flag == 0) {
             size++;
 
@@ -41,6 +41,7 @@ int get_str_size(char* str) {
                 size++;
             }
         }
+
     }
 
     return size - 1;

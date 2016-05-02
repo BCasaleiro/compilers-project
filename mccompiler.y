@@ -281,7 +281,7 @@ TypeSpec:   INT                                                                 
  //Declarator
 Declarator: ZMast ID                                                            {
                                                                                     $$ = create_simple_node("Declaration", yylineno, (int)(columnNumber));
-                                                                                    auxId = create_str_node("Id", $2, yylineno, (int)(columnNumber - strlen($2)));
+                                                                                    auxId = create_str_node("Id", $2, yylineno, (int)(columnNumber - strlen($2) - 1));
                                                                                     if($1 != NULL) {
                                                                                         $$->luke = $1;
                                                                                         add_brother_end($$->luke, auxId);
