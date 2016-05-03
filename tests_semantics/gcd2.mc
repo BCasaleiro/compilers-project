@@ -1,23 +1,9 @@
+char A0;
+
 int gdc(int a) {
-    char c[10];
-    char *d[012];
+    int* b;
+    int* c;
 
-    c + d; 
-
-    a + c;
-    c + a;
-    c + c;
-
-    a - c;
-    c - a;
-    c - c;
-
-    a / c;
-    c / a;
-    c / c;
-
-    a % c;
-    c % a;
-    c % c;
+    b - c; 
 
 }

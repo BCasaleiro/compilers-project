@@ -1,8 +1,6 @@
 #include <stdbool.h>
 #include "ast.h"
 
-#define MAX_STR 100
-
 typedef struct _table_element{
 	char name[MAX_STR];
     char type[MAX_STR];

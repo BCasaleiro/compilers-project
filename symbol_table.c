@@ -228,7 +228,7 @@ element_param* get_params(tree_node* node) {
     return params;
 }
 
-table* search_table(table* tables, char *name) { //TODO: maybe add params to the search
+table* search_table(table* tables, char *name) {
     table* target = NULL;
     table* aux = tables;
 
@@ -243,7 +243,7 @@ table* search_table(table* tables, char *name) { //TODO: maybe add params to the
     return target;
 }
 
-table_element* search_symbol(table* g_table, table* c_table, char *name, bool global_table) { //TODO: maybe add params to the search
+table_element* search_symbol(table* g_table, table* c_table, char *name, bool global_table) {
     table_element* table_symbols = c_table->symbols;
     table_element* global_symbols = g_table->symbols;
 

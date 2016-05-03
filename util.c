@@ -30,6 +30,14 @@ int get_str_size(char* str) {
         } else {
             if( flag == 1 && (str[i] == 'n' || str[i] == 't' || str[i] == '\\' || str[i] == '\'' || str[i] == '\"') ) {
                 flag = 0;
+            } else if(flag == 4) {
+                if(str[i] == '\\') {
+                    flag = 1;
+                } else {
+                    flag = 0;
+                }
+
+                size++;
             } else if(str[i] >= '0' && str[i] <= '7') {
                 flag++;
             } else {
@@ -38,6 +46,7 @@ int get_str_size(char* str) {
                 } else {
                     flag = 0;
                 }
+
                 size++;
             }
         }

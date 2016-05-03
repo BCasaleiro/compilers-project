@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX_STR 100
+#define MAX_STR 250
 
 typedef struct _element_param {
     char type[MAX_STR];

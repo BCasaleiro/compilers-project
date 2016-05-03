@@ -8,8 +8,6 @@
     #include "y.tab.h"
     #include "semantics.h"
 
-    #define MAX_STR 100
-
     int flag = 0;
     int lineNumber = 1;
     int columnNumber = 1;

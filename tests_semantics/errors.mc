@@ -1,9 +1,9 @@
-int b[012];
-int b[10];
+int teste(int, void);
+int teste(int, char);
+int teste(int);
 
-int a[20];
-int a[20];
 
-int main(int argc, char* argv) {
-
-}
+int main(int argc, char* argv);
+void main(int argc, char* argv);
+int main(int argc, int argv);
+int main(int argc);

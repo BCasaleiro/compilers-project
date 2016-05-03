@@ -291,7 +291,7 @@ Declarator: ZMast ID                                                            
                                                                                 }
         |   ZMast ID LSQ INTLIT RSQ                                             {
                                                                                     $$ = create_simple_node("ArrayDeclaration", yylineno, (int)(columnNumber));
-                                                                                    auxId = create_str_node("Id", $2, yylineno, (int)(columnNumber - strlen($2)));
+                                                                                    auxId = create_str_node("Id", $2, yylineno, (int)(columnNumber - strlen($2) - strlen($4) - 2));
                                                                                     auxIntLit = create_str_node("IntLit", $4, yylineno, (int)(columnNumber - strlen($4)));
                                                                                     if($1 != NULL) {
                                                                                         $$->luke = $1;
