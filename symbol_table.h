@@ -40,6 +40,9 @@ element_param* get_param_info(tree_node* node);
 table* search_table(table* tables, char *name);
 table_element* search_symbol(table* g_table, table* c_table, char *name, bool global_table);
 
+int check_params_void(element_param* params);
+int check_param_list(element_param* atual, element_param* from_table);
+
 void print_tables(table* c_table);
 void print_elements(table* table);
 void print_params(element_param* param);

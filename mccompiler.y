@@ -185,7 +185,7 @@ FunctionDeclaration: TypeSpec FunctionDeclarator SEMI                           
 
  //FunctionDeclarator
 FunctionDeclarator: ZMast ID LPAR ParameterList RPAR                            {
-                                                                                    auxId = create_str_node("Id", $2, yylineno, (int)(columnNumber - strlen($2)));
+                                                                                    auxId = create_str_node("Id", $2, yylineno, (int)($4->col - strlen($2)));
                                                                                     if($1 != NULL) {
                                                                                         $$ = $1;
                                                                                         add_brother_end($$, auxId);
@@ -215,7 +215,7 @@ FunctionBody: LBRACE Redeclaration ReSpecialStatement  RBRACE                   
 
  //ParameterList
 ParameterList: ParameterDeclaration CommaParameterDeclaration                   {
-                                                                                    $$ = create_simple_node("ParamList", yylineno, (int)(columnNumber));
+                                                                                    $$ = create_simple_node("ParamList", yylineno, (int)($1->col - 1));
                                                                                     add_child($$,$1);
                                                                                     add_brother_end($1,$2);
                                                                                 }
@@ -223,7 +223,7 @@ ParameterList: ParameterDeclaration CommaParameterDeclaration                   
 
  //ParameterDeclaration
 ParameterDeclaration: TypeSpec ZMast ZUid                                       {
-                                                                                    $$ = create_simple_node("ParamDeclaration", yylineno, (int)(columnNumber));
+                                                                                    $$ = create_simple_node("ParamDeclaration", yylineno, (int)(columnNumber - (columnNumber - $1->col)));
                                                                                     add_child($$,$1);
                                                                                     add_brother_end($1,$2);
                                                                                     add_brother_end($1,$3);
@@ -268,13 +268,13 @@ Redeclaration:  Empty                                                           
 
  //TypeSpec
 TypeSpec:   INT                                                                 {
-                                                                                    $$ = create_simple_node("Int", yylineno, (int)(columnNumber));
+                                                                                    $$ = create_simple_node("Int", yylineno, (int)(columnNumber - 3));
                                                                                 }
     |       CHAR                                                                {
-                                                                                    $$ = create_simple_node("Char", yylineno, (int)(columnNumber));
+                                                                                    $$ = create_simple_node("Char", yylineno, (int)(columnNumber - 4));
                                                                                 }
     |       VOID                                                                {
-                                                                                    $$ = create_simple_node("Void", yylineno, (int)(columnNumber));
+                                                                                    $$ = create_simple_node("Void", yylineno, (int)(columnNumber - 4));
                                                                                 }
     ;
 

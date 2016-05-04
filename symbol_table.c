@@ -268,6 +268,45 @@ table_element* search_symbol(table* g_table, table* c_table, char *name, bool gl
     return NULL;
 }
 
+int check_params_void(element_param* params) {
+    element_param* aux = params;
+
+    while(aux != NULL) {
+        if( strcmp(aux->type, "void") == 0 && aux->pointer == 0 && aux == params && aux->next == NULL ) {
+            return 0;
+        } else if(strcmp(aux->type, "void") == 0 && aux->pointer == 0) {
+            return 1;
+        }
+
+        aux = aux->next;
+    }
+
+    return 0;
+}
+
+int check_param_list(element_param* atual, element_param* from_table) {
+    element_param* aux_a;
+    element_param* aux_b;
+    int flag = 0;
+    aux_a = atual;
+    aux_b = from_table;
+
+    while(aux_a != NULL && aux_b != NULL) {
+        if( strcmp(aux_a->type, aux_b->type) != 0 || aux_a->pointer != aux_b->pointer ) {
+            flag = 1;
+        }
+
+        aux_a = aux_a->next;
+        aux_b = aux_b->next;
+    }
+
+    if( !( aux_a == NULL && aux_b == NULL ) ) {
+        flag = 1;
+    }
+
+    return flag;
+}
+
 void print_params(element_param* param) {
     element_param* aux = param;
 
