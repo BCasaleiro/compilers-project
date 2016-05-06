@@ -609,7 +609,16 @@ void is_add(table* c_table, tree_node* node) {
     } else if( strcmp(f_eq->type, "void") != 0 && strcmp(s_eq->type, "void") != 0  && f_eq->pointer == 0 && s_eq->pointer == 0) {
         strcpy(node->type, "int");
     } else {
-        //TODO: add error message
+        strcpy(node->type, "undef");
+        printf("Line %d, col %d: Operator + cannot be applied to types %s", node->line, node->col, f_eq->type);
+        for (int i = 0; i < f_eq->pointer; i++) {
+            printf("*");
+        }
+        printf(",%s", s_eq->type);
+        for (int i = 0; i < s_eq->pointer; i++) {
+            printf("*");
+        }
+        printf("\n");
     }
 }
 
@@ -627,7 +636,16 @@ void is_sub(table* c_table, tree_node* node) {
     } else if( strcmp(f_eq->type, "void") != 0 && strcmp(s_eq->type, "void") != 0  && f_eq->pointer == 0 && s_eq->pointer == 0) {
         strcpy(node->type, "int");
     } else {
-        //TODO: add error message
+        strcpy(node->type, "undef");
+        printf("Line %d, col %d: Operator - cannot be applied to types %s", node->line, node->col, f_eq->type);
+        for (int i = 0; i < f_eq->pointer; i++) {
+            printf("*");
+        }
+        printf(",%s", s_eq->type);
+        for (int i = 0; i < s_eq->pointer; i++) {
+            printf("*");
+        }
+        printf("\n");
     }
 }
 
@@ -640,7 +658,16 @@ void is_mul(table* c_table, tree_node* node) {
     if( strcmp(f_eq->type, "void") != 0 && strcmp(s_eq->type, "void") != 0  && f_eq->pointer == 0 && s_eq->pointer == 0) {
         strcpy(node->type, "int");
     } else {
-        //TODO: add error message
+        strcpy(node->type, "undef");
+        printf("Line %d, col %d: Operator * cannot be applied to types %s", node->line, node->col, f_eq->type);
+        for (int i = 0; i < f_eq->pointer; i++) {
+            printf("*");
+        }
+        printf(",%s", s_eq->type);
+        for (int i = 0; i < s_eq->pointer; i++) {
+            printf("*");
+        }
+        printf("\n");
     }
 }
 
@@ -653,7 +680,16 @@ void is_div(table* c_table, tree_node* node) {
     if( strcmp(f_eq->type, "void") != 0 && strcmp(s_eq->type, "void") != 0  && f_eq->pointer == 0 && s_eq->pointer == 0) {
         strcpy(node->type, "int");
     } else {
-        //TODO: add error message
+        strcpy(node->type, "undef");
+        printf("Line %d, col %d: Operator / cannot be applied to types %s", node->line, node->col, f_eq->type);
+        for (int i = 0; i < f_eq->pointer; i++) {
+            printf("*");
+        }
+        printf(",%s", s_eq->type);
+        for (int i = 0; i < s_eq->pointer; i++) {
+            printf("*");
+        }
+        printf("\n");
     }
 }
 
@@ -666,7 +702,16 @@ void is_mod(table* c_table, tree_node* node) {
     if( strcmp(f_eq->type, "void") != 0 && strcmp(s_eq->type, "void") != 0  && f_eq->pointer == 0 && s_eq->pointer == 0) {
         strcpy(node->type, "int");
     } else {
-        //TODO: add error message
+        strcpy(node->type, "undef");
+        printf("Line %d, col %d: Operator %% cannot be applied to types %s", node->line, node->col, f_eq->type);
+        for (int i = 0; i < f_eq->pointer; i++) {
+            printf("*");
+        }
+        printf(",%s", s_eq->type);
+        for (int i = 0; i < s_eq->pointer; i++) {
+            printf("*");
+        }
+        printf("\n");
     }
 }
 
@@ -683,6 +728,13 @@ void is_minus(table* c_table, tree_node* node) {
 
     if(minus->pointer == 0) {
         strcpy(node->type, "int");
+    } else {
+        strcpy(node->type, "undef");
+        printf("Line %d, col %d: Operator - cannot be applied to type %s", node->line, node->col, minus->type);
+        for (int i = 0; i < minus->pointer; i++) {
+            printf("*");
+        }
+        printf("\n");
     }
 }
 
@@ -693,6 +745,13 @@ void is_plus(table* c_table, tree_node* node) {
 
     if(plus->pointer == 0) {
         strcpy(node->type, "int");
+    } else {
+        strcpy(node->type, "undef");
+        printf("Line %d, col %d: Operator + cannot be applied to type %s", node->line, node->col, plus->type);
+        for (int i = 0; i < plus->pointer; i++) {
+            printf("*");
+        }
+        printf("\n");
     }
 }
 
@@ -759,13 +818,13 @@ void is_call(table* c_table, tree_node* node) {
                 param_node = param_node->next_brother;
             }
 
-            if(got_params != expected_params) {
+            /*if(got_params != expected_params) { TODO:this error?
                 strcpy(node->type, "undef");
                 printf("Line %d, col %d: Wrong number of arguments to function %s (got %d, required %d)\n", function->line, function->col, function->value, got_params, expected_params);
-            } else {
+            } else {*/
                 strcpy(node->type, function->type);
                 node->pointer = function->pointer;
-            }
+            // }
         } else {
             strcpy(node->type, "undef");
             printf("Line %d, col %d: Symbol %s is not a function\n", function->line, function->col, function->value);
