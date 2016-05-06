@@ -131,16 +131,26 @@ void is_declaration(table* c_tab, tree_node* node) {
     } else if(symbol_tables != c_table) {
         printf("Line %d, col %d: Symbol %s already defined\n", line, col, name);
     } else {
-        if( aux_repeat->is_func || strcmp(type, aux_repeat->type) != 0 || (strcmp(type, aux_repeat->type) == 0 &&  aux_repeat->pointer != pointer) ) {
+        if(aux_repeat->is_array || aux_repeat->is_func || strcmp(type, aux_repeat->type) != 0 || (strcmp(type, aux_repeat->type) == 0 &&  aux_repeat->pointer != pointer) ) {
             printf("Line %d, col %d: Conflicting types (got %s", line, col, type);
             for (int i = 0; i < pointer; i++) {
                 printf("*");
             }
             printf(", expected %s", aux_repeat->type);
-            for (int i = 0; i < aux_repeat->pointer; i++) {
-                printf("*");
+
+            if(aux_repeat->is_array) {
+                for (int i = 0; i < aux_repeat->pointer - 1; i++) {
+                    printf("*");
+                }
+            } else {
+                for (int i = 0; i < aux_repeat->pointer; i++) {
+                    printf("*");
+                }
             }
-            if(aux_repeat->is_func) {
+
+            if(aux_repeat->is_array) {
+                printf("[%d]", aux_repeat->array_size_dec);
+            } else if(aux_repeat->is_func) {
                 aux_params = aux_repeat->func_param;
                 printf("(");
                 while(aux_params != NULL) {
@@ -216,9 +226,16 @@ void is_array_declaration(table* c_tab, tree_node* node) {
                 printf("*");
             }
             printf("[%d], expected %s", size_dec, aux_repeat->type);
-            for (int i = 0; i < aux_repeat->pointer - 1; i++) {
-                printf("*");
+            if(aux_repeat->is_array) {
+                for (int i = 0; i < aux_repeat->pointer - 1; i++) {
+                    printf("*");
+                }
+            } else {
+                for (int i = 0; i < aux_repeat->pointer; i++) {
+                    printf("*");
+                }
             }
+
 
             if(aux_repeat->is_array) {
                 printf("[%d]", aux_repeat->array_size_dec);
@@ -275,6 +292,7 @@ void is_func_declaration(table* c_tab, tree_node* node) {
                 if(strcmp(aux_param_dec->luke->name, "Void") == 0) {
                     line_void = aux_param_dec->line;
                     col_void = aux_param_dec->col;
+                    break;
                 }
 
                 aux_param_dec = aux_param_dec->next_brother;
@@ -388,6 +406,7 @@ void is_func_definition(table* c_tab, tree_node* node) {
                 if(strcmp(aux_param_dec->luke->name, "Void") == 0) {
                     line_void = aux_param_dec->line;
                     col_void = aux_param_dec->col;
+                    break;
                 }
 
                 aux_param_dec = aux_param_dec->next_brother;
@@ -807,7 +826,9 @@ void is_call(table* c_table, tree_node* node) {
             param_node = function->next_brother;
 
             while(params != NULL) {
-                expected_params++;
+                if( !(strcmp(params->type, "void") == 0 && params->pointer == 0) ) {
+                    expected_params++;
+                }
 
                 params = params->next;
             }
@@ -818,13 +839,13 @@ void is_call(table* c_table, tree_node* node) {
                 param_node = param_node->next_brother;
             }
 
-            /*if(got_params != expected_params) { TODO:this error?
+            if(got_params != expected_params) {
                 strcpy(node->type, "undef");
                 printf("Line %d, col %d: Wrong number of arguments to function %s (got %d, required %d)\n", function->line, function->col, function->value, got_params, expected_params);
-            } else {*/
+            } else {
                 strcpy(node->type, function->type);
                 node->pointer = function->pointer;
-            // }
+            }
         } else {
             strcpy(node->type, "undef");
             printf("Line %d, col %d: Symbol %s is not a function\n", function->line, function->col, function->value);

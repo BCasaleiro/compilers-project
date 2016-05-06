@@ -286,7 +286,7 @@ int check_params_void(element_param* params) {
     element_param* aux = params;
 
     while(aux != NULL) {
-        if( strcmp(aux->type, "void") == 0 && aux->pointer == 0 && aux == params && aux->next == NULL ) {
+        if( strcmp(aux->type, "void") == 0 && strcmp(aux->name, "") == 0 && aux->pointer == 0 && aux == params && aux->next == NULL ) {
             return 0;
         } else if(strcmp(aux->type, "void") == 0 && aux->pointer == 0) {
             return 1;

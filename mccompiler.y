@@ -554,24 +554,24 @@ ExprSpecial:    ExprSpecial ASSIGN ExprSpecial                                  
                                                                                     add_brother_end($1,$3);
                                                                                 }
         |       NOT ExprSpecial                                                 {
-                                                                                    $$ = create_simple_node("Not", yylineno, (int)(columnNumber));
+                                                                                    $$ = create_simple_node("Not", yylineno, (int)($2->col - 1));
                                                                                     add_child($$,$2);
                                                                                 }
         |       MINUS ExprSpecial %prec "neg"                                   {
-                                                                                    $$ = create_simple_node("Minus", yylineno, (int)(columnNumber));
+                                                                                    $$ = create_simple_node("Minus", yylineno, (int)($2->col - 1));
                                                                                     add_child($$,$2);
                                                                                 }
         |       PLUS ExprSpecial %prec "pos"                                    {
-                                                                                    $$ = create_simple_node("Plus", yylineno, (int)(columnNumber));
+                                                                                    $$ = create_simple_node("Plus", yylineno, (int)($2->col - 1));
                                                                                     add_child($$,$2);
                                                                                 }
         |       AST ExprSpecial %prec "pointer"                                 {
 
-                                                                                    $$ = create_simple_node("Deref", yylineno, (int)(columnNumber));
+                                                                                    $$ = create_simple_node("Deref", yylineno, (int)($2->col - 1));
                                                                                     add_child($$,$2);
                                                                                 }
         |       AMP ExprSpecial                                                 {
-                                                                                    $$ = create_simple_node("Addr", yylineno, (int)(columnNumber));
+                                                                                    $$ = create_simple_node("Addr", yylineno, (int)($2->col - 1));
                                                                                     add_child($$,$2);
                                                                                 }
         |       ID                                                              {
