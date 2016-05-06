@@ -724,13 +724,9 @@ void is_store(table* c_table, tree_node* node) {
 }
 
 void is_comma(table* c_table, tree_node* node) {
-    tree_node* son = node->luke;
+    tree_node* son = node->luke->next_brother;
 
     repeat_check(c_table, node);
-
-    while(son->next_brother != NULL) {
-        son = son->next_brother;
-    }
 
     strcpy(node->type, son->type);
     node->pointer = son->pointer;
