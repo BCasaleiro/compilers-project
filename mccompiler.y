@@ -592,7 +592,12 @@ ExprSpecial:    ExprSpecial ASSIGN ExprSpecial                                  
         |       LPAR error RPAR                                                 { $$ = NULL; }
         |       ID LPAR ZUExprZMComma RPAR                                      {
                                                                                     $$ = create_simple_node("Call", yylineno, (int)(columnNumber));
-                                                                                    add_child($$, create_str_node("Id",$1, yylineno, (int)(columnNumber - strlen($1))));
+                                                                                    if($3 != NULL) {
+                                                                                        add_child($$, create_str_node( "Id",$1, yylineno, (int)($3->col - strlen($1) - 2) ));
+                                                                                    } else {
+                                                                                        add_child($$, create_str_node( "Id",$1, yylineno, (int)(columnNumber - strlen($1) - 2) ));
+                                                                                    }
+
                                                                                     add_brother_end($$->luke,$3);
                                                                                 }
         |       ID LPAR error RPAR                                              { $$ = NULL; }

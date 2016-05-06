@@ -1,3 +1,10 @@
-int f1[2];
+int c(int, char);
 
-int f1(void);
+int main(void) {
+    int a;
+    a = 1;
+
+    a();
+
+    c(a, a, a);
+}
