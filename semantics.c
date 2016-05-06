@@ -95,6 +95,7 @@ void repeat_check(table* c_table, tree_node* node) {
 void is_declaration(table* c_tab, tree_node* node) {
     tree_node* aux = node->luke;
     table_element* aux_repeat;
+    element_param* aux_params;
     char type[MAX_STR];
     char name[MAX_STR];
     int pointer = 0;
@@ -128,21 +129,9 @@ void is_declaration(table* c_tab, tree_node* node) {
         }
 
     } else if(symbol_tables != c_table) {
-        if( strcmp(type, aux_repeat->type) != 0 || (strcmp(type, aux_repeat->type) == 0 &&  aux_repeat->pointer != pointer) ) {
-            printf("Line %d, col %d: Conflicting types (got %s", line, col, type);
-            for (int i = 0; i < pointer; i++) {
-                printf("*");
-            }
-            printf(", expected %s", aux_repeat->type);
-            for (int i = 0; i < aux_repeat->pointer; i++) {
-                printf("*");
-            }
-            printf(")\n");
-        } else {
-            printf("Line %d, col %d: Symbol %s already defined\n", line, col, name);
-        }
+        printf("Line %d, col %d: Symbol %s already defined\n", line, col, name);
     } else {
-        if( strcmp(type, aux_repeat->type) != 0 || (strcmp(type, aux_repeat->type) == 0 &&  aux_repeat->pointer != pointer) ) {
+        if( aux_repeat->is_func || strcmp(type, aux_repeat->type) != 0 || (strcmp(type, aux_repeat->type) == 0 &&  aux_repeat->pointer != pointer) ) {
             printf("Line %d, col %d: Conflicting types (got %s", line, col, type);
             for (int i = 0; i < pointer; i++) {
                 printf("*");
@@ -150,6 +139,25 @@ void is_declaration(table* c_tab, tree_node* node) {
             printf(", expected %s", aux_repeat->type);
             for (int i = 0; i < aux_repeat->pointer; i++) {
                 printf("*");
+            }
+            if(aux_repeat->is_func) {
+                aux_params = aux_repeat->func_param;
+                printf("(");
+                while(aux_params != NULL) {
+
+                    printf("%s", aux_params->type);
+
+                    for (int i = 0; i < aux_params->pointer; i++) {
+                        printf("*");
+                    }
+
+                    if(aux_params->next != NULL) {
+                        printf(",");
+                    }
+
+                    aux_params = aux_params->next;
+                }
+                printf(")");
             }
             printf(")\n");
         }
@@ -159,6 +167,7 @@ void is_declaration(table* c_tab, tree_node* node) {
 void is_array_declaration(table* c_tab, tree_node* node) {
     tree_node* aux = node->luke;
     table_element* aux_repeat;
+    element_param* aux_params;
     char type[MAX_STR];
     char name[MAX_STR];
     char size[MAX_STR];
@@ -199,21 +208,9 @@ void is_array_declaration(table* c_tab, tree_node* node) {
             printf("Line %d, col %d: Invalid use of void type in declaration\n", line_type, col_type);
         }
     } else if(symbol_tables != c_table) {
-        if( strcmp(type, aux_repeat->type) != 0 || size_dec != aux_repeat->array_size_dec || (strcmp(type, aux_repeat->type) == 0 &&  aux_repeat->pointer != pointer) ) {
-            printf("Line %d, col %d: Conflicting types (got %s", line, col, type);
-            for (int i = 0; i < pointer - 1; i++) {
-                printf("*");
-            }
-            printf("[%d], expected %s", size_dec, aux_repeat->type);
-            for (int i = 0; i < aux_repeat->pointer - 1; i++) {
-                printf("*");
-            }
-            printf("[%d])\n", aux_repeat->array_size_dec);
-        } else {
-            printf("Line %d, col %d: Symbol %s already defined\n", line, col, name);
-        }
+        printf("Line %d, col %d: Symbol %s already defined\n", line, col, name);
     } else {
-        if( strcmp(type, aux_repeat->type) != 0 || size_dec != aux_repeat->array_size_dec || (strcmp(type, aux_repeat->type) == 0 &&  aux_repeat->pointer != pointer) ) {
+        if( aux_repeat->is_func || strcmp(type, aux_repeat->type) != 0 || size_dec != aux_repeat->array_size_dec || (strcmp(type, aux_repeat->type) == 0 &&  aux_repeat->pointer != pointer) ) {
             printf("Line %d, col %d: Conflicting types (got %s", line, col, type);
             for (int i = 0; i < pointer - 1; i++) {
                 printf("*");
@@ -222,14 +219,39 @@ void is_array_declaration(table* c_tab, tree_node* node) {
             for (int i = 0; i < aux_repeat->pointer - 1; i++) {
                 printf("*");
             }
-            printf("[%d])\n", aux_repeat->array_size_dec);
+
+            if(aux_repeat->is_array) {
+                printf("[%d]", aux_repeat->array_size_dec);
+            } else if(aux_repeat->is_func) {
+                aux_params = aux_repeat->func_param;
+                printf("(");
+                while(aux_params != NULL) {
+
+                    printf("%s", aux_params->type);
+
+                    for (int i = 0; i < aux_params->pointer; i++) {
+                        printf("*");
+                    }
+
+                    if(aux_params->next != NULL) {
+                        printf(",");
+                    }
+
+                    aux_params = aux_params->next;
+                }
+                printf(")");
+            }
+            printf(")\n");
         }
     }
 }
 
 void is_func_declaration(table* c_tab, tree_node* node) {
     tree_node* aux = node->luke;
+    tree_node* aux_param_dec;
+    tree_node* param_list;
     element_param* params;
+    element_param* aux_params;
     table_element* aux_repeat;
     char name[MAX_STR];
     char type[MAX_STR];
@@ -246,8 +268,17 @@ void is_func_declaration(table* c_tab, tree_node* node) {
             col = aux->col;
         } else if(strcmp(aux->name, "ParamList") == 0){
             params = get_params(aux);
-            line_void = aux->line;
-            col_void = aux->col;
+            param_list = aux;
+            aux_param_dec = aux->luke;
+            while(aux_param_dec != NULL) {
+
+                if(strcmp(aux_param_dec->luke->name, "Void") == 0) {
+                    line_void = aux_param_dec->line;
+                    col_void = aux_param_dec->col;
+                }
+
+                aux_param_dec = aux_param_dec->next_brother;
+            }
         } else {
             strcpy(type, aux->name);
         }
@@ -260,24 +291,68 @@ void is_func_declaration(table* c_tab, tree_node* node) {
     aux_repeat = search_symbol(symbol_tables, c_table, name, false);
     if(aux_repeat == NULL) {
         if(check_params_void(params) == 0) {
+            check_params_repeat(param_list);
             insert_function(c_table, name, type, pointer, params);
             insert_table(symbol_tables, name, false);
         } else {
             printf("Line %d, col %d: Invalid use of void type in declaration\n", line_void, col_void);
         }
     } else {
-        if(strcmp(type, aux_repeat->type) != 0 || pointer != aux_repeat->pointer) {
+         if(check_params_void(params) == 1) {
+             printf("Line %d, col %d: Invalid use of void type in declaration\n", line_void, col_void);
+         } else if(strcmp(type, aux_repeat->type) != 0 || pointer != aux_repeat->pointer || check_param_list(params, aux_repeat->func_param) == 1) {
+
             printf("Line %d, col %d: Conflicting types (got %s", line, col, type);
             for (int i = 0; i < pointer; i++) {
                 printf("*");
             }
-            printf(", expected %s", aux_repeat->type);
-            for (int i = 0; i < aux_repeat->pointer; i++) {
-                printf("*");
+            printf("(");
+            aux_params = params;
+            while(aux_params != NULL) {
+                printf("%s", aux_params->type);
+                for (int i = 0; i < aux_params->pointer; i++) {
+                    printf("*");
+                }
+
+                if(aux_params->next != NULL) {
+                    printf(",");
+                }
+                aux_params = aux_params->next;
             }
+            printf(")");
+
+            printf(", expected %s", aux_repeat->type);
+
+            if(aux_repeat->is_array) {
+                for (int i = 0; i < aux_repeat->pointer - 1; i++) {
+                    printf("*");
+                }
+            } else {
+                for (int i = 0; i < aux_repeat->pointer; i++) {
+                    printf("*");
+                }
+            }
+
+            if(aux_repeat->is_func) {
+                printf("(");
+                aux_params = aux_repeat->func_param;
+                while(aux_params != NULL) {
+                    printf("%s", aux_params->type);
+                    for (int i = 0; i < aux_params->pointer; i++) {
+                        printf("*");
+                    }
+
+                    if(aux_params->next != NULL) {
+                        printf(",");
+                    }
+                    aux_params = aux_params->next;
+                }
+                printf(")");
+            } else if(aux_repeat->is_array) {
+                printf("[%d]", aux_repeat->array_size_dec);
+            }
+
             printf(")\n");
-        } else if(check_param_list(params, aux_repeat->func_param) == 1) {
-            printf("Line %d, col %d: Symbol %s already defined\n", line, col, name); //TODO: check if it is this error messages
         }
     }
 }
@@ -285,8 +360,11 @@ void is_func_declaration(table* c_tab, tree_node* node) {
 void is_func_definition(table* c_tab, tree_node* node) {
     table* declared_func;
     tree_node* aux = node->luke;
+    tree_node* aux_param_dec;
+    tree_node* param_list;
     table_element* aux_repeat;
     element_param* params;
+    element_param* aux_params;
     char name[MAX_STR];
     char type[MAX_STR];
     int pointer = 0;
@@ -303,28 +381,67 @@ void is_func_definition(table* c_tab, tree_node* node) {
             col = aux->col;
         } else if(strcmp(aux->name, "ParamList") == 0){
             params = get_params(aux);
-            line_void = aux->line;
-            col_void = aux->col;
+            param_list = aux;
+            aux_param_dec = param_list->luke;
+            while(aux_param_dec != NULL) {
+
+                if(strcmp(aux_param_dec->luke->name, "Void") == 0) {
+                    line_void = aux_param_dec->line;
+                    col_void = aux_param_dec->col;
+                }
+
+                aux_param_dec = aux_param_dec->next_brother;
+            }
         } else if(strcmp(aux->name, "FuncBody") == 0) {
             aux_repeat = search_symbol(symbol_tables, c_tab, name, false);
             declared_func = search_table(symbol_tables, name);
 
             if(declared_func != NULL) {
                 if( !declared_func->is_defined ) {
-                    if(strcmp(type, aux_repeat->type) != 0 || pointer != aux_repeat->pointer ) {
+                    if(check_params_void(params) == 1) {
+                        printf("Line %d, col %d: Invalid use of void type in declaration\n", line_void, col_void);
+                    } else if(strcmp(type, aux_repeat->type) != 0 || pointer != aux_repeat->pointer || check_param_list(params, aux_repeat->func_param) == 1) {
                         printf("Line %d, col %d: Conflicting types (got %s", line, col, type);
                         for (int i = 0; i < pointer; i++) {
                             printf("*");
                         }
+
+                        printf("(");
+                        aux_params = params;
+                        while(aux_params != NULL) {
+                            printf("%s", aux_params->type);
+                            for (int i = 0; i < aux_params->pointer; i++) {
+                                printf("*");
+                            }
+
+                            if(aux_params->next != NULL) {
+                                printf(",");
+                            }
+                            aux_params = aux_params->next;
+                        }
+                        printf(")");
+
                         printf(", expected %s", aux_repeat->type);
                         for (int i = 0; i < aux_repeat->pointer; i++) {
                             printf("*");
                         }
+
+                        printf("(");
+                        aux_params = aux_repeat->func_param;
+                        while(aux_params != NULL) {
+                            printf("%s", aux_params->type);
+                            for (int i = 0; i < aux_params->pointer; i++) {
+                                printf("*");
+                            }
+
+                            if(aux_params->next != NULL) {
+                                printf(",");
+                            }
+                            aux_params = aux_params->next;
+                        }
+                        printf(")");
+
                         printf(")\n");
-                    } else if(check_param_list(params, aux_repeat->func_param) == 1) {
-                        printf("Line %d, col %d: Symbol %s already defined\n", line, col, name);
-                    } else if(check_params_void(params) == 1) {
-                        printf("Line %d, col %d: Invalid use of void type in declaration\n", line_void, col_void);
                     } else {
                         c_table = declared_func;
                         c_table->is_defined = true;
@@ -339,6 +456,7 @@ void is_func_definition(table* c_tab, tree_node* node) {
                 if(check_params_void(params) == 1) {
                     printf("Line %d, col %d: Invalid use of void type in declaration\n", line_void, col_void);
                 } else {
+                    check_params_repeat(param_list);
                     insert_function(c_table, name, type, pointer, params);
                     c_table = insert_table(symbol_tables, name, true);
                     insert_symbol(c_table, "return", type, pointer, false);

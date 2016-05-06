@@ -41,6 +41,7 @@ table* search_table(table* tables, char *name);
 table_element* search_symbol(table* g_table, table* c_table, char *name, bool global_table);
 
 int check_params_void(element_param* params);
+int check_params_repeat(tree_node* param_list);
 int check_param_list(element_param* atual, element_param* from_table);
 
 void print_tables(table* c_table);

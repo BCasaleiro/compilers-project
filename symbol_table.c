@@ -3,7 +3,6 @@
 #include <string.h>
 #include "symbol_table.h"
 
-
 table* init_table() {
     table* aux = (table*) malloc( sizeof(table) );
 
@@ -166,14 +165,29 @@ void insert_symbol(table* symbol_table, char* symbol_name, char* symbol_type, in
 
 void insert_params(table* c_table, element_param* params) {
     element_param* aux = params;
+    element_param* aux_brother;
+    int flag;
 
     while(aux != NULL) {
-        if( strcmp(aux->type, "void") != 0 ) {
-            to_lower_case(aux->type);
-            insert_symbol(c_table, aux->name, aux->type, aux->pointer, true);
-        } else if( strcmp(aux->type, "void") == 0 && aux->pointer > 0 ) {
-            to_lower_case(aux->type);
-            insert_symbol(c_table, aux->name, aux->type, aux->pointer, true);
+        flag = 0;
+        aux_brother = params;
+
+        while(aux_brother != aux) {
+            if(strcmp(aux->name, aux_brother->name) == 0) {
+                flag = 1;
+                break;
+            }
+            aux_brother = aux_brother->next;
+        }
+
+        if(flag == 0) {
+            if( strcmp(aux->type, "void") != 0 ) {
+                to_lower_case(aux->type);
+                insert_symbol(c_table, aux->name, aux->type, aux->pointer, true);
+            } else if( strcmp(aux->type, "void") == 0 && aux->pointer > 0 ) {
+                to_lower_case(aux->type);
+                insert_symbol(c_table, aux->name, aux->type, aux->pointer, true);
+            }
         }
 
         aux = aux->next;
@@ -284,6 +298,46 @@ int check_params_void(element_param* params) {
     return 0;
 }
 
+int check_params_repeat(tree_node* param_list) {
+    tree_node* aux = param_list->luke;
+    tree_node* aux_brother;
+    tree_node* brother = NULL;
+    tree_node* brother2 = NULL;
+    int flag = 0;
+
+    while(aux != NULL) {
+        aux_brother = param_list->luke;
+
+        while(aux_brother != aux) {
+
+            brother = aux_brother->luke;
+            brother2 = aux->luke;
+
+            while(brother != NULL && strcmp(brother->name, "Id") != 0) {
+                brother = brother->next_brother;
+            }
+
+            while(brother2 != NULL && strcmp(brother2->name, "Id") != 0) {
+                brother2 = brother2->next_brother;
+            }
+
+            if(brother != NULL && brother2 != NULL && strcmp(brother->value, "") != 0 && strcmp(brother2->value, "") != 0) {
+                if(strcmp(brother->value, brother2->value) == 0) {
+                    printf("Line %d, col %d: Symbol %s already defined\n", brother2->line, brother2->col, brother2->value);
+                    flag = 1;
+                    break;
+                }
+            }
+
+            aux_brother = aux_brother->next_brother;
+        }
+
+        aux = aux->next_brother;
+    }
+
+    return flag;
+}
+
 int check_param_list(element_param* atual, element_param* from_table) {
     element_param* aux_a;
     element_param* aux_b;
@@ -309,18 +363,20 @@ int check_param_list(element_param* atual, element_param* from_table) {
 
 void print_params(element_param* param) {
     element_param* aux = param;
+    element_param* aux_brother;
 
     while(aux != NULL) {
+        aux_brother = param;
+
+        if(aux != param) {
+            printf(",");
+        }
 
         printf("%s", aux->type);
-
         for(int i = 0; i < aux->pointer; i++){
             printf("*");
         }
 
-        if(aux->next != NULL) {
-            printf(",");
-        }
 
         aux = aux->next;
     }
