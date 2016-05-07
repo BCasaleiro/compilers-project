@@ -1,1 +1,6 @@
-int b(int c) { void a; }
+int main(void) {
+    int* a;
+    int** b;
+
+    +b;
+}

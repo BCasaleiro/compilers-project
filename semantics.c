@@ -109,10 +109,10 @@ void is_declaration(table* c_tab, tree_node* node) {
             strcpy(name, aux->value);
             line = aux->line;
             col = aux->col;
-        } else {
+        } else if(strcmp(aux->name, "Void") == 0 || strcmp(aux->name, "Int") == 0 || strcmp(aux->name, "Char") == 0) {
             strcpy(type, aux->name);
             line_void = aux->line;
-            col_void = aux->line;
+            col_void = aux->col;
         }
 
         aux = aux->next_brother;
