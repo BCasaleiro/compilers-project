@@ -15,12 +15,15 @@ void print_code(tree_node* root, table* c_table){
 
 void llvm_is_easy(tree_node * node, table * c_table){
 	if ( strcmp(node->name, "FuncDefinition") == 0 ) {
-		printf("%s\n", node->name);
         funcDefenition_code(node, c_table);
+    }else if(strcmp(node->name, "Declaration")==0){
+    	//globalDeclaration_code(node, c_table);
     }
 }
 
-
+void globalDeclaration_code(tree_node * node, table * c_table){
+	printf("@");	
+}
 
 void funcDefenition_code(tree_node * node, table * c_table){
 	printf("define");
@@ -59,9 +62,33 @@ void funcDefenition_code(tree_node * node, table * c_table){
 
 		if (strcmp(aux_element->type, "int") == 0){
 			printf(" i32");
+			int i=0;
+			while(i<aux_element->pointer){
+				printf("*");
+				i++;
+			}
 			printf(" %%%s", aux_element->name);
 		}else if(strcmp(aux->type, "void") == 0){
+			if(aux_element->pointer >= 1){
+				printf(" i8");
+				int i=0;
+				while(i<aux_element->pointer){
+					printf("*");
+					i++;
+				}
+			}
+			else{
+				printf(" void");
+			}
 
+		}else if (strcmp(aux_element->type, "char") == 0){
+			printf(" i8");
+			int i=0;
+			while(i<aux_element->pointer){
+				printf("*");
+				i++;
+			}
+			printf(" %%%s", aux_element->name);
 		}
 		aux_element = aux_element->next;
 		param_count++;
@@ -83,7 +110,7 @@ void print_function_body(tree_node * node, table * c_table){
 	tree_node * aux_node = node->luke;
 	while(aux_node != NULL){
 		if(strcmp(aux_node->name, "Declaration")==0){
-			tree_node * current = aux_node -> luke;
+
 		}else if(strcmp(aux_node->name, "ArrayDeclaration")==0){
 
 		}else if(strcmp(aux_node->name, "Return")==0){

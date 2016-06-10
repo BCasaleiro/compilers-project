@@ -363,10 +363,8 @@ int check_param_list(element_param* atual, element_param* from_table) {
 
 void print_params(element_param* param) {
     element_param* aux = param;
-    element_param* aux_brother;
 
     while(aux != NULL) {
-        aux_brother = param;
 
         if(aux != param) {
             printf(",");
