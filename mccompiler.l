@@ -6,7 +6,7 @@
     #include <string.h>
     #include <stdbool.h>
     #include "y.tab.h"
-    #include "semantics.h"
+    #include "code_gen.h"
 
     int flag = 0;
     int lineNumber = 1;
@@ -304,6 +304,10 @@ int main(int argc, char const *argv[])
             print_tables(symbol_tables);
             print_annotated_tree(root, 0);
         }
+        if(flag == 0 && flag_error==0){
+            print_code(root, symbol_tables);
+        }
+
     } else {
         yylex();
     }

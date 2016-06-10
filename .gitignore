@@ -51,3 +51,5 @@ util
 
 # Debug files
 *.dSYM/
+
+tests_sintaxe/
