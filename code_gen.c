@@ -15,17 +15,35 @@ void print_code(tree_node* root, table* c_table){
 
 void llvm_is_easy(tree_node * node, table * c_table){
 	if ( strcmp(node->name, "FuncDefinition") == 0 ) {
-        funcDefenition_code(node, c_table);
+        funcDefinition_code(node, c_table);
     }else if(strcmp(node->name, "Declaration")==0){
-    	//globalDeclaration_code(node, c_table);
+    	globalDeclaration_code(node, c_table);
     }
 }
 
 void globalDeclaration_code(tree_node * node, table * c_table){
-	printf("@");	
+	tree_node * aux = node -> luke;
+	char * type = return_typeSpec(aux);
+
+	int pointers =0;
+	while(aux != NULL){
+		if(strcmp(aux->name,"Pointer")==0){
+			pointers++;
+		}else if(strcmp(aux->name,"Id")==0){
+			printf("@%s = global ",aux->value);
+			printf("%s", type);
+			while(pointers>0){
+				printf("*");
+				pointers--;
+			}
+			printf(" 0\n");
+			break;
+		}
+		aux = aux -> next_brother;
+	}
 }
 
-void funcDefenition_code(tree_node * node, table * c_table){
+void funcDefinition_code(tree_node * node, table * c_table){
 	printf("define");
 
 	tree_node * aux = node -> luke;
@@ -133,8 +151,23 @@ char * return_type(tree_node * node){
 	char * p = (char*)malloc(sizeof(char*)*10);
 	if(strcmp(node->type, "int")==0){
 		strcpy(p, "i32");
-	}else {
-		strcpy(p, "qq");
+	}else if (strcmp(node->type, "char") == 0){
+		strcpy(p, "i8");
+	}else if (strcmp(node->type, "void") == 0){
+		strcpy(p, "void");
+	}
+	return p;
+}
+
+
+char * return_typeSpec(tree_node * node){
+	char * p = (char*)malloc(sizeof(char*)*10);
+	if(strcmp(node->name, "Int")==0){
+		strcpy(p, "i32");
+	}else if (strcmp(node->name, "Char") == 0){
+		strcpy(p, "i8");
+	}else if (strcmp(node->name, "Void") == 0){
+		strcpy(p, "void");
 	}
 	return p;
 }
